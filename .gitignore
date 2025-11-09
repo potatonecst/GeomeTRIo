@@ -15,8 +15,6 @@ __MACOSX/
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
-/[Aa]ssets/Fonts/
-/[Aa]ssets/Fonts.meta
 /[Aa]ssets/_Recovery/
 /[Aa]ssets/_Recovery.meta
 *.log
