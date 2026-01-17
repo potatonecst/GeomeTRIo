@@ -2,6 +2,9 @@ import { render } from '@reactunity/renderer';
 import { useState } from 'react';
 import '../index.css';
 import { Button } from '../components/Button';
+import { Menu } from './Menu';
+import { Ranking } from './Ranking';
+import { Settings } from './Settings';
 
 // 画面の定義
 type Screen = 'title' | 'menu' | 'ranking' | 'settings';
@@ -22,31 +25,20 @@ const TitleApp = () => {
 
             {/* メニュー画面 */}
             {currentScreen === 'menu' && (
-                <view>
-                    <text style={{ fontSize: 30, marginBottom: 20 }}>Main Menu</text>
-                    <Button style={{ marginBottom: 10 }} onClick={() => console.log("Game Start!")}>Play Game</Button>
-                    <Button style={{ marginBottom: 10 }} onClick={() => setCurrentScreen('ranking')}>Ranking</Button>
-                    <Button style={{ marginBottom: 10 }} onClick={() => setCurrentScreen('settings')}>Settings</Button>
-                    <Button onClick={() => setCurrentScreen('title')}>Back to Title</Button>
-                </view>
+                <Menu
+                    onNavigate={(screen) => setCurrentScreen(screen)}
+                    onPlay={() => console.log("Game Start!")}
+                />
             )}
 
             {/* ランキング画面 */}
             {currentScreen === 'ranking' && (
-                <view>
-                    <text style={{ fontSize: 30 }}>Ranking</text>
-                    {/* ここにランキングリストを実装 */}
-                    <Button style={{ marginTop: 20 }} onClick={() => setCurrentScreen('menu')}>Back</Button>
-                </view>
+                <Ranking onBack={() => setCurrentScreen('menu')} />
             )}
 
             {/* 設定画面 */}
             {currentScreen === 'settings' && (
-                <view>
-                    <text style={{ fontSize: 30 }}>Settings</text>
-                    {/* ここに音量設定などを実装 */}
-                    <Button style={{ marginTop: 20 }} onClick={() => setCurrentScreen('menu')}>Back</Button>
-                </view>
+                <Settings onBack={() => setCurrentScreen('menu')} />
             )}
         </view>
     );

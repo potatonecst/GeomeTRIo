@@ -9710,8 +9710,29 @@ var __spreadValues = (a, b) => {
       }
     );
   };
+  const Card = ({ children, style }) => {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "view",
+      {
+        style: __spreadValues({
+          backgroundColor: "#f9f9f9",
+          borderRadius: "8px",
+          padding: "15px",
+          border: "1px solid #e0e0e0"
+        }, style),
+        children
+      }
+    );
+  };
   const TitleApp = () => {
     const [currentScreen, setCurrentScreen] = reactExports.useState("title");
+    const rankingData = [
+      { rank: 1, date: "2024/01/15", score: 5e4 },
+      { rank: 2, date: "2024/01/14", score: 45e3 },
+      { rank: 3, date: "2024/01/10", score: 4e4 },
+      { rank: 4, date: "2024/01/05", score: 35e3 },
+      { rank: 5, date: "2024/01/01", score: 3e4 }
+    ];
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { style: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }, children: [
       currentScreen === "title" && /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("text", { style: { fontSize: 40, marginBottom: 20 }, children: "GeomeTRIo" }),
@@ -9724,9 +9745,19 @@ var __spreadValues = (a, b) => {
         /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { style: { marginBottom: 10 }, onClick: () => setCurrentScreen("settings"), children: "Settings" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: () => setCurrentScreen("title"), children: "Back to Title" })
       ] }),
-      currentScreen === "ranking" && /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { style: { fontSize: 30 }, children: "Ranking" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { style: { marginTop: 20 }, onClick: () => setCurrentScreen("menu"), children: "Back" })
+      currentScreen === "ranking" && /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { style: { width: "100%", padding: "0 40px", maxWidth: 600 }, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { style: { fontSize: 30, marginBottom: 20, textAlign: "center" }, children: "Ranking" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("view", { style: { flex: 1 }, children: rankingData.map((record) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Card, { style: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { style: { flexDirection: "row", alignItems: "center" }, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { style: { fontSize: 24, fontWeight: "bold", marginRight: 15, color: "#555", width: 40 }, children: [
+              "#",
+              record.rank
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { style: { fontSize: 18 }, children: record.date })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { style: { fontSize: 20, fontWeight: "bold" }, children: record.score.toLocaleString() })
+        ] }, record.rank)) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { style: { marginTop: 20, alignSelf: "center" }, onClick: () => setCurrentScreen("menu"), children: "Back" })
       ] }),
       currentScreen === "settings" && /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("text", { style: { fontSize: 30 }, children: "Settings" }),
