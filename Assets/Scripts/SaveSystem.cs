@@ -1,54 +1,53 @@
 using UnityEngine;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections.Generic;
 
 public static class SaveSystem
 {
-    private static string saveFileName = "/savedata.sav";
-
-    //すべてのランキングを保存する関数
-    public static void SaveGameData(GameData data)
+    // 指定したファイル名で保存する
+    public static void Save(string fileName, GameData data)
     {
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + saveFileName;
-        FileStream stream = new FileStream(path, FileMode.Create);
+        // 1. 保存先のフルパスを作成
+        string path = Path.Combine(Application.persistentDataPath, fileName);
 
-        //GameDataを丸ごとバイナリに変換して保存
-        formatter.Serialize(stream, data);
-        stream.Close();
+        // 2. GameDataをJSON文字列に変換 (第2引数trueで読みやすく整形)
+        string json = JsonUtility.ToJson(data, true);
+
+        // 3. ファイルを書き込み
+        File.WriteAllText(path, json);
+
+#if UNITY_EDITOR
+        Debug.Log($"[Save] Data saved to: {path}");
+#endif
     }
 
-    //すべてのランキングを読み込む関数
-    public static GameData LoadGameData()
+    // 指定したファイル名から読み込む
+    public static GameData Load(string fileName)
     {
-        string path = Application.persistentDataPath + saveFileName;
+        string path = Path.Combine(Application.persistentDataPath, fileName);
+
         if (File.Exists(path))
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
+            // 1. JSON文字列を読み込む
+            string json = File.ReadAllText(path);
 
-            //ファイルからGameDataを丸ごと復元
-            GameData data = formatter.Deserialize(stream) as GameData;
-            stream.Close();
+            // 2. JSONをGameDataクラスのインスタンスに変換
+            return JsonUtility.FromJson<GameData>(json);
+        }
 
-            return data;
-        }
-        else
-        {
-            //セーブファイルがなければ、空のDictionaryを返す
-            return new GameData();
-        }
+        // ファイルがない場合はnullを返す（呼び出し側で新規作成を判断するため）
+        return null;
     }
 
-    public static void DeleteSaveData()
+    // 指定したファイルを削除する
+    public static void DeleteSaveData(string fileName)
     {
-        string path = Application.persistentDataPath + saveFileName;
+        string path = Path.Combine(Application.persistentDataPath, fileName);
         if (File.Exists(path))
         {
             File.Delete(path);
+#if UNITY_EDITOR
+            Debug.Log($"[Delete] File deleted: {path}");
+#endif
         }
-
-        GameManager.instance?.InitializeGameData(); //空の新しいGameDataで上書き
     }
 }

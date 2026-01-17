@@ -119,8 +119,10 @@ public class OptionsManager : MonoBehaviour
     public void DeleteGameData()
     {
         GameManager.instance?.PlaySubmitSound(); //効果音再生
-        SaveSystem.DeleteSaveData();
-        PlayerPrefs.DeleteAll();
+        string fileName = GameManager.instance.CurrentSaveFileName;
+        SaveSystem.DeleteSaveData(fileName);
+        GameManager.instance?.InitializeGameData();
+        //PlayerPrefs.DeleteAll();
         SceneManager.LoadScene("TitleScene");
     }
 }

@@ -28,11 +28,13 @@
     - 保存場所: `Application.persistentDataPath`
   - **データ構造 (`GameData` クラス):**
     - `playerName` (string): プレイヤー名
-    - `initialHp` (int): 初期HP (Default: 3)
-    - `initialSp` (int): 初期SP (Default: 3)
-    - `autoFireEnabled` (bool): オート連射設定 (Default: false)
-    - `totalPlayTime` (float): 総プレイ時間
-    - `totalEnemiesDefeated` (int): 総撃破数
+    - `settings` (PlayerSettings): プレイヤー設定
+      - `initialHp` (int): 初期HP (Default: 3)
+      - `initialSp` (int): 初期SP (Default: 3)
+      - `autoFireEnabled` (bool): オート連射設定 (Default: false)
+    - `stats` (PlayerStats): プレイ統計
+      - `totalPlayTime` (float): 総プレイ時間
+      - `totalEnemiesDefeated` (int): 総撃破数
     - `stage1Scores` (List<ScoreRecord>): ステージ1のハイスコアリスト
     - `scoreAttackScores` (List<ScoreRecord>): スコアアタックのハイスコアリスト
   - **データ構造 (`ScoreRecord` 構造体):**

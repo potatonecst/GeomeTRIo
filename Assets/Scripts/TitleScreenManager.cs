@@ -106,21 +106,36 @@ public class TitleScreenManager : MonoBehaviour
 
         stageNameLabel.text = targetStage; //ステージ名を更新
 
-        var allRankings = SaveSystem.LoadGameData().rankings;
-        RankingData rankingData = null;
-        if (allRankings.ContainsKey(targetStage))
+        // データをロード
+        GameData data = SaveSystem.Load(GameManager.instance.CurrentSaveFileName);
+        if (data == null) data = new GameData();
+
+        List<ScoreRecord> scores = null;
+        if (targetStage == "Stage1") scores = data.stage1Scores;
+        else if (targetStage == "ScoreAttack") scores = data.scoreAttackScores;
+
+        // 現在の設定（HP, SP, AutoFire）に一致するスコアを抽出
+        List<ScoreRecord> filteredScores = new List<ScoreRecord>();
+        if (scores != null)
         {
-            rankingData = allRankings[targetStage];
+            filteredScores = scores
+                .Where(s => s.hp == data.settings.initialHp &&
+                            s.sp == data.settings.initialSp &&
+                            s.autoFire == data.settings.autoFireEnabled)
+                .OrderByDescending(s => s.score)
+                .Take(rankingScoreTexts.Count) // 上位5件
+                .ToList();
         }
 
         //ランキングデータをUIに反映
         for (int i = 0; i < rankingScoreTexts.Count; ++i)
         {
-            if (rankingData != null && i < rankingData.scores.Count)
+            if (i < filteredScores.Count)
             {
                 //データがある場合はスコアと名前を表示
-                rankingScoreTexts[i].text = rankingData.scores[i].score.ToString();
-                rankingPlayerNameTexts[i].text = rankingData.scores[i].playerName.ToString();
+                rankingScoreTexts[i].text = filteredScores[i].score.ToString();
+                // 名前はGameDataのプレイヤー名を使用（仕様変更によりレコードには名前がないため）
+                rankingPlayerNameTexts[i].text = data.playerName;
             }
             else
             {
@@ -175,6 +190,7 @@ public class TitleScreenManager : MonoBehaviour
     {
         GameManager.instance?.PlayCancelSound(); //効果音再生
         optionsPanel.SetActive(false);
+        GameManager.instance?.SaveGameData(); // 設定変更を確定して保存
         ShowMainMenu();
     }
 }

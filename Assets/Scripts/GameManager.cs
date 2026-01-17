@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     //セーブデータ
     private GameData gameData;
+    public GameData Data => gameData; // 外部から読み書きするためのプロパティ
 
     // 現在のシーンのUI管理役を保存しておくための箱
     private SceneUIManager sceneUI;
@@ -44,6 +45,10 @@ public class GameManager : MonoBehaviour
     private AudioSource audioSource;
     private AudioSource bgmAudioSource;
 
+    // ユーザーIDとファイル名
+    public string currentUserId = "default_player";
+    public string CurrentSaveFileName => $"user_{currentUserId}.sav";
+
     void Awake()
     {
         //シーン内にGameManagerが一つしか存在しないようにするための一般的な設定（シングルトン）
@@ -53,7 +58,11 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject); //シーンを切り替えてもこのオブジェクトを破壊しない
 
             //セーブデータをロード
-            gameData = SaveSystem.LoadGameData();
+            gameData = SaveSystem.Load(CurrentSaveFileName);
+            if (gameData == null)
+            {
+                gameData = new GameData();
+            }
         }
         else
         {
@@ -179,33 +188,35 @@ public class GameManager : MonoBehaviour
         //現在のステージのシーン名を取得
         string currentSceneName = SceneManager.GetActiveScene().name;
 
-        RankingData currentRanking;
-        if (!gameData.rankings.ContainsKey(currentSceneName))
-        {
-            //ランキングがない場合
-            currentRanking = new RankingData();
-            gameData.rankings.Add(currentSceneName, currentRanking);
-        }
-        else
-        {
-            currentRanking = gameData.rankings[currentSceneName];
-        }
+        List<ScoreRecord> currentScores = null;
+        if (currentSceneName == "Stage1") currentScores = gameData.stage1Scores;
+        else if (currentSceneName == "ScoreAttack") currentScores = gameData.scoreAttackScores;
 
         //SceneManagerにGameOverPanelの表示を依頼
         sceneUI?.ShowGameOverPanel();
 
-        //ランキングに空きがあるかどうか
-        bool hasRankingSlot = currentRanking.scores.Count < rankingLimit;
-
-        //ランキングの最下位よりも高スコアかどうか
-        bool isHigherThanLastPlace = currentRanking.scores.Count > 0 && score > currentRanking.scores.Last().score;
-
-        if (hasRankingSlot || isHigherThanLastPlace)
+        if (currentScores != null)
         {
-            //ランキングデータの個数が0の場合と、ハイスコアを更新した場合にtrue
-            bool isHigherThanHighScore = currentRanking.scores.Count == 0 || score > currentRanking.scores.First().score;
-            //SceneManegerにScoreEntryPanelの表示を依頼
-            sceneUI?.ShowScoreEntryPanel(score, isHigherThanHighScore);
+            // 現在の設定（HP, SP, AutoFire）に一致するスコアだけを抽出してソート
+            var filteredScores = currentScores
+                .Where(s => s.hp == gameData.settings.initialHp &&
+                            s.sp == gameData.settings.initialSp &&
+                            s.autoFire == gameData.settings.autoFireEnabled)
+                .OrderByDescending(s => s.score)
+                .ToList();
+
+            // その設定でのランキングに空きがあるか
+            bool hasRankingSlot = filteredScores.Count < rankingLimit;
+            // その設定での最下位よりも高スコアか
+            bool isHigherThanLastPlace = filteredScores.Count > 0 && score > filteredScores.Last().score;
+
+            if (hasRankingSlot || isHigherThanLastPlace)
+            {
+                // その設定でのハイスコア更新か
+                bool isHigherThanHighScore = filteredScores.Count == 0 || score > filteredScores.First().score;
+                //SceneManegerにScoreEntryPanelの表示を依頼
+                sceneUI?.ShowScoreEntryPanel(score, isHigherThanHighScore);
+            }
         }
     }
 
@@ -215,27 +226,52 @@ public class GameManager : MonoBehaviour
 
         string currentSceneName = SceneManager.GetActiveScene().name;
 
-        RankingData currentRanking = gameData.rankings[currentSceneName];
+        List<ScoreRecord> currentScores = null;
+        if (currentSceneName == "Stage1") currentScores = gameData.stage1Scores;
+        else if (currentSceneName == "ScoreAttack") currentScores = gameData.scoreAttackScores;
 
-        //ランキングに今回の結果を追加
-        currentRanking.scores.Add(new ScoreEntry { score = score, playerName = sceneUI.playerNameInputField.text });
-
-        //スコアの高い順に並べ替え
-        currentRanking.scores = currentRanking.scores.OrderByDescending(s => s.score).ToList();
-
-        //rankingLimitを超過した分を削除
-        if (currentRanking.scores.Count > rankingLimit)
+        if (currentScores != null)
         {
-            currentRanking.scores.RemoveRange(rankingLimit, currentRanking.scores.Count - rankingLimit);
-        }
+            // 現在の初期設定を取得
+            int currentInitialHp = gameData.settings.initialHp;
+            int currentInitialSp = gameData.settings.initialSp;
+            bool currentAutoFire = gameData.settings.autoFireEnabled;
 
-        //セーブ
-        SaveSystem.SaveGameData(gameData);
+            //ランキングに今回の結果を追加
+            ScoreRecord newRecord = new ScoreRecord
+            {
+                score = score,
+                date = System.DateTime.Now.ToString("yyyy/MM/dd"),
+                hp = currentInitialHp,
+                sp = currentInitialSp,
+                autoFire = currentAutoFire
+            };
+            currentScores.Add(newRecord);
 
-        //デフォルトプレイヤーネームに設定
-        if (sceneUI.asDefaultToggle.isOn)
-        {
-            SettingsManager.SetPlayerName(sceneUI.playerNameInputField.text);
+            // 「全く同じ条件」のデータだけを抽出してソート
+            var sameConditionScores = currentScores
+                .Where(s => s.hp == currentInitialHp && s.sp == currentInitialSp && s.autoFire == currentAutoFire)
+                .OrderByDescending(s => s.score)
+                .ToList();
+
+            // その条件の中で5位から漏れたものを削除
+            if (sameConditionScores.Count > rankingLimit)
+            {
+                var scoresToRemove = sameConditionScores.Skip(rankingLimit).ToList(); // 5位以下のスコアをリストアップ（上位5つのスコアをスキップ）
+                foreach (var oldScore in scoresToRemove)
+                {
+                    currentScores.Remove(oldScore);
+                }
+            }
+
+            //セーブ
+            SaveSystem.Save(CurrentSaveFileName, gameData);
+
+            //デフォルトプレイヤーネームに設定
+            //if (sceneUI.asDefaultToggle.isOn)
+            //{
+            //    gameData.playerName = sceneUI.playerNameInputField.text;
+            //}
         }
     }
 
@@ -313,6 +349,12 @@ public class GameManager : MonoBehaviour
     public void RegisterBGMAudioSource(AudioSource source)
     {
         bgmAudioSource = source;
+    }
+
+    // データをファイルに保存する
+    public void SaveGameData()
+    {
+        SaveSystem.Save(CurrentSaveFileName, gameData);
     }
 
 }

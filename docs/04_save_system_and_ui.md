@@ -1,35 +1,35 @@
 # 4. データ保存とUIシステム
 
-ランキングや設定を永続化（保存）する仕組みと、Observerパターンを用いた効率的なUI更新、そしてInput Systemを用いたUIナビゲーションについて解説します。
+ランキングや設定を永続化（保存）する仕組みと、Singletonパターンを用いたUI更新、そしてInput Systemを用いたUIナビゲーションについて解説します。
 
-## データの保存方法：PlayerPrefs vs バイナリシリアライズ
+## データの保存方法：JSONシリアライズ
 
-このプロジェクトでは、保存するデータの種類によって2つの方法を使い分けています。
+このプロジェクトでは、すべてのユーザーデータ（設定、ランキング、統計）を **JSON形式** で一元管理しています。
 
-### 1. PlayerPrefs (設定用)
-簡単な設定値（音量、画面設定など）の保存に適しています。
+### 変更点：PlayerPrefsの廃止とGameDataへの統合
+以前は設定値（HP、SPなど）を `PlayerPrefs` で管理していましたが、現在は `GameData` クラスに統合しました。
+これにより、以下のメリットがあります。
+1. **データの一元管理:** 設定、スコア、進行状況を1つのファイル (`.sav`) で管理できます。
+2. **整合性の確保:** ランキング記録時に「そのスコアを出した時の設定」を正確に保存・比較できます。
 
-```csharp
-// 使用しているキー一覧
-const string KEY_INITIAL_HP = "InitialHP";   // 初期HP (Default: 3)
-const string KEY_INITIAL_SP = "InitialSP";   // 初期SP (Default: 3)
-const string KEY_AUTO_FIRE = "AutoFire";     // オート連射 (0:Off, 1:On)
-const string KEY_PLAYER_NAME = "PlayerName"; // プレイヤー名
+### データ構造 (GameData)
+`GameData` クラスは、ゲームの全永続化データを保持するルートオブジェクトです。`[System.Serializable]` 属性をつけることで、`JsonUtility` による変換を可能にしています。
 
-// 例：読み込み
-int hp = PlayerPrefs.GetInt(KEY_INITIAL_HP, 3);
-```
-
-### 2. バイナリシリアライズ (ランキング・統計用)
-ランキングのような複雑な構造（リストやクラス）を保存する場合、PlayerPrefsは不向きです。クラスをそのままファイルに書き出す「シリアライズ」を使用します。
-
-**GameDataクラス:**
 ```csharp
 [System.Serializable] // これをつけると保存可能になる
 public class GameData
 {
-    public List<int> highScores = new List<int>();
-    public string playerName;
+    public string playerName = "Player";
+    
+    // プレイヤー設定 (HP, SP, AutoFire)
+    public PlayerSettings settings = new PlayerSettings(3, 3);
+    
+    // プレイ統計
+    public PlayerStats stats = new PlayerStats();
+    
+    // ランキングデータ
+    public List<ScoreRecord> stage1Scores = new List<ScoreRecord>();
+    public List<ScoreRecord> scoreAttackScores = new List<ScoreRecord>();
 }
 ```
 

@@ -6,7 +6,7 @@
 
 Unityでのゲーム開発では、各オブジェクト（自機、敵、UIなど）が独立して動くだけでなく、それらを統括する「監督」のような存在が必要です。このプロジェクトでは、以下のような構成になっています。
 
-- **GameManager:** ゲーム全体の状態（プレイ中、ゲームオーバー、スコア計算）を管理する監督。
+- **GameManager:** ゲーム全体の状態（プレイ中、ゲームオーバー、スコア計算）を管理し、**セーブデータ(GameData)の保持・保存**も行う監督。
 - **PlayerController:** 自機の操作を担当。
 - **EnemySpawner:** 敵の出現タイミングと生成を担当。
 - **UIManager:** スコア表示やHPゲージの更新を担当。
@@ -38,9 +38,12 @@ public class GameManager : MonoBehaviour
         
         Instance = this;
         
-        // シーン遷移してもこのオブジェクトを維持したい場合は以下を有効化します。
-        // 今回は各ステージごとにリセットするため、コメントアウトしています。
-        // DontDestroyOnLoad(gameObject);
+        // セーブデータをロード
+        gameData = SaveSystem.Load(CurrentSaveFileName);
+        if (gameData == null)
+        {
+            gameData = new GameData();
+        }
     }
 }
 ```

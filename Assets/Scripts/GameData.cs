@@ -1,0 +1,52 @@
+using System.Collections.Generic;
+
+[System.Serializable]
+public class GameData
+{
+    // 基本情報
+    public string playerName = "Player";
+
+    // まとめる：プレイヤー設定 (初期値 HP:3, SP:3 を保証するためにコンストラクタを使用)
+    public PlayerSettings settings = new PlayerSettings(3, 3);
+
+    // まとめる：プレイ統計
+    public PlayerStats stats = new PlayerStats();
+
+    // ランキングデータ
+    public List<ScoreRecord> stage1Scores = new List<ScoreRecord>();
+    public List<ScoreRecord> scoreAttackScores = new List<ScoreRecord>();
+}
+
+[System.Serializable]
+public struct PlayerSettings
+{
+    public int initialHp;
+    public int initialSp;
+    public bool autoFireEnabled;
+
+    // 初期値を設定するコンストラクタ
+    public PlayerSettings(int hp = 3, int sp = 3)
+    {
+        initialHp = hp;
+        initialSp = sp;
+        autoFireEnabled = false;
+    }
+}
+
+[System.Serializable]
+public struct PlayerStats
+{
+    public float totalPlayTime;
+    public int totalEnemiesDefeated;
+}
+
+[System.Serializable]
+public struct ScoreRecord
+{
+    public int score;
+    public string date;
+    // スコアを出した時の条件を記録
+    public int hp;
+    public int sp;
+    public bool autoFire;
+}

@@ -2,63 +2,67 @@ using UnityEngine;
 
 public static class SettingsManager
 {
-    //PlayerPrefsのキー
-    private const string initialHPKey = "PlayerInitialHP";
-    private const string initialSPKey = "PlayerInitialSP";
-    private const string autofireKey = "AutofireEnabled";
-    private const string playerNameKey = "PlayerName";
-
-    //PlayerPrefsの初期値
-    private const int defaultInitialHP = 3;
-    private const int defaultInitilaSP = 3;
-    private const int defaultAutofire = 0;
-    private const string defaultPlayerName = "Player1";
-
     //初期HP取得
     public static int GetInitialHP()
     {
-        return PlayerPrefs.GetInt(initialHPKey, defaultInitialHP);
+        if (GameManager.instance == null) return 3;
+        return GameManager.instance.Data.settings.initialHp;
     }
 
     //初期HP割り当て
     public static void SetInitialHP(int hp)
     {
-        PlayerPrefs.SetInt(initialHPKey, hp);
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.Data.settings.initialHp = hp;
+        }
     }
 
     //初期ボム数取得
     public static int GetInitialSP()
     {
-        return PlayerPrefs.GetInt(initialSPKey, defaultInitilaSP);
+        if (GameManager.instance == null) return 3;
+        return GameManager.instance.Data.settings.initialSp;
     }
 
     //初期ボム数割り当て
     public static void SetInitialSP(int sp)
     {
-        PlayerPrefs.SetInt(initialSPKey, sp);
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.Data.settings.initialSp = sp;
+        }
     }
 
     //オート連射設定状況取得
     public static bool IsAutofireEnabled()
     {
-        return PlayerPrefs.GetInt(autofireKey, defaultAutofire) == 1;
+        if (GameManager.instance == null) return false;
+        return GameManager.instance.Data.settings.autoFireEnabled;
     }
 
     //オート連射設定状況割り当て
     public static void SetAutofire(bool isEnabled)
     {
-        PlayerPrefs.SetInt(autofireKey, isEnabled ? 1 : 0);
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.Data.settings.autoFireEnabled = isEnabled;
+        }
     }
 
     //プレイヤーネーム取得
     public static string GetPlayerName()
     {
-        return PlayerPrefs.GetString(playerNameKey, defaultPlayerName);
+        if (GameManager.instance == null) return "Player";
+        return GameManager.instance.Data.playerName;
     }
 
     //プレイヤーネーム割り当て
     public static void SetPlayerName(string name)
     {
-        PlayerPrefs.SetString(playerNameKey, name);
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.Data.playerName = name;
+        }
     }
 }
