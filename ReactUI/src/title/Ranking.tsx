@@ -16,7 +16,7 @@ export const Ranking = ({ onBack }: RankingProps) => {
     ];
 
     return (
-        <view style={{ width: '100%', padding: '0 40px', maxWidth: 600 }}>
+        <view className="w-full max-w-2xl px-10 h-full flex-col">
             <text style={{ fontSize: 30, marginBottom: 20, textAlign: 'center' }}>Ranking</text>
 
             <view style={{ flex: 1 }}>

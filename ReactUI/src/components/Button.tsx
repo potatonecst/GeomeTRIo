@@ -4,11 +4,13 @@ export interface ButtonProps {
     children: ReactNode;
     onClick?: () => void;
     style?: any;
+    className?: string;
 }
 
-export const Button = ({ children, onClick, style }: ButtonProps) => {
+export const Button = ({ children, onClick, style, className }: ButtonProps) => {
     return (
         <button
+            className={className}
             onClick={onClick}
             style={{
                 padding: '10px 20px',

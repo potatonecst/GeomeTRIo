@@ -9,18 +9,19 @@ export default defineConfig(({ command }) => {
     game: path.resolve(__dirname, 'src/game/index.tsx'),
   };
 
-  const targetPage = process.env.TARGET_PAGE as keyof typeof pages | undefined;
+  // 環境変数からターゲットを取得、指定がなければ 'title' をデフォルトとする
+  const targetPage = (process.env.TARGET_PAGE as keyof typeof pages) || 'title';
 
   return {
     plugins: [react()],
     build: {
       // Unityの Resources フォルダに直接出力
       outDir: '../Assets/Resources/react',
-      // 個別ビルド時にフォルダを空にしないように制御 (スクリプト側で掃除する)
-      emptyOutDir: !targetPage,
+      // ターゲット指定ビルドになるため、自動削除は無効化（必要な場合は別途スクリプトで削除）
+      emptyOutDir: false,
       rollupOptions: {
-        // ビルド時は単一エントリ、開発時は全エントリ
-        input: (command === 'build' && targetPage) ? { [targetPage]: pages[targetPage] } : pages,
+        // IIFE形式では単一エントリしかサポートされないため、常に1つに絞る
+        input: { [targetPage]: pages[targetPage] },
         output: {
           // ファイル名を固定 (ハッシュ値を付けない)
           entryFileNames: '[name].js',
