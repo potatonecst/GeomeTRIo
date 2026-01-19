@@ -17,7 +17,7 @@ export const Ranking = ({ onBack }: RankingProps) => {
 
     return (
         <view className="w-full max-w-2xl px-10 h-full flex-col">
-            <text style={{ fontSize: 30, marginBottom: 20, textAlign: 'center' }}>Ranking</text>
+            <text className="text-white" style={{ fontSize: 30, marginBottom: 20, textAlign: 'center' }}>Ranking</text>
 
             <view style={{ flex: 1 }}>
                 {rankingData.map((record) => (

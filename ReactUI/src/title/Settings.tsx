@@ -7,7 +7,7 @@ interface SettingsProps {
 export const Settings = ({ onBack }: SettingsProps) => {
     return (
         <view className="flex-col items-center w-full">
-            <text style={{ fontSize: 30 }}>Settings</text>
+            <text className="text-white" style={{ fontSize: 30 }}>Settings</text>
             {/* ここに音量設定などを実装 */}
             <Button style={{ marginTop: 20 }} onClick={onBack}>Back</Button>
         </view>

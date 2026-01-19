@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Melete-Bold';
+  src: url('res:Fonts/Melete-Bold');
+}
+
+@font-face {
+  font-family: 'Melete-Medium';
+  src: url('res:Fonts/Melete-Medium');
+}
+
+:root {
+  font-family: 'Melete-Bold', sans-serif;
+  font-size: 16px;
+}
