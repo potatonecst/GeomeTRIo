@@ -4,6 +4,8 @@ interface SettingsProps {
     onBack: () => void;
 }
 
+// 設定画面コンポーネント（現在はプレースホルダー）
+// プレースホルダー: まだ機能は実装していないが、画面遷移の確認などのために仮置きしている状態のこと。
 export const Settings = ({ onBack }: SettingsProps) => {
     return (
         <view className="flex-col items-center w-full">

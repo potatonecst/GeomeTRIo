@@ -12,7 +12,27 @@
   src: url('res:Fonts/Melete-Medium');
 }
 
+@font-face {
+  font-family: 'Melete-Regular';
+  src: url('res:Fonts/Melete-Regular');
+}
+
+@font-face {
+  font-family: 'Melete-Light';
+  src: url('res:Fonts/Melete-Light');
+}
+
+@font-face {
+  font-family: 'Melete-UltraLight';
+  src: url('res:Fonts/Melete-UltraLight');
+}
+
+@font-face {
+  font-family: 'SourceHanCodeJP';
+  src: url('res:Fonts/SourceHanCodeJP');
+}
+
 :root {
-  font-family: 'Melete-Bold', sans-serif;
+  font-family: sans-serif;
   font-size: 16px;
 }
