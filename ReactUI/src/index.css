@@ -32,6 +32,22 @@
   src: url('res:Fonts/SourceHanCodeJP');
 }
 
+/* コントローラーアイコン用フォント */
+@font-face {
+  font-family: 'kenney_input_keyboard_&_mouse';
+  src: url('res:Fonts/kenney_input_keyboard_&_mouse');
+}
+
+@font-face {
+  font-family: 'kenney_input_nintendo_switch_2';
+  src: url('res:Fonts/kenney_input_nintendo_switch_2');
+}
+
+@font-face {
+  font-family: 'kenney_input_playstation_series';
+  src: url('res:Fonts/kenney_input_playstation_series');
+}
+
 :root {
   font-family: sans-serif;
   font-size: 16px;

@@ -7367,11 +7367,11 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: cb4d4c3c4299e4dfc951f5be1736846d, type: 3}
-  m_PlayOnAwake: 1
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -9070,6 +9070,9 @@ MonoBehaviour:
   cancelSound: {fileID: 8300000, guid: 7aca312eb335541e7a3894a7b14bc5f2, type: 3}
   playerShootSound: {fileID: 8300000, guid: 27298fb67cdf441d79b8f8b56393e180, type: 3}
   enemyShootSound: {fileID: 8300000, guid: 461cca163cf724e6b8fcef7de102e4d2, type: 3}
+  titleBgm: {fileID: 8300000, guid: cb4d4c3c4299e4dfc951f5be1736846d, type: 3}
+  stage1Bgm: {fileID: 0}
+  scoreAttackBgm: {fileID: 8300000, guid: 928a408da2e4d4344855ff7f90021c08, type: 3}
   currentUserId: default_player
 --- !u!4 &1626946126
 Transform:

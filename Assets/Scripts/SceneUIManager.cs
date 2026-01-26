@@ -31,18 +31,6 @@ public class SceneUIManager : MonoBehaviour
     void Start()
     {
         GameManager.instance?.RegisterSceneUI(this);
-
-        Camera sceneCamera = Camera.main;
-        if (sceneCamera != null)
-        {
-            //MainCameraからAudioSourceを取得
-            AudioSource bgmSource = sceneCamera.GetComponent<AudioSource>();
-
-            if (bgmSource != null)
-            {
-                GameManager.instance?.RegisterBGMAudioSource(bgmSource);
-            }
-        }
     }
 
     // Update is called once per frame

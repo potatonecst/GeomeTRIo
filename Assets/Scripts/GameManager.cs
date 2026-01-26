@@ -42,6 +42,10 @@ public class GameManager : MonoBehaviour
     public AudioClip cancelSound;
     public AudioClip playerShootSound;
     public AudioClip enemyShootSound;
+    [Header("BGM")]
+    public AudioClip titleBgm;
+    public AudioClip stage1Bgm;
+    public AudioClip scoreAttackBgm;
     private AudioSource audioSource;
     private AudioSource bgmAudioSource;
 
@@ -76,16 +80,23 @@ public class GameManager : MonoBehaviour
 
         //自分についているAudioSourceを取得
         audioSource = GetComponent<AudioSource>();
+
+        // BGM用のAudioSourceを動的に追加（SE用とは分けるため）
+        bgmAudioSource = gameObject.AddComponent<AudioSource>();
+        bgmAudioSource.loop = true;
+        bgmAudioSource.playOnAwake = false;
     }
 
     private void OnEnable()
     {
         playerInputActions.UI.Enable();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         playerInputActions?.UI.Disable();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -93,6 +104,10 @@ public class GameManager : MonoBehaviour
     {
         //ゲーム開始時にスコア表示を初期化
         sceneUI?.UpdateScoreValueText(score);
+
+        // 現在のシーン名に合わせてBGMを再生（デバッグ起動時なども考慮）
+        string currentScene = SceneManager.GetActiveScene().name;
+        PlayGameBGM(currentScene);
     }
 
     void Update()
@@ -103,10 +118,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // シーン読み込み完了時に呼ばれるイベントハンドラ
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        PlayGameBGM(scene.name);
+    }
+
     //SceneUIManagerの登録
     public void RegisterSceneUI(SceneUIManager uiManager)
     {
         sceneUI = uiManager;
+    }
+
+    // シーン名に応じたBGMを再生する
+    public void PlayGameBGM(string sceneName)
+    {
+        if (sceneName == "TitleScene") PlayBGM(titleBgm);
+        else if (sceneName == "Stage1") PlayBGM(stage1Bgm);
+        else if (sceneName == "ScoreAttack") PlayBGM(scoreAttackBgm);
+    }
+
+    // 指定したクリップをBGMとして再生（既に流れている場合は何もしない）
+    public void PlayBGM(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (bgmAudioSource.clip == clip && bgmAudioSource.isPlaying) return;
+
+        bgmAudioSource.Stop();
+        bgmAudioSource.clip = clip;
+        bgmAudioSource.Play();
     }
 
     //
@@ -241,7 +281,7 @@ public class GameManager : MonoBehaviour
             ScoreRecord newRecord = new ScoreRecord
             {
                 score = score,
-                date = System.DateTime.Now.ToString("yyyy/MM/dd"),
+                date = System.DateTime.Now.ToString("yyyy/MM/dd HH:mm"),
                 hp = currentInitialHp,
                 sp = currentInitialSp,
                 autoFire = currentAutoFire
@@ -296,6 +336,7 @@ public class GameManager : MonoBehaviour
 
         //止まっていた時間を戻す
         Time.timeScale = 1f;
+
         //タイトル画面を読み込む
         SceneManager.LoadScene("TitleScene");
     }
@@ -346,15 +387,26 @@ public class GameManager : MonoBehaviour
     }
 
     //BGMのAudioSourceを取得する関数
-    public void RegisterBGMAudioSource(AudioSource source)
-    {
-        bgmAudioSource = source;
-    }
+    // 廃止: GameManager内部で生成するようにしたため不要
+    // public void RegisterBGMAudioSource(AudioSource source)
+    // {
+    //     bgmAudioSource = source;
+    // }
 
     // データをファイルに保存する
     public void SaveGameData()
     {
         SaveSystem.Save(CurrentSaveFileName, gameData);
+    }
+
+    // ゲームを終了する
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
 }

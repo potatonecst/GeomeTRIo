@@ -3,18 +3,22 @@
  * 
  * このファイルはタイトル画面全体の構成、背景演出、画面遷移のロジックを管理しています。
  */
-import { render } from '@reactunity/renderer';
+import { render, useGlobals } from '@reactunity/renderer';
 import { useState, useEffect } from 'react';
 import '../index.css';
 import { Menu } from './Menu';
+import { StageSelect } from './StageSelect';
 import { Ranking } from './Ranking';
 import { Settings } from './Settings';
+import { useGlitch } from '../hooks/useGlitch';
+import { GlitchText } from '../components/GlitchText';
 
 // 画面の状態を表す型定義
 // 'title': タイトル画面（ロゴ表示など）
+// 'stage_select': ステージ選択画面
 // 'ranking': ランキング画面
 // 'settings': 設定画面
-type Screen = 'title' | 'ranking' | 'settings';
+type Screen = 'title' | 'stage_select' | 'ranking' | 'settings';
 
 // グリッド背景コンポーネント
 // 意味: 幾何学的な戦場となる仮想空間の座標グリッドを表現
@@ -273,58 +277,10 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
 // 役割: タイトルロゴを時々激しく振動させたり色ズレさせて、サイバーパンク感を出す
 const GlitchLogo = ({ isAlert }: { isAlert: boolean }) => {
     // offset: ロゴの表示位置のズレ（x, y）
-    const [offset, setOffset] = useState({ x: 0, y: 0 });
     // isGlitching: 現在グリッチ演出中かどうかのフラグ
-    const [isGlitching, setIsGlitching] = useState(false);
-
-    useEffect(() => {
-        let timeoutHandle: any;
-        let intervalHandle: any;
-        let isMounted = true; // コンポーネントが存在しているかどうかのチェック用
-
-        const loop = () => {
-            // 次のグリッチ発生までの時間をランダムに決定（2秒〜5秒後）
-            const nextDelay = Math.random() * 3000 + 2000;
-
-            // 再帰的なsetTimeoutパターン: 処理が終わったら次のタイマーをセットすることで、不定期な繰り返し処理を実現しています。
-            timeoutHandle = setTimeout(() => {
-                if (!isMounted) return;
-                // グリッチ開始
-                setIsGlitching(true);
-
-                // グリッチの継続時間をランダムに決定（0.1秒〜0.3秒）
-                const duration = Math.random() * 200 + 100;
-
-                // 継続時間の間、50ミリ秒ごとに位置をランダムにずらす（振動）
-                // setInterval: 指定した時間間隔で、関数を繰り返し実行し続けるメソッド。
-                intervalHandle = setInterval(() => {
-                    setOffset({
-                        x: (Math.random() - 0.5) * 10,
-                        y: (Math.random() - 0.5) * 4
-                    });
-                }, 50);
-
-                // グリッチ終了処理
-                setTimeout(() => {
-                    if (!isMounted) return;
-                    clearInterval(intervalHandle); // 振動を止める
-                    setIsGlitching(false); // フラグを下ろす
-                    setOffset({ x: 0, y: 0 }); // 位置を元に戻す
-                    loop(); // 次のグリッチを予約するために再帰呼び出し
-                }, duration);
-            }, nextDelay);
-        };
-
-        loop();
-
-        return () => {
-            // クリーンアップ: タイマーを全て破棄
-            // clearInterval: setIntervalで開始した繰り返し処理を停止するメソッド。
-            isMounted = false;
-            clearTimeout(timeoutHandle);
-            clearInterval(intervalHandle);
-        };
-    }, []);
+    // useGlitchフックを使用することで、複雑な計算ロジックを外部ファイル(useGlitch.ts)に任せることができます。
+    // これにより、このコンポーネントは「表示」に集中できます。
+    const { offset, isGlitching } = useGlitch();
 
     const baseColor = '#e2e8f0';
     const triColor = isAlert ? '#ff3333' : '#00ffff';
@@ -359,14 +315,21 @@ const GlitchLogo = ({ isAlert }: { isAlert: boolean }) => {
 
 // アプリケーション全体を統括するメインコンポーネント
 const TitleApp = () => {
+    const globals = useGlobals() as any;
+    // GameInteropをコンポーネントのトップレベルで取得し、各関数で使い回せるようにする
+    const interop = globals.GameInterop;
+
     // 現在どの画面を表示しているかを管理するState
     const [currentScreen, setCurrentScreen] = useState<Screen>('title');
 
-    // 接続状態: 'idle'(待機) -> 'connecting'(ログ表示) -> 'connected'(メニュー表示) -> 'disconnecting'(切断中)
-    const [connectionState, setConnectionState] = useState<'idle' | 'connecting' | 'connected' | 'disconnecting'>('idle');
+    // 接続状態: 'idle'(待機) -> 'connecting'(ログ表示) -> 'connected'(メニュー表示) -> 'disconnecting'(切断中) -> 'exiting'(アプリ終了中)
+    const [connectionState, setConnectionState] = useState<'idle' | 'connecting' | 'connected' | 'disconnecting' | 'exiting'>('idle');
 
     // 赤フラッシュ演出用
     const [showRedFlash, setShowRedFlash] = useState(false);
+
+    // 終了メッセージの表示制御用
+    const [shutdownOpacity, setShutdownOpacity] = useState(0);
 
     // Unityからの入力イベントを受け取るための設定
     useEffect(() => {
@@ -375,6 +338,7 @@ const TitleApp = () => {
             // windowオブジェクトにUnityから呼び出される関数を定義する
             // (window as any): TypeScriptの型チェックを回避して、windowオブジェクトに独自のプロパティを追加するための書き方。
             (window as any).onAnyKeyPress = () => {
+                interop?.PlaySound('submit');
                 setConnectionState('connecting');
             };
         } else {
@@ -391,7 +355,18 @@ const TitleApp = () => {
         return () => {
             (window as any).onAnyKeyPress = () => { };
         };
-    }, [currentScreen, connectionState]);
+    }, [currentScreen, connectionState, interop]); // 依存配列も interop に変更
+
+    // 終了シーケンスの制御
+    useEffect(() => {
+        if (connectionState === 'exiting') {
+            // 終了状態になったら、メッセージをフェードインさせる
+            const timer = setTimeout(() => setShutdownOpacity(1), 50);
+            return () => clearTimeout(timer);
+        } else {
+            setShutdownOpacity(0);
+        }
+    }, [connectionState]);
 
     // 接続シーケンス完了時の処理
     const handleConnectionComplete = () => {
@@ -410,8 +385,25 @@ const TitleApp = () => {
         }, 300); // Menuのフェードアウト時間(300ms)に合わせる
     };
 
+    // ゲーム終了処理
+    const handleExit = () => {
+        // アプリ終了状態へ遷移（exiting）
+        setConnectionState('exiting');
+
+        // フェードアウトアニメーションの完了を待ってから終了コマンドを送信
+        setTimeout(() => {
+            if (interop && typeof interop.QuitGame === 'function') {
+                interop.QuitGame();
+            } else {
+                console.log("Quit Game (Mock)");
+                // エディタなどでGameInteropがない場合やモック時は待機画面に戻す
+                setConnectionState('idle');
+            }
+        }, 500); // フェードアウト(300ms)後、少しの余韻(200ms)を持たせてから終了
+    };
+
     // メニューが開いているかどうかの判定（フッター表示などで使用）
-    const isMenuOpen = connectionState === 'connected' || connectionState === 'disconnecting';
+    const isMenuOpen = connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting';
 
     return (
         // 背景色を「真っ黒」から「深いネイビー（ダークスレート）」に変更して、ビネット（黒い影）を目立たせる
@@ -457,17 +449,29 @@ const TitleApp = () => {
                         )}
 
                         {/* 接続完了: メニューを表示 */}
-                        {(connectionState === 'connected' || connectionState === 'disconnecting') && (
+                        {(connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting') && (
                             <Menu
                                 onNavigate={(screen) => setCurrentScreen(screen)}
                                 onPlay={() => console.log("Game Start!")}
                                 onBack={handleMenuBack}
-                                onExit={() => console.log("Quit Application")}
-                                isExiting={connectionState === 'disconnecting'}
+                                onExit={handleExit}
+                                isExiting={connectionState === 'disconnecting' || connectionState === 'exiting'}
                             />
+                        )}
+
+                        {/* 終了メッセージ */}
+                        {connectionState === 'exiting' && (
+                            <view className="absolute transition-opacity duration-300" style={{ opacity: shutdownOpacity, top: '25%' }}>
+                                <GlitchText text="SHUTTING DOWN..." isAlert={true} className="text-xl text-red-500 whitespace-nowrap" />
+                            </view>
                         )}
                     </view>
                 </view>
+            )}
+
+            {/* ステージ選択画面 */}
+            {currentScreen === 'stage_select' && (
+                <StageSelect onBack={() => setCurrentScreen('title')} />
             )}
 
             {/* ランキング画面 */}
@@ -494,41 +498,9 @@ const TitleApp = () => {
                 <view className="absolute top-0 left-0 w-full h-full bg-[#ff3333] opacity-30 pointer-events-none" />
             )}
 
-            {/* フッター: 操作ガイドとCopyright */}
-            {isMenuOpen ? (
-                <view className="absolute bottom-0 w-full flex-row items-center justify-between px-6 py-1 bg-black border-t border-[#333] pointer-events-none">
-                    <text className="text-gray-400 text-xs font-sans ml-2">Use keys to navigate</text>
-                    <view className="flex-row items-center mr-2">
-                        {/* Select */}
-                        <view className="flex-row items-center ml-4">
-                            <view className="flex-row items-center bg-[#222] px-1.5 py-0.5 rounded border border-[#444] mr-1.5">
-                                <text className="text-gray-300 text-[10px]">WASD</text>
-                                <text className="text-gray-600 text-[10px] mx-1">|</text>
-                                <text className="text-gray-300 text-[10px]">↑↓</text>
-                            </view>
-                            <text className="text-gray-400 text-[10px]">Select</text>
-                        </view>
-                        {/* Confirm */}
-                        <view className="flex-row items-center ml-4">
-                            <view className="flex-row items-center bg-[#222] px-1.5 py-0.5 rounded border border-[#444] mr-1.5">
-                                <text className="text-gray-300 text-[10px]">Enter</text>
-                                <text className="text-gray-600 text-[10px] mx-1">|</text>
-                                <text className="text-[#00ffff] text-xs font-bold">A</text>
-                            </view>
-                            <text className="text-gray-400 text-[10px]">Confirm</text>
-                        </view>
-                        {/* Back */}
-                        <view className="flex-row items-center ml-4">
-                            <view className="flex-row items-center bg-[#222] px-1.5 py-0.5 rounded border border-[#444] mr-1.5">
-                                <text className="text-gray-300 text-[10px]">Esc</text>
-                                <text className="text-gray-600 text-[10px] mx-1">|</text>
-                                <text className="text-[#ff3333] text-xs font-bold">B</text>
-                            </view>
-                            <text className="text-gray-400 text-[10px]">Back</text>
-                        </view>
-                    </view>
-                </view>
-            ) : (
+            {/* フッター: Copyright */}
+            {/* 操作ガイドはコントローラーのボタン配置差異の問題により廃止しました */}
+            {currentScreen === 'title' && (
                 <view className="absolute bottom-4 w-full items-center justify-center pointer-events-none">
                     <text className="text-gray-500 text-xs font-sans">© 2026 potatonecst</text>
                 </view>

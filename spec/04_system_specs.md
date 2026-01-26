@@ -12,6 +12,14 @@
   - **SPゲージ:** 現在のSPを表示
   - **スコア:** 現在の獲得スコア
   - **発射点インジケーター:** 現在どの頂点が発射口になっているかを可視化
+
+- **ReactUnity連携:**
+  - **UI描画:** タイトル画面、ランキング、設定画面などのメニュー周りは ReactUnity (HTML/CSS/React) で描画。
+  - **入力ブリッジ:** Unityの `Input System` で検知した入力を `ReactInputBridge` 経由で React 側のグローバル関数 (`onMenuInput`, `onAnyKeyPress`) にイベントとして送信。
+  - **データ連携:**
+    - C#側の `GameInterop` クラスを ReactUnity の `Globals` に登録。
+    - React側は `useGlobals` フックを使用して `GameInterop` オブジェクトを取得し、メソッド (`GetGameData`, `StartGame`) を呼び出す。
+
 - **改善・展望:**
   - **コントローラー完全対応:** タイトル画面からゲームプレイ、設定までマウス/キーボード不要で操作可能にする。
   - **ナビゲーション改善:**
@@ -39,7 +47,10 @@
     - `scoreAttackScores` (List<ScoreRecord>): スコアアタックのハイスコアリスト
   - **データ構造 (`ScoreRecord` 構造体):**
     - `score` (int): スコア
-    - `date` (string): 達成日時 (例: "2024/05/20")
+    - `date` (string): 達成日時 (例: "2024/05/20 15:30")
+    - `hp` (int): 達成時の初期HP設定
+    - `sp` (int): 達成時の初期SP設定
+    - `autoFire` (bool): 達成時のオート連射設定
   - **責任分界:**
     - `SaveSystem`: ファイルの読み書き（I/O）のみを担当。
     - `GameManager`: 現在の `userId` の管理と、保存タイミングの制御を担当。
