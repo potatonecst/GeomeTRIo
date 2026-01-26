@@ -4,7 +4,7 @@
  * このファイルはタイトル画面全体の構成、背景演出、画面遷移のロジックを管理しています。
  */
 import { render, useGlobals } from '@reactunity/renderer';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import '../index.css';
 import { Menu } from './Menu';
 import { StageSelect } from './StageSelect';
@@ -23,6 +23,7 @@ type Screen = 'title' | 'stage_select' | 'ranking' | 'settings';
 // グリッド背景コンポーネント
 // 意味: 幾何学的な戦場となる仮想空間の座標グリッドを表現
 // 役割: 画面全体に広がるグリッド線を、斜めにスクロールさせて奥行きと動きを出す
+// 技術的ポイント: CSSアニメーションではなく、JSのrequestAnimationFrameを使って座標を毎フレーム計算しています。
 const GridBackground = () => {
     // offset: グリッドのスクロール位置を管理する状態変数 (0 ~ gridSize)
     // useState: Reactの「フック」と呼ばれる機能の一つ。コンポーネント内で変化する値を保持します。
@@ -117,6 +118,7 @@ const GridBackground = () => {
 // 幾何学的なデブリ（残骸/データ）コンポーネント
 // 意味: 自機（三角形）と敵（四角形）の構成要素や残骸がデジタル空間に漂っている様子を表現
 // 役割: 背景に浮遊するパーティクルを描画・アニメーションさせる
+// 技術的ポイント: 多数のオブジェクトを配列で管理し、map関数で一括描画しています。
 const GeometricDebris = () => {
     // particles: 画面上の全パーティクルの情報を配列で管理
     const [particles, setParticles] = useState<any[]>([]);
@@ -209,6 +211,7 @@ const GeometricDebris = () => {
 // 接続シーケンス（コンソールログ）コンポーネント
 // 意味: サーバーへの接続や認証プロセスをハッキング風に演出
 // 役割: タイトル画面でボタンを押した後、メニューが出るまでの間に文字をパラパラと表示する
+// 技術的ポイント: setTimeoutを連鎖させることで、時間差でのログ表示を実現しています。
 const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
     // logs: 現在表示されているログのリスト
     const [logs, setLogs] = useState<{ text: string; isAlert?: boolean }[]>([]);
@@ -275,6 +278,7 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
 
 // ロゴにグリッチノイズ（接触不良のような乱れ）を与えるコンポーネント
 // 役割: タイトルロゴを時々激しく振動させたり色ズレさせて、サイバーパンク感を出す
+// 技術的ポイント: useGlitchフックを利用して、ロジック（計算）とビュー（表示）を分離しています。
 const GlitchLogo = ({ isAlert }: { isAlert: boolean }) => {
     // offset: ロゴの表示位置のズレ（x, y）
     // isGlitching: 現在グリッチ演出中かどうかのフラグ
@@ -314,6 +318,7 @@ const GlitchLogo = ({ isAlert }: { isAlert: boolean }) => {
 };
 
 // アプリケーション全体を統括するメインコンポーネント
+// 役割: 画面遷移の状態管理、背景の描画、Unityからの入力イベントの受け口として機能します。
 const TitleApp = () => {
     const globals = useGlobals() as any;
     // GameInteropをコンポーネントのトップレベルで取得し、各関数で使い回せるようにする
@@ -322,8 +327,17 @@ const TitleApp = () => {
     // 現在どの画面を表示しているかを管理するState
     const [currentScreen, setCurrentScreen] = useState<Screen>('title');
 
+    // メニューのカーソル位置を記憶するState (初期値: 0)
+    const [lastMenuIndex, setLastMenuIndex] = useState(0);
+
     // 接続状態: 'idle'(待機) -> 'connecting'(ログ表示) -> 'connected'(メニュー表示) -> 'disconnecting'(切断中) -> 'exiting'(アプリ終了中)
     const [connectionState, setConnectionState] = useState<'idle' | 'connecting' | 'connected' | 'disconnecting' | 'exiting'>('idle');
+
+    // ゲーム開始演出用
+    const [isGameStarting, setIsGameStarting] = useState(false);
+
+    // 暗転演出用（シーン遷移直前のフリーズ隠し）
+    const [isBlackout, setIsBlackout] = useState(false);
 
     // 赤フラッシュ演出用
     const [showRedFlash, setShowRedFlash] = useState(false);
@@ -332,6 +346,7 @@ const TitleApp = () => {
     const [shutdownOpacity, setShutdownOpacity] = useState(0);
 
     // Unityからの入力イベントを受け取るための設定
+    // useEffect: コンポーネントのマウント時や状態変化時に実行される副作用フック
     useEffect(() => {
         // 1. Press Any Button の検知
         if (currentScreen === 'title' && connectionState === 'idle') {
@@ -345,6 +360,11 @@ const TitleApp = () => {
             (window as any).onAnyKeyPress = () => { };
         }
 
+        // 3. 暗転リクエストの検知
+        (window as any).onFadeOutRequest = () => {
+            setIsBlackout(true);
+        };
+
         // 2. メニュー操作の検知 (Menuコンポーネント等で処理するためにグローバル関数を空定義しておく)
         // 実際の処理は Menu.tsx などの各コンポーネントの useEffect で上書きされるが、エラー防止のために初期化しておく
         if (!((window as any).onMenuInput)) {
@@ -352,8 +372,10 @@ const TitleApp = () => {
         }
 
         // クリーンアップ
+        // コンポーネントがアンマウントされる際に、グローバル関数を無効化してメモリリークやエラーを防ぐ
         return () => {
             (window as any).onAnyKeyPress = () => { };
+            (window as any).onFadeOutRequest = () => { };
         };
     }, [currentScreen, connectionState, interop]); // 依存配列も interop に変更
 
@@ -369,24 +391,30 @@ const TitleApp = () => {
     }, [connectionState]);
 
     // 接続シーケンス完了時の処理
-    const handleConnectionComplete = () => {
+    // useCallback: 関数定義を「メモ化（キャッシュ）」するフックです。
+    // 通常、Reactコンポーネントが再描画されるたびに、内部の関数はすべて新しく作り直されます。
+    // しかし、useCallbackを使うと、依存配列（第2引数）が変わらない限り、同じ関数インスタンスを再利用します。
+    // これにより、この関数を受け取る子コンポーネントが無駄に再描画されるのを防ぎます。
+    const handleConnectionComplete = useCallback(() => {
         setConnectionState('connected'); // 状態を「接続済み（メニュー表示）」に変更
         // 侵入完了の瞬間に赤フラッシュ
         setShowRedFlash(true);
         setTimeout(() => setShowRedFlash(false), 200);
-    };
+    }, []); // 依存配列が空 [] なので、この関数は最初に作られたものがずっと使われます。
 
     // メニューから戻る時の処理
-    const handleMenuBack = () => {
+    // これもMenuコンポーネントにpropsとして渡されるため、useCallbackで固定化します。
+    const handleMenuBack = useCallback(() => {
         // 切断処理: ログアウトして待機画面に戻るイメージ
         setConnectionState('disconnecting');
         setTimeout(() => {
             setConnectionState('idle');
         }, 300); // Menuのフェードアウト時間(300ms)に合わせる
-    };
+    }, []);
 
     // ゲーム終了処理
-    const handleExit = () => {
+    // interop オブジェクトを使用していますが、interop自体が変更されない限り関数を作り直す必要はありません。
+    const handleExit = useCallback(() => {
         // アプリ終了状態へ遷移（exiting）
         setConnectionState('exiting');
 
@@ -400,10 +428,22 @@ const TitleApp = () => {
                 setConnectionState('idle');
             }
         }, 500); // フェードアウト(300ms)後、少しの余韻(200ms)を持たせてから終了
-    };
+    }, [interop]); // interop が変わった時だけ、この関数を作り直します。
+
+    // ゲーム開始処理
+    // StageSelectコンポーネントに渡されます。
+    const handleGameStart = useCallback(() => {
+        setIsGameStarting(true);
+    }, []);
+
+    // 画面遷移ハンドラ
+    // Menuコンポーネント等で頻繁に使われます。
+    const handleNavigate = useCallback((screen: Screen) => {
+        setCurrentScreen(screen);
+    }, []);
 
     // メニューが開いているかどうかの判定（フッター表示などで使用）
-    const isMenuOpen = connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting';
+    const isMenuOpen = connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting' || isGameStarting;
 
     return (
         // 背景色を「真っ黒」から「深いネイビー（ダークスレート）」に変更して、ビネット（黒い影）を目立たせる
@@ -451,11 +491,13 @@ const TitleApp = () => {
                         {/* 接続完了: メニューを表示 */}
                         {(connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting') && (
                             <Menu
-                                onNavigate={(screen) => setCurrentScreen(screen)}
+                                onNavigate={handleNavigate}
                                 onPlay={() => console.log("Game Start!")}
                                 onBack={handleMenuBack}
                                 onExit={handleExit}
                                 isExiting={connectionState === 'disconnecting' || connectionState === 'exiting'}
+                                initialIndex={lastMenuIndex} // 記憶していた位置を渡す
+                                onIndexChange={setLastMenuIndex} // 位置が変わったら記憶を更新
                             />
                         )}
 
@@ -471,7 +513,7 @@ const TitleApp = () => {
 
             {/* ステージ選択画面 */}
             {currentScreen === 'stage_select' && (
-                <StageSelect onBack={() => setCurrentScreen('title')} />
+                <StageSelect onBack={() => setCurrentScreen('title')} onGameStart={handleGameStart} />
             )}
 
             {/* ランキング画面 */}
@@ -483,6 +525,20 @@ const TitleApp = () => {
             {currentScreen === 'settings' && (
                 <Settings onBack={() => setCurrentScreen('title')} />
             )}
+
+            {/* ゲーム開始メッセージ */}
+            {isGameStarting && (
+                <view className="absolute bottom-10 right-10 flex-row items-center transition-opacity duration-300" style={{ opacity: 1 }}>
+                    <GlitchText text="LOADING" isAlert={false} className="text-xl text-cyan-400 whitespace-nowrap tracking-widest" />
+                    <view className="custom-spin w-6 h-6 border-4 border-cyan-900 border-t-cyan-400 rounded-full ml-4" />
+                </view>
+            )}
+
+            {/* 暗転オーバーレイ: シーン遷移直前のフリーズを隠すために最前面に表示 */}
+            <view
+                className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
+                style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
+            />
 
             {/* ビネット効果: 画面四隅を暗くして没入感を出す */}
             <view

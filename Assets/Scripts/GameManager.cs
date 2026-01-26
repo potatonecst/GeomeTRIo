@@ -5,10 +5,12 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameManager : MonoBehaviour
 {
+    // シングルトンパターン (Singleton Pattern)
     //staticなインスタンス。これにより、他のどのスクリプトからでも簡単にアクセスできる。
     public static GameManager instance;
 
@@ -16,7 +18,8 @@ public class GameManager : MonoBehaviour
     private GameData gameData;
     public GameData Data => gameData; // 外部から読み書きするためのプロパティ
 
-    // 現在のシーンのUI管理役を保存しておくための箱
+    // 現在のシーンのUI管理役（自作スクリプト）を保存しておくための箱
+    // SceneManager（Unity標準機能）とは別物です。こちらはスコア表示などの「見た目」を担当します。
     private SceneUIManager sceneUI;
 
     //ランキング関連
@@ -55,11 +58,14 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        //シーン内にGameManagerが一つしか存在しないようにするための一般的な設定（シングルトン）
+        // シーン内にGameManagerが一つしか存在しないようにするための一般的な設定（シングルトンパターン）
+        // static変数 'instance' に自分自身を代入することで、外部から GameManager.instance でアクセス可能にします。
+        // これにより、どのスクリプトからでも GameManager.instance でアクセスできるようになります。
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); //シーンを切り替えてもこのオブジェクトを破壊しない
+            DontDestroyOnLoad(gameObject); // シーンを切り替えてもこのオブジェクトを破壊しない
+            // これにより、BGMの継続再生やスコアの保持が可能になります。
 
             //セーブデータをロード
             gameData = SaveSystem.Load(CurrentSaveFileName);
@@ -75,7 +81,10 @@ public class GameManager : MonoBehaviour
 
         //Pause時の入力システムの準備
         playerInputActions = new PlayerInputActions();
+
+        // イベントの購読 (Subscription)
         //UIマップのPauseアクションが実行されたら、TogglePause関数を呼び出す
+        // '+=' 演算子: 左側のイベント（performed）に、右側のメソッド（TogglePause）を追加（登録）します。
         playerInputActions.UI.Pause.performed += TogglePause;
 
         //自分についているAudioSourceを取得
@@ -89,12 +98,21 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        // Input Systemを有効化
         playerInputActions.UI.Enable();
+
+        // イベントの購読
+        // シーン読み込み完了イベントを購読（BGM切り替えなどのため）
+        // SceneManager.sceneLoaded はUnityエンジン側（標準機能）が持っている「通知リスト」のようなものです。
+        // ここに自分の関数（OnSceneLoaded）を登録（+=）しておくと、
+        // Unityがシーン読み込みを完了したタイミングで、自動的にその関数を呼び出してくれます。
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
+        // オブジェクトが無効化される際に、イベント購読を解除（メモリリーク防止）
+        // '-=' 演算子: イベントからメソッドを削除（解除）します。これを忘れるとエラーの原因になります。
         playerInputActions?.UI.Disable();
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
@@ -119,6 +137,9 @@ public class GameManager : MonoBehaviour
     }
 
     // シーン読み込み完了時に呼ばれるイベントハンドラ
+    // 引数 scene: 読み込まれたシーンの情報, mode: 読み込みモード（Single/Additive）
+    // これらの引数は、Unity側がイベントを発火させる際に自動的にセットして渡してくれます。
+    // プログラマーが自分で呼び出す必要はありません。
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         PlayGameBGM(scene.name);
@@ -147,6 +168,58 @@ public class GameManager : MonoBehaviour
         bgmAudioSource.Stop();
         bgmAudioSource.clip = clip;
         bgmAudioSource.Play();
+    }
+
+    // ローディング演出付きでシーン遷移を行う
+    // ReactUI側でローディング画面を表示している間に、裏で非同期読み込みを行います。
+    public void LoadSceneWithTransition(string sceneName)
+    {
+        StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
+    }
+
+    // 非同期読み込みを行うコルーチン (Coroutine)
+    // IEnumerator: コルーチンとして動作させるための戻り値の型です。
+    // コルーチンとは、処理を途中で中断（yield）し、次のフレームや指定時間後に再開できる特別な関数です。
+    private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
+    {
+        ResetScore();
+
+        // 非同期読み込み開始
+        // SceneManager.LoadSceneAsync: Unity標準のAPIです。
+        // 現在のシーンを動かしたまま、裏側で次のシーンを読み込みます。
+        // 戻り値 AsyncOperation を使うことで、進捗状況の確認や遷移タイミングの制御ができます。
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        // allowSceneActivation = false: 
+        // 読み込みが完了しても、自動的に画面を切り替えないようにします。
+        // これにより、ロード画面（ReactUI側）を表示し続けることができます。
+        asyncLoad.allowSceneActivation = false;
+
+        // 読み込み完了まで待機 (progressは0.9までしか進まない)
+        // allowSceneActivationがfalseの間は、progressは0.9で止まります。
+        while (asyncLoad.progress < 0.9f)
+        {
+            // yield return null:
+            // ここで処理を中断し、次のフレーム（画面更新）まで待ちます。
+            // これがないと無限ループでゲームがフリーズしてしまいます。
+            yield return null;
+        }
+
+        // 演出のために少し待機 (0.5秒)。
+        // これにより、読み込みが一瞬で終わっても「LOADING」表示をユーザーに認識させることができます。
+        yield return new WaitForSeconds(0.5f);
+
+        // 画面を暗転させる（フリーズを隠すため）
+        // シーン切り替えの瞬間にメインスレッドが停止して描画が固まるのを、黒画面で隠します。
+        if (ReactInputBridge.Instance != null)
+        {
+            ReactInputBridge.Instance.FadeOutScreen();
+            // React側でフェードアウトアニメーションが始まるよう命令を送ります。
+        }
+        yield return new WaitForSeconds(0.5f); // フェードアウトのアニメーション時間待機
+
+        // シーン遷移を許可（ここで一瞬フリーズするが、ユーザーは既にロード画面を見ているので違和感が減る）
+        asyncLoad.allowSceneActivation = true;
     }
 
     //
@@ -185,6 +258,7 @@ public class GameManager : MonoBehaviour
     }
 
     //
+    // InputAction.CallbackContext: Input Systemから渡される入力情報（押されたボタン、値など）
     private void TogglePause(InputAction.CallbackContext context)
     {
         PlaySubmitSound(); //効果音再生
@@ -202,6 +276,7 @@ public class GameManager : MonoBehaviour
 
     void PauseGame()
     {
+        // Time.timeScale: ゲーム内の時間の流れの速さ。0にすると停止、1で通常速度、0.5でスローモーションになります。
         Time.timeScale = 0f; //時間を停止
         bgmAudioSource?.Pause(); //BGMを一時停止
 
@@ -238,6 +313,7 @@ public class GameManager : MonoBehaviour
         if (currentScores != null)
         {
             // 現在の設定（HP, SP, AutoFire）に一致するスコアだけを抽出してソート
+            // LINQ (Language Integrated Query) を使用してリスト操作を行っています。
             var filteredScores = currentScores
                 .Where(s => s.hp == gameData.settings.initialHp &&
                             s.sp == gameData.settings.initialSp &&
@@ -289,6 +365,7 @@ public class GameManager : MonoBehaviour
             currentScores.Add(newRecord);
 
             // 「全く同じ条件」のデータだけを抽出してソート
+            // Where: 条件に合うものだけ残す / OrderByDescending: 降順（大きい順）に並べ替え
             var sameConditionScores = currentScores
                 .Where(s => s.hp == currentInitialHp && s.sp == currentInitialSp && s.autoFire == currentAutoFire)
                 .OrderByDescending(s => s.score)
@@ -297,6 +374,7 @@ public class GameManager : MonoBehaviour
             // その条件の中で5位から漏れたものを削除
             if (sameConditionScores.Count > rankingLimit)
             {
+                // Skip(rankingLimit): 上位5つを飛ばして、6位以降を取得
                 var scoresToRemove = sameConditionScores.Skip(rankingLimit).ToList(); // 5位以下のスコアをリストアップ（上位5つのスコアをスキップ）
                 foreach (var oldScore in scoresToRemove)
                 {

@@ -10,6 +10,7 @@ interface GlitchTextProps {
 // 汎用グリッチテキストコンポーネント
 // 役割: テキストに「接触不良」のようなノイズ演出（色ズレ、振動）を加える
 // 使い方: <GlitchText text="GAME OVER" isAlert={true} />
+// 技術的ポイント: メインのテキストの背後に、色を変えた「ゴースト」テキストを配置し、ランダムに座標をずらすことで表現しています。
 export const GlitchText = ({ text, isAlert, className, style }: GlitchTextProps) => {
     // さきほど作ったフックを使って、現在のズレ(offset)とグリッチ中か(isGlitching)を取得
     // ロジックをフックに分離することで、コンポーネントの見通しを良くしています。

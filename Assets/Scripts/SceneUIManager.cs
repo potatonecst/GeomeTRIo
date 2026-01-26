@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
+// ゲームシーン内のUI（HUD、ポーズ画面、ゲームオーバー画面など）を管理するクラス
 public class SceneUIManager : MonoBehaviour
 {
     //UI部品への参照
@@ -30,6 +31,12 @@ public class SceneUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // このStartメソッドは、このスクリプトがアタッチされているシーン（Stage1など）が
+        // ロードされ、ゲーム内に登場した瞬間にUnityによって自動的に実行されます。
+        // GameManagerに自分自身を登録する
+        // これにより、GameManagerからUIの更新メソッド（UpdateScoreValueTextなど）を呼び出せるようになります。
+        // 'this' はこのクラスのインスタンス（SceneUIManagerがついているオブジェクト自身）を指します。
+        // '?.' (Null条件演算子): GameManager.instance が null でない場合のみ実行します。エラー防止用です。
         GameManager.instance?.RegisterSceneUI(this);
     }
 
@@ -41,6 +48,7 @@ public class SceneUIManager : MonoBehaviour
 
     public void UpdateScoreValueText(int newScore)
     {
+        // ToString(): 数値(int)を文字列(string)に変換します。UIのテキストには文字列しか代入できないため必須です。
         scoreValueText.text = newScore.ToString();
     }
 
@@ -59,6 +67,8 @@ public class SceneUIManager : MonoBehaviour
         gameOverPanel.SetActive(true);
 
         //リスタートボタンを選択
+        // EventSystem: UIのナビゲーション（フォーカス移動）を管理するシステム。
+        // SetSelectedGameObject: 指定したオブジェクトを「選択状態」にします。これによりコントローラーやキーボードですぐに操作可能になります。
         EventSystem.current.SetSelectedGameObject(restartButton.gameObject);
     }
 

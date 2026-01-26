@@ -11,6 +11,7 @@ interface MenuButtonProps {
 
 // メニュー画面などで使う、選択時に背景が伸びるボタン
 // 役割: 選択状態（isSelected）に応じて見た目を変化させ、ユーザーに現在のフォーカス位置を伝える
+// 技術的ポイント: CSSの transition プロパティを使用して、幅や色の変化を滑らかにアニメーションさせています。
 export const MenuButton = ({ label, isSelected, onClick, style, className, barClass }: MenuButtonProps) => {
     // 背景バーの幅を指定するクラス。指定がなければデフォルト幅(w-80)を使用。
     const barWidth = barClass || 'w-80';

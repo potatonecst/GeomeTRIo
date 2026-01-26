@@ -5,6 +5,7 @@ import { useGlobals } from '@reactunity/renderer';
 
 interface StageSelectProps {
     onBack: () => void;
+    onGameStart: () => void;
 }
 
 const STAGES = [
@@ -12,7 +13,8 @@ const STAGES = [
     { label: "Score Attack", sceneName: "ScoreAttack" }
 ];
 
-export const StageSelect = ({ onBack }: StageSelectProps) => {
+// ステージ選択画面コンポーネント
+export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
     // useGlobals: ReactUnityが提供するフック。
     // C#側で ReactRenderer.Globals に登録したオブジェクトにアクセスするために使用します。
     // ここでは C# の GameInterop クラスのインスタンスを取得し、ゲーム開始メソッドを呼び出すために使います。
@@ -52,6 +54,7 @@ export const StageSelect = ({ onBack }: StageSelectProps) => {
 
     // 入力ハンドリング
     // C# (ReactInputBridge) からの入力を受け取るイベントリスナーを設定します。
+    // 依存配列に必要な変数をすべて含めることで、状態が更新された際にリスナーも正しく更新されるようにします。
     useEffect(() => {
         // windowオブジェクトに onMenuInput 関数を定義し、C#から呼び出せるようにします。
         (window as any).onMenuInput = (event: string) => {
@@ -72,6 +75,9 @@ export const StageSelect = ({ onBack }: StageSelectProps) => {
                 // という設計だったが、ラグ解消のためC#側の再生を削除し、React側で即座に鳴らす方針に変更。
                 // 遷移アニメーション(300ms)があるため、ボタンを押した瞬間のフィードバックとしてここで鳴らすのが適切。
                 interop?.PlaySound('submit');
+
+                // 親コンポーネントにゲーム開始を通知
+                onGameStart();
 
                 // ゲーム開始処理
                 setIsStarting(true);
@@ -100,7 +106,7 @@ export const StageSelect = ({ onBack }: StageSelectProps) => {
         // クリーンアップ関数: コンポーネントがアンマウントされる（消える）時に、
         // グローバル関数を空の関数で上書きして、無効な呼び出しを防ぎます。
         return () => { (window as any).onMenuInput = () => { }; };
-    }, [selectedIndex, isExiting, isStarting, interop]);
+    }, [selectedIndex, isExiting, isStarting, interop, onBack, onGameStart]);
 
     return (
         <view className="flex-col w-full h-full p-8 text-white font-mono transition-opacity duration-300" style={{ opacity }}>

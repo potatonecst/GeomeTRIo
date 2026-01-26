@@ -10,16 +10,21 @@ interface MenuProps {
     onBack: () => void; // 戻る用コールバック
     onExit: () => void; // ゲーム終了用コールバック
     isExiting?: boolean; // 終了アニメーション中かどうかのフラグ
+    initialIndex?: number; // 初期選択インデックス（前回位置の復元用）
+    onIndexChange?: (index: number) => void; // 選択位置が変更された時の通知用
 }
 
 // メニューリストを表示・操作するコンポーネント
-export const Menu = ({ onNavigate, onPlay, onBack, onExit, isExiting }: MenuProps) => {
+// 役割: タイトル画面でのメインメニュー（Stage Select, Ranking, Settings, Exit）の表示と入力制御を担当します。
+export const Menu = ({ onNavigate, onPlay, onBack, onExit, isExiting, initialIndex = 0, onIndexChange }: MenuProps) => {
     // C#側のGameInteropにアクセスするためにglobalsを取得
+    // useGlobals: ReactUnityが提供するフック。Unity側で登録したグローバルオブジェクトにアクセスできます。
     const globals = useGlobals() as any;
     const interop = globals.GameInterop;
 
     // selectedIndex: 現在どのメニュー項目が選択されているか（0番目〜3番目）
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    // useState: コンポーネントの状態を管理するフック。値が変わると再描画されます。
+    const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
     // opacity: メニュー全体の不透明度。フェードイン/アウトアニメーションに使用
     const [opacity, setOpacity] = useState(0);
@@ -40,15 +45,25 @@ export const Menu = ({ onNavigate, onPlay, onBack, onExit, isExiting }: MenuProp
 
     // フェードイン・フェードアウト制御
     // isExitingフラグが変わった時に実行される
+    // useEffect: 副作用（画面描画以外の処理）を実行するフック。ここではタイマーを使ったアニメーション制御を行います。
     useEffect(() => {
         if (isExiting || isNavigating) {
             setOpacity(0); // 終了時は透明にする（フェードアウト）
         } else {
             // 開始時は少し待ってから不透明にする（フェードイン）
+            // setTimeoutを使うことで、レンダリング直後ではなく少し遅らせてアニメーションを開始させます。
             const timer = setTimeout(() => setOpacity(1), 50);
             return () => clearTimeout(timer);
         }
     }, [isExiting, isNavigating]);
+
+    // 選択インデックスが変更されたら親コンポーネントに通知する
+    // これにより、画面を行き来してもカーソル位置を記憶・復元できるようになります。
+    useEffect(() => {
+        if (onIndexChange) {
+            onIndexChange(selectedIndex);
+        }
+    }, [selectedIndex, onIndexChange]);
 
     // C#からの入力を監視
     // Unity側でキー入力があった時に window.onMenuInput が呼ばれる想定
@@ -84,6 +99,7 @@ export const Menu = ({ onNavigate, onPlay, onBack, onExit, isExiting }: MenuProp
         };
 
         // クリーンアップ: コンポーネントが消える時に関数を空にする
+        // これを忘れると、コンポーネントが消えた後もイベントが発火し続け、エラーの原因になります。
         return () => { (window as any).onMenuInput = () => { }; };
     }, [selectedIndex, menuItems, onBack, isNavigating, isExiting, interop]); // selectedIndexを依存配列に入れることで、submit時に最新のindexを参照する
 

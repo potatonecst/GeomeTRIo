@@ -1,5 +1,5 @@
 import '../index.css';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useGlobals } from '@reactunity/renderer';
 import { MenuButton } from '../components/MenuButton';
 import { GlitchText } from '../components/GlitchText';
@@ -32,6 +32,7 @@ const STAGES = ['Stage 1', 'Score Attack'];
 const FILTER_KEYS = ['hp', 'sp', 'auto'];
 
 
+// ランキング画面コンポーネント
 export const Ranking = ({ onBack }: { onBack: () => void }) => {
     // ReactUnityのGlobalsオブジェクトを取得
     // ドキュメントに従い、Globalsへのアクセスにはこのフックを使用する
@@ -119,7 +120,8 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
     // 依存配列 ([selectedStageIndex, filters, scoresData]) のいずれかが変化した時だけ再計算されます。
     // これにより、無関係な再描画時の計算コストを削減できます。
     // useMemo: 計算結果をキャッシュ（保存）しておくフック。
-    // 毎回計算すると重くなる処理などに使います。
+    // フィルタリングやソートは計算コストが高いため、毎回計算するのを避けるために使用します。
+    // useMemo は「値」をメモ化します。対して useCallback は「関数」をメモ化します。
     const filteredScores = useMemo(() => {
         const stageName = STAGES[selectedStageIndex];
         // 現在選択されているステージのスコアリストを取得
@@ -139,6 +141,47 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
             return true;
         }).sort((a, b) => b.score - a.score); // sortメソッド: 配列を並び替える。b.score - a.score で降順（大きい順）になる。
     }, [selectedStageIndex, filters, scoresData]);
+
+    // フィルタ値を変更する関数
+    // direction: +1 (右) または -1 (左)
+    // useCallbackの重要な役割:
+    // useCallback は「関数定義」そのものをメモ化します。useMemoが「計算結果の値」をメモ化するのとは対照的です。
+    // この関数は下の useEffect 内で使用されており、依存配列にも含まれています。
+    // もし useCallback を使わないと、レンダリングのたびに「新しい関数」が作られるため、
+    // useEffect が「依存値が変わった」と判断して毎回実行されてしまい、イベントリスナーの登録・解除が繰り返されてしまいます。
+    const changeFilterValue = useCallback((rowIndex: number, direction: number) => {
+        // setFiltersに関数を渡すことで、現在の状態(prev)をもとに新しい状態を計算します。
+        setFilters(prev => {
+            // スプレッド構文 (...prev): 現在のフィルタ設定をコピーして新しいオブジェクトを作ります。
+            // Reactでは状態を直接書き換えず、コピーを変更してセットするのがルールです。
+            const next = { ...prev };
+
+            if (rowIndex === 0) { // HP (1-10, ANY)
+                // ANY(0) <-> 1 <-> ... <-> 10
+                let current = next.hp === 'ANY' ? 0 : next.hp; //ANYを0に変換
+                let newVal = current + direction;
+                if (newVal < 0) newVal = 10;
+                if (newVal > 10) newVal = 0;
+                next.hp = newVal === 0 ? 'ANY' : newVal; //0をANYに変換
+            } else if (rowIndex === 1) { // SP (0-10, ANY)
+                // ANY(-1) <-> 0 <-> ... <-> 10
+                let current = next.sp === 'ANY' ? -1 : next.sp; //ANYを-1に変換
+                let newVal = current + direction;
+                if (newVal < -1) newVal = 10;
+                if (newVal > 10) newVal = -1;
+                next.sp = newVal === -1 ? 'ANY' : newVal; //-1をANYに変換
+            } else if (rowIndex === 2) { // Auto (ANY, OFF, ON)
+                // ANY(0) <-> OFF(1) <-> ON(2)
+                const states: (boolean | 'ANY')[] = ['ANY', false, true];
+                // indexOf: 配列の中から特定の値を探し、その位置（インデックス）を返します。
+                let currentIdx = states.indexOf(next.auto);
+                // 配列の長さで割った余り(%)を使うことで、インデックスを循環（ループ）させています。
+                let newIdx = (currentIdx + direction + states.length) % states.length;
+                next.auto = states[newIdx];
+            }
+            return next;
+        });
+    }, []);
 
     // キー入力ハンドリング
     useEffect(() => {
@@ -198,43 +241,7 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
 
         // クリーンアップ: コンポーネントが消える時に関数を空にする
         return () => { (window as any).onMenuInput = () => { }; };
-    }, [focusArea, filterRowIndex, filters, onBack, isExiting, interop]);
-
-    // フィルタ値を変更する関数
-    // direction: +1 (右) または -1 (左)
-    const changeFilterValue = (rowIndex: number, direction: number) => {
-        // setFiltersに関数を渡すことで、現在の状態(prev)をもとに新しい状態を計算します。
-        setFilters(prev => {
-            // スプレッド構文 (...prev): 現在のフィルタ設定をコピーして新しいオブジェクトを作ります。
-            // Reactでは状態を直接書き換えず、コピーを変更してセットするのがルールです。
-            const next = { ...prev };
-
-            if (rowIndex === 0) { // HP (1-10, ANY)
-                // ANY(0) <-> 1 <-> ... <-> 10
-                let current = next.hp === 'ANY' ? 0 : next.hp;
-                let newVal = current + direction;
-                if (newVal < 0) newVal = 10;
-                if (newVal > 10) newVal = 0;
-                next.hp = newVal === 0 ? 'ANY' : newVal;
-            } else if (rowIndex === 1) { // SP (0-10, ANY)
-                // ANY(-1) <-> 0 <-> ... <-> 10
-                let current = next.sp === 'ANY' ? -1 : next.sp;
-                let newVal = current + direction;
-                if (newVal < -1) newVal = 10;
-                if (newVal > 10) newVal = -1;
-                next.sp = newVal === -1 ? 'ANY' : newVal;
-            } else if (rowIndex === 2) { // Auto (ANY, OFF, ON)
-                // ANY(0) <-> OFF(1) <-> ON(2)
-                const states: (boolean | 'ANY')[] = ['ANY', false, true];
-                // indexOf: 配列の中から特定の値を探し、その位置（インデックス）を返します。
-                let currentIdx = states.indexOf(next.auto);
-                // 配列の長さで割った余り(%)を使うことで、インデックスを循環（ループ）させています。
-                let newIdx = (currentIdx + direction + states.length) % states.length;
-                next.auto = states[newIdx];
-            }
-            return next;
-        });
-    };
+    }, [focusArea, filterRowIndex, filters, onBack, isExiting, interop, changeFilterValue]);
 
     // ASCIIゲージ生成ヘルパー
     // 数値を視覚的なバー（[|||...]）に変換して返します

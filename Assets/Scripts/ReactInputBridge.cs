@@ -8,7 +8,7 @@ using TMPro;
 public class GameInterop
 {
     // ゲームデータをJSON形式で取得するメソッド
-    // React側からは window.GameInterop.GetGameData() のように呼び出されます。
+    // React側からは useGlobals().GameInterop.GetGameData() のように呼び出されます。
     public string GetGameData()
     {
         if (GameManager.instance != null)
@@ -27,9 +27,14 @@ public class GameInterop
             // GameManager.instance.PlaySubmitSound();
             // スコアをリセットして新しいゲームを開始
             GameManager.instance.ResetScore();
+            // GameManagerのコルーチンを使って遷移（遅延と演出を含む）
+            GameManager.instance.LoadSceneWithTransition(stageName);
         }
-        // Unityのシーン遷移を実行
-        UnityEngine.SceneManagement.SceneManager.LoadScene(stageName);
+        else
+        {
+            // Fallback (GameManagerがない場合)
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(stageName);
+        }
     }
 
     // 効果音を再生するメソッド
@@ -73,8 +78,11 @@ public class GameInterop
 // DefaultExecutionOrder(-100): このスクリプトを他のスクリプト（特にReactUnity）より先に実行させるための属性。
 // これにより、ReactUnityが初期化される前にGlobalsへの登録準備を整えることができます。
 [DefaultExecutionOrder(-100)]
+// ReactInputBridge: UnityのInput Systemからの入力を検知し、React側のJavaScript関数を呼び出すブリッジクラス
 public class ReactInputBridge : MonoBehaviour
 {
+    public static ReactInputBridge Instance { get; private set; }
+
     private ReactRendererBase _reactRenderer;
     private InputAction _pressAnyKeyAction;
     private InputAction _navigateAction;
@@ -88,6 +96,11 @@ public class ReactInputBridge : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+
         _reactRenderer = GetComponent<ReactRendererBase>();
         if (!_reactRenderer) Debug.LogError("[ReactInputBridge] ReactRenderer not found!");
 
@@ -179,6 +192,8 @@ public class ReactInputBridge : MonoBehaviour
         _navigateAction?.Dispose();
         _submitAction?.Dispose();
         _cancelAction?.Dispose();
+
+        if (Instance == this) Instance = null;
     }
 
     private void OnPressAnyButton()
@@ -253,6 +268,16 @@ public class ReactInputBridge : MonoBehaviour
             // React側の関数 'onMenuInput' を呼び出す
             // 引数としてイベント名（up, down, submit, cancel）を渡す
             _reactRenderer.Context.Script.ExecuteScript($"if (typeof onMenuInput === 'function') onMenuInput('{eventName}');");
+        }
+    }
+
+    // 画面をフェードアウト（暗転）させる命令を送る
+    public void FadeOutScreen()
+    {
+        if (_reactRenderer != null && _reactRenderer.Context != null)
+        {
+            // React側の関数 'onFadeOutRequest' を呼び出す
+            _reactRenderer.Context.Script.ExecuteScript("if (typeof onFadeOutRequest === 'function') onFadeOutRequest();");
         }
     }
 }
