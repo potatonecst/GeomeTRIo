@@ -87,7 +87,7 @@ public class EnemyController : MonoBehaviour
             //通常弾用の遅いスピードを設定
             bulletController.speed = 3f;
         }
-        
+
         GameManager.instance?.PlayEnemyShootSound(); //効果音再生
     }
 
@@ -99,6 +99,7 @@ public class EnemyController : MonoBehaviour
         if (currentHP <= 0)
         {
             GameManager.instance.AddScore(10); //10点加算
+            GameManager.instance.IncrementEnemiesDefeated(); //撃破数カウント
             Destroy(gameObject);
         }
     }

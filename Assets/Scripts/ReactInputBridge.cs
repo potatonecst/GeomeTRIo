@@ -13,9 +13,95 @@ public class GameInterop
     {
         if (GameManager.instance != null)
         {
+            // JsonUtility.ToJson(object):
+            // 渡されたオブジェクトのパブリックフィールドを読み取り、JSON形式の文字列に変換（シリアライズ）して返します。
             return JsonUtility.ToJson(GameManager.instance.Data);
         }
         return "{}";
+    }
+
+    // JsonUtility用にシリアライズ可能なクラスを定義
+    // [System.Serializable]: この属性をクラスや構造体につけることで、
+    // Unityのシリアライザ（Inspector表示やJsonUtilityなど）がそのデータを保存・読み込みできるようになります。
+    [System.Serializable]
+    private class SettingsData
+    {
+        public int hp;
+        public int sp;
+        public bool auto_fire;
+        public string player_name;
+        public int bgm_vol;
+        public int se_vol;
+        public bool vibration;
+        public bool crt_filter;
+        // 統計情報
+        public float total_play_time;
+        public int total_enemies_defeated;
+        public int total_games_played;
+        public int total_damage_taken;
+        public int total_shots_fired;
+    }
+
+    // 現在の設定値をJSONで取得するメソッド
+    public string GetSettings()
+    {
+        // 統計情報はセーブデータ（GameData）に含まれているため、GameManagerから取得します。
+        // GameManagerが存在しない場合（エディタでの単体テスト時など）は、空のデータを使用します。
+        var stats = GameManager.instance != null ? GameManager.instance.Data.stats : new PlayerStats();
+
+        var settings = new SettingsData
+        {
+            hp = SettingsManager.GetInitialHP(),
+            sp = SettingsManager.GetInitialSP(),
+            auto_fire = SettingsManager.IsAutofireEnabled(),
+            player_name = SettingsManager.GetPlayerName(),
+            bgm_vol = SettingsManager.GetBGMVolume(),
+            se_vol = SettingsManager.GetSEVolume(),
+            vibration = SettingsManager.IsVibrationEnabled(),
+            crt_filter = SettingsManager.IsCRTFilterEnabled(),
+
+            // 統計情報 (GameData from GameManager)
+            total_play_time = stats.totalPlayTime,
+            total_enemies_defeated = stats.totalEnemiesDefeated,
+            total_games_played = stats.totalGamesPlayed,
+            total_damage_taken = stats.totalDamageTaken,
+            total_shots_fired = stats.totalShotsFired
+        };
+        // 設定データをJSON文字列に変換して返します。
+        return JsonUtility.ToJson(settings);
+    }
+
+    // 設定値を更新するメソッド
+    public void UpdateSetting(string key, string value)
+    {
+        switch (key)
+        {
+            // int.Parse(string): 文字列を整数(int)に変換します。変換できない場合は例外が発生します。
+            // bool.Parse(string): 文字列("True"/"False")を真偽値(bool)に変換します。
+            case "hp": SettingsManager.SetInitialHP(int.Parse(value)); break;
+            case "sp": SettingsManager.SetInitialSP(int.Parse(value)); break;
+            case "auto_fire": SettingsManager.SetAutofire(bool.Parse(value)); break;
+            case "player_name": SettingsManager.SetPlayerName(value); break;
+            case "bgm_vol":
+                SettingsManager.SetBGMVolume(int.Parse(value));
+                GameManager.instance?.ApplyAudioSettings(); // 即時反映
+                break;
+            case "se_vol":
+                SettingsManager.SetSEVolume(int.Parse(value));
+                // SEは鳴らす瞬間に音量を取得するのでApply不要
+                break;
+            case "vibration": SettingsManager.SetVibration(bool.Parse(value)); break;
+            case "crt_filter": SettingsManager.SetCRTFilter(bool.Parse(value)); break;
+        }
+
+        // ここでは保存を行わず、メモリ上の値とゲーム挙動への反映のみを行う
+    }
+
+    public void SaveSettings()
+    {
+        // 設定とセーブデータをディスクに書き込みます。
+        SettingsManager.Save(); // PlayerPrefsの保存
+        GameManager.instance?.SaveGameData(); // GameDataの保存
     }
 
     // 指定したステージ（シーン）を開始するメソッド
@@ -46,6 +132,7 @@ public class GameInterop
         switch (type)
         {
             case "move":
+                // GameManagerのメソッドを呼び出して効果音を再生します。
                 GameManager.instance.PlayCursorMoveSound();
                 break;
             case "submit":
@@ -68,8 +155,10 @@ public class GameInterop
 
         // フォールバック（GameManagerがない場合など）
 #if UNITY_EDITOR
+        // Unityエディタ上では再生モードを停止します。
         UnityEditor.EditorApplication.isPlaying = false;
 #else
+        // ビルド済みアプリではアプリケーションを終了します。
         Application.Quit();
 #endif
     }
@@ -88,6 +177,7 @@ public class ReactInputBridge : MonoBehaviour
     private InputAction _navigateAction;
     private InputAction _submitAction;
     private InputAction _cancelAction;
+    private InputAction _backspaceAction;
 
     // ナビゲーション入力のクールタイム（連続入力防止）管理用変数
     // メニュー操作時にカーソルが高速に移動しすぎてしまうのを防ぐため、一度入力したら一定時間入力を無視します。
@@ -106,6 +196,8 @@ public class ReactInputBridge : MonoBehaviour
 
         // InputActionを初期化
         // type: Button は「押した/離した」を検知するのに適しています
+        // InputAction: Input Systemにおける「入力の単位」です。
+        // ボタン押し、軸入力などの定義と、それに対するバインディング（キー割り当て）を管理します。
         _pressAnyKeyAction = new InputAction(type: InputActionType.Button);
         // バインディングを個別に追加（カンマ区切りはコンストラクタでは機能しません）
         _pressAnyKeyAction.AddBinding("<Keyboard>/anyKey");
@@ -117,16 +209,14 @@ public class ReactInputBridge : MonoBehaviour
         // --- ナビゲーション操作 (上下左右) ---
         // 1DAxis から 2DVector に変更して左右も検知できるようにする
         // type: Value はスティックの傾きなど連続的な値を扱うのに適しています
+        // AddCompositeBinding("2DVector"): 上下左右の4つの入力をまとめて、
+        // 1つの Vector2 (x, y) の値として扱えるようにする「コンポジット（複合）バインディング」を追加します。
         _navigateAction = new InputAction("Navigate", type: InputActionType.Value);
         _navigateAction.AddCompositeBinding("2DVector")
             .With("Up", "<Keyboard>/upArrow")
             .With("Down", "<Keyboard>/downArrow")
             .With("Left", "<Keyboard>/leftArrow")
             .With("Right", "<Keyboard>/rightArrow")
-            .With("Up", "<Keyboard>/w")
-            .With("Down", "<Keyboard>/s")
-            .With("Left", "<Keyboard>/a")
-            .With("Right", "<Keyboard>/d")
             .With("Up", "<Gamepad>/dpad/up")
             .With("Down", "<Gamepad>/dpad/down")
             .With("Left", "<Gamepad>/dpad/left")
@@ -136,6 +226,8 @@ public class ReactInputBridge : MonoBehaviour
             .With("Left", "<Gamepad>/leftStick/left")
             .With("Right", "<Gamepad>/leftStick/right");
 
+        // ctx.ReadValue<Vector2>(): 現在の入力値を Vector2 型として読み取ります。
+        // 上下左右の入力状態に応じて、(0, 1) や (-1, 0) などの値が返ってきます。
         _navigateAction.performed += ctx => OnNavigate(ctx.ReadValue<Vector2>());
 
         // --- 決定操作 (Enter, Space, 南ボタン) ---
@@ -148,9 +240,15 @@ public class ReactInputBridge : MonoBehaviour
         // --- キャンセル/戻る操作 (Esc, Backspace, 東ボタン) ---
         _cancelAction = new InputAction("Cancel");
         _cancelAction.AddBinding("<Keyboard>/escape");
-        _cancelAction.AddBinding("<Keyboard>/backspace");
+        // Backspaceは文字削除に使用するため、キャンセルアクションからは除外
         _cancelAction.AddBinding("<Gamepad>/buttonEast");
         _cancelAction.performed += _ => SendEvent("cancel");
+
+        // --- Backspace操作 ---
+        _backspaceAction = new InputAction("Backspace");
+        _backspaceAction.AddBinding("<Keyboard>/backspace");
+        _backspaceAction.AddBinding("<Gamepad>/buttonWest");
+        _backspaceAction.performed += _ => SendEvent("backspace");
     }
 
     private void Update()
@@ -163,6 +261,8 @@ public class ReactInputBridge : MonoBehaviour
         {
             if (!_reactRenderer.Context.Globals.ContainsKey("GameInterop"))
             {
+                // React側のグローバル変数 'GameInterop' に、C#の GameInterop クラスのインスタンスを登録します。
+                // これにより、React側から `interop.GetGameData()` のようにC#のメソッドを呼べるようになります。
                 _reactRenderer.Context.Globals["GameInterop"] = new GameInterop();
             }
         }
@@ -175,6 +275,13 @@ public class ReactInputBridge : MonoBehaviour
         _navigateAction.Enable();
         _submitAction.Enable();
         _cancelAction.Enable();
+        _backspaceAction.Enable();
+        if (Keyboard.current != null)
+        {
+            // Keyboard.current.onTextInput: キーボードからのテキスト入力を受け取るイベントです。
+            // キーが押されるたびに、入力された文字（char）を引数として登録されたメソッド（OnTextInput）を呼び出します。
+            Keyboard.current.onTextInput += OnTextInput;
+        }
     }
 
     // オブジェクトが無効になったら監視停止
@@ -184,6 +291,11 @@ public class ReactInputBridge : MonoBehaviour
         _navigateAction.Disable();
         _submitAction.Disable();
         _cancelAction.Disable();
+        _backspaceAction.Disable();
+        if (Keyboard.current != null)
+        {
+            Keyboard.current.onTextInput -= OnTextInput;
+        }
     }
 
     private void OnDestroy()
@@ -192,6 +304,7 @@ public class ReactInputBridge : MonoBehaviour
         _navigateAction?.Dispose();
         _submitAction?.Dispose();
         _cancelAction?.Dispose();
+        _backspaceAction?.Dispose();
 
         if (Instance == this) Instance = null;
     }
@@ -209,6 +322,22 @@ public class ReactInputBridge : MonoBehaviour
         else
         {
             Debug.LogWarning("[ReactInputBridge] React Context is not ready.");
+        }
+    }
+
+    // キーボードからのテキスト入力を処理
+    private void OnTextInput(char c)
+    {
+        // char.IsControl(char): 指定した文字が制御文字（バックスペース、タブ、エンターなど）かどうかを判定します。
+        // 制御文字の場合は true を返します。
+        // 制御文字は除外
+        if (char.IsControl(c)) return;
+
+        if (_reactRenderer != null && _reactRenderer.Context != null)
+        {
+            // React側の関数 'onTextInput' を呼び出す
+            // 入力された文字を引数として渡す
+            _reactRenderer.Context.Script.ExecuteScript($"if (typeof onTextInput === 'function') onTextInput('{c}');");
         }
     }
 
@@ -266,6 +395,8 @@ public class ReactInputBridge : MonoBehaviour
         if (_reactRenderer != null && _reactRenderer.Context != null)
         {
             // React側の関数 'onMenuInput' を呼び出す
+            // ExecuteScript(script): 文字列として渡されたJavaScriptコードを、ReactUnityのコンテキスト内で実行します。
+            // ここでは、React側で定義されたグローバル関数 `onMenuInput` を呼び出しています。
             // 引数としてイベント名（up, down, submit, cancel）を渡す
             _reactRenderer.Context.Script.ExecuteScript($"if (typeof onMenuInput === 'function') onMenuInput('{eventName}');");
         }

@@ -123,9 +123,19 @@ public class GameManager : MonoBehaviour
         //ゲーム開始時にスコア表示を初期化
         sceneUI?.UpdateScoreValueText(score);
 
+        // 音量設定を適用
+        ApplyAudioSettings();
+
         // 現在のシーン名に合わせてBGMを再生（デバッグ起動時なども考慮）
         string currentScene = SceneManager.GetActiveScene().name;
         PlayGameBGM(currentScene);
+
+        // ゲームプレイシーンならプレイ回数を加算して保存
+        if (currentScene == "Stage1" || currentScene == "ScoreAttack")
+        {
+            gameData.stats.totalGamesPlayed++;
+            SaveGameData();
+        }
     }
 
     void Update()
@@ -134,6 +144,16 @@ public class GameManager : MonoBehaviour
         {
             timeElapsed += Time.deltaTime;
         }
+    }
+
+    // 設定から音量を適用する
+    public void ApplyAudioSettings()
+    {
+        // UIの0-100をAudioSourceの0.0-1.0に変換
+        float bgmVol = SettingsManager.GetBGMVolume() / 100f;
+        // SEは個別にPlayOneShotで鳴らす際に音量を乗算するか、AudioSource自体の音量を変える
+        // ここではAudioSource（SE用）とbgmAudioSource（BGM用）のVolumeプロパティを設定します
+        if (bgmAudioSource != null) bgmAudioSource.volume = bgmVol;
     }
 
     // シーン読み込み完了時に呼ばれるイベントハンドラ
@@ -228,6 +248,25 @@ public class GameManager : MonoBehaviour
         gameData = new GameData(); //空の新しいGameDataで上書き
     }
 
+    // 統計データの更新用メソッド
+    // 敵を倒した時に呼び出され、総撃破数を加算します。
+    public void IncrementEnemiesDefeated()
+    {
+        gameData.stats.totalEnemiesDefeated++;
+    }
+
+    // プレイヤーがダメージを受けた時に呼び出され、総被ダメージ量を加算します。
+    public void IncrementDamageTaken(int damage)
+    {
+        gameData.stats.totalDamageTaken += damage;
+    }
+
+    // 弾を発射した時に呼び出され、総発射数を加算します。
+    public void IncrementShotsFired()
+    {
+        gameData.stats.totalShotsFired++;
+    }
+
     //スコアと経過時間をリセット
     public void ResetScore()
     {
@@ -261,6 +300,9 @@ public class GameManager : MonoBehaviour
     // InputAction.CallbackContext: Input Systemから渡される入力情報（押されたボタン、値など）
     private void TogglePause(InputAction.CallbackContext context)
     {
+        // タイトル画面ではポーズ機能（BGM停止など）を無効化する
+        if (SceneManager.GetActiveScene().name == "TitleScene") return;
+
         PlaySubmitSound(); //効果音再生
         isPaused = !isPaused;
 
@@ -382,6 +424,9 @@ public class GameManager : MonoBehaviour
                 }
             }
 
+            // 今回のプレイ時間を総プレイ時間に加算
+            gameData.stats.totalPlayTime += timeElapsed;
+
             //セーブ
             SaveSystem.Save(CurrentSaveFileName, gameData);
 
@@ -410,6 +455,10 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToTitle()
     {
+        // 途中終了した場合も、そこまでのプレイ時間を加算して保存する
+        gameData.stats.totalPlayTime += timeElapsed;
+        SaveGameData();
+
         PlayCancelSound(); //効果音再生
 
         //止まっていた時間を戻す
@@ -424,7 +473,8 @@ public class GameManager : MonoBehaviour
     {
         if (cursorMoveSound != null)
         {
-            audioSource.PlayOneShot(cursorMoveSound);
+            float seVol = SettingsManager.GetSEVolume() / 100f;
+            audioSource.PlayOneShot(cursorMoveSound, seVol);
         }
     }
 
@@ -433,7 +483,8 @@ public class GameManager : MonoBehaviour
     {
         if (submitSound != null)
         {
-            audioSource.PlayOneShot(submitSound);
+            float seVol = SettingsManager.GetSEVolume() / 100f;
+            audioSource.PlayOneShot(submitSound, seVol);
         }
     }
 
@@ -442,7 +493,8 @@ public class GameManager : MonoBehaviour
     {
         if (cancelSound != null)
         {
-            audioSource.PlayOneShot(cancelSound);
+            float seVol = SettingsManager.GetSEVolume() / 100f;
+            audioSource.PlayOneShot(cancelSound, seVol);
         }
     }
 
@@ -451,7 +503,8 @@ public class GameManager : MonoBehaviour
     {
         if (playerShootSound != null)
         {
-            audioSource.PlayOneShot(playerShootSound);
+            float seVol = SettingsManager.GetSEVolume() / 100f;
+            audioSource.PlayOneShot(playerShootSound, seVol);
         }
     }
 
@@ -460,7 +513,8 @@ public class GameManager : MonoBehaviour
     {
         if (enemyShootSound != null)
         {
-            audioSource.PlayOneShot(enemyShootSound);
+            float seVol = SettingsManager.GetSEVolume() / 100f;
+            audioSource.PlayOneShot(enemyShootSound, seVol);
         }
     }
 

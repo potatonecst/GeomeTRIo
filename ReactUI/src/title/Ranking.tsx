@@ -56,6 +56,9 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
     // フォーカスエリアの状態 ('stage': 左側のリスト, 'filter': 右側の設定)
     const [focusArea, setFocusArea] = useState<'stage' | 'filter'>('stage');
 
+    // ステージ選択ボタンの押下状態（アニメーション用）
+    const [isStagePressed, setIsStagePressed] = useState(false);
+
     // フィルタ設定の選択行 (0: HP, 1: SP, 2: Auto)
     const [filterRowIndex, setFilterRowIndex] = useState(0); // 0:HP, 1:SP, 2:Auto
 
@@ -212,6 +215,8 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
                 }
                 if (event === 'right' || event === 'submit') {
                     interop?.PlaySound('submit'); // 決定音でエリア移動
+                    setIsStagePressed(true);
+                    setTimeout(() => setIsStagePressed(false), 100); // 一瞬だけ光らせる
                     setFocusArea('filter');
                 }
             } else {
@@ -306,6 +311,8 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
                             key={stage}
                             label={stage}
                             isSelected={idx === selectedStageIndex}
+                            // ステージ選択エリアにフォーカスがあり、かつ決定ボタンが押された瞬間に光らせる
+                            isPressed={isStagePressed && idx === selectedStageIndex}
                             barClass="w-full"
                             className="h-8 mb-2"
                             // フォーカスがステージ選択にない場合は半透明にして、非アクティブであることを示す
@@ -329,7 +336,7 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
                                         <text className={`w-28 ${isFocused ? 'text-cyan-400' : 'text-gray-500'}`}>{display.label} :</text>
                                         <text className={`${isFocused ? 'text-white bg-cyan-900' : 'text-gray-400'}`}>{display.text}</text>
                                     </view>
-                                    <text className="text-gray-600 text-xs tracking-widest">{display.gauge}</text>
+                                    <text className="text-gray-600 text-xs tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>{display.gauge}</text>
                                 </view>
                             );
                         })}
@@ -352,7 +359,8 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
                         {filteredScores.length === 0 ? (
                             <text className="text-center text-gray-600 mt-10">NO RECORDS FOUND</text>
                         ) : (
-                            filteredScores.map((score, idx) => (
+                            // FHD環境での表示崩れを防ぐため、最大5件までに制限して表示する
+                            filteredScores.slice(0, 5).map((score, idx) => (
                                 <view key={idx} className="flex-row justify-between items-center bg-gray-900 p-2 border-l-2 border-gray-700">
                                     <view className="flex-row items-center">
                                         {/* 順位はフィルタ後のリストのインデックス + 1 で表示 */}

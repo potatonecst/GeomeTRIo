@@ -215,17 +215,24 @@ const GeometricDebris = () => {
 const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
     // logs: 現在表示されているログのリスト
     const [logs, setLogs] = useState<{ text: string; isAlert?: boolean }[]>([]);
+    // ウィンドウ出現アニメーション用の状態 (高さと不透明度)
+    const [windowStyle, setWindowStyle] = useState({ height: 0, opacity: 0 });
 
     useEffect(() => {
+        // マウント直後にアニメーションを開始（ウィンドウを縦に展開）
+        const animTimer = setTimeout(() => {
+            setWindowStyle({ height: 125, opacity: 1 });
+        }, 50);
+
         // 表示するログの内容とタイミング
         // delayは「開始から何ミリ秒後に表示するか」を指定
         const sequence = [
-            { text: "> ESTABLISHING CONNECTION...", delay: 0 },
-            { text: "> HANDSHAKE INITIATED...", delay: 200 },
-            { text: "> VERIFYING CREDENTIALS...", delay: 400 },
-            { text: "> BYPASSING FIREWALL...", delay: 700 },
-            { text: "> ACCESS GRANTED.", delay: 1000 },
-            { text: "> SYSTEM ALERT: INTRUDER DETECTED.", delay: 1300, isAlert: true }
+            { text: "> ESTABLISHING CONNECTION...", delay: 100 }, // ウィンドウが開き始めてから表示
+            { text: "> HANDSHAKE INITIATED...", delay: 300 },
+            { text: "> VERIFYING CREDENTIALS...", delay: 500 },
+            { text: "> BYPASSING FIREWALL...", delay: 800 },
+            { text: "> ACCESS GRANTED.", delay: 1100 },
+            { text: "> SYSTEM ALERT: INTRUDER DETECTED.", delay: 1400, isAlert: true }
         ];
 
         let timeouts: number[] = [];
@@ -248,14 +255,29 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
 
         // クリーンアップ: 途中で画面が閉じられた場合、予約していたタイマーを全てキャンセルする
         // clearTimeout: setTimeoutで予約したタイマーを解除するメソッド。
-        return () => timeouts.forEach(clearTimeout);
+        return () => {
+            clearTimeout(animTimer);
+            timeouts.forEach(clearTimeout);
+        };
     }, [onComplete]);
 
     // 最後のログが警告（ALERT）の場合、枠線を赤くする
     const isAlert = logs.length > 0 && logs[logs.length - 1].isAlert;
 
     return (
-        <view className="flex-col items-start p-2 bg-black bg-opacity-80 border" style={{ width: 300, height: 125, justifyContent: 'flex-start', flexShrink: 0, borderColor: isAlert ? '#ff3333' : '#00ffff', fontFamily: 'SourceHanCodeJP' }}>
+        <view
+            className="flex-col items-start p-2 bg-black bg-opacity-80 border transition-all duration-300 ease-out"
+            style={{
+                width: 300,
+                height: windowStyle.height, // アニメーション
+                opacity: windowStyle.opacity, // アニメーション
+                justifyContent: 'flex-start',
+                flexShrink: 0,
+                borderColor: isAlert ? '#ff3333' : '#00ffff',
+                fontFamily: 'SourceHanCodeJP',
+                overflow: 'hidden' // アニメーション中の中身のはみ出し防止
+            }}
+        >
             {/* ターミナルウィンドウ: 幅と高さを固定し、上詰め(justify-start)で表示。flexShrink: 0で縮小防止 */}
             {logs.map((log, i) => (
                 <text
@@ -266,7 +288,8 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
                         fontFamily: 'monospace',
                         textShadow: '0 0 5px currentColor',
                         flexShrink: 0,
-                        marginBottom: 2
+                        marginBottom: 2,
+                        whiteSpace: 'nowrap'
                     }}
                 >
                     {log.text}

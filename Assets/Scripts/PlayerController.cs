@@ -163,6 +163,7 @@ public class PlayerController : MonoBehaviour
     private void ShootBullet()
     {
         GameManager.instance?.PlayPlayerShootSound(); //効果音再生
+        GameManager.instance?.IncrementShotsFired(); //発射数カウント
 
         //現在選択中の発射点の位置・角度で弾のプレハブを生成
         Instantiate(bulletPrefab, firePoints[currentFirePointIndex].position, firePoints[currentFirePointIndex].rotation);
@@ -254,6 +255,7 @@ public class PlayerController : MonoBehaviour
                 foreach (Transform firePoint in firePoints)
                 {
                     Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+                    GameManager.instance?.IncrementShotsFired(); //スピンアタックの弾もカウント
                 }
                 nextFireTime = Time.time + spinAttackFireRate;
             }
@@ -276,6 +278,7 @@ public class PlayerController : MonoBehaviour
 
         currentHP -= damage;
         GameManager.instance.UpdateHPDisplay(currentHP);
+        GameManager.instance?.IncrementDamageTaken(damage); //被ダメージカウント
 
         if (currentHP <= 0)
         {

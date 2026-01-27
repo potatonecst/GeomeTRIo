@@ -123,6 +123,8 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
                         key={idx}
                         label={stage.label}
                         isSelected={idx === selectedIndex}
+                        // ゲーム開始処理中かつ、この項目が選択されている場合に「押下状態」にする
+                        isPressed={isStarting && idx === selectedIndex}
                         barClass="w-full"
                         className="h-12 mb-4"
                     />

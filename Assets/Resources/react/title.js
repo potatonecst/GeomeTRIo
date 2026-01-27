@@ -20,7 +20,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 (function() {
   "use strict";
   var __vite_style__ = document.createElement("style");
-  __vite_style__.textContent = "*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}/*\n! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n5. Use the user's configured `sans` font-feature-settings by default.\n6. Use the user's configured `sans` font-variation-settings by default.\n7. Disable tap highlights on iOS\n*/\n\nhtml,\n:host {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n  font-feature-settings: normal; /* 5 */\n  font-variation-settings: normal; /* 6 */\n  -webkit-tap-highlight-color: transparent; /* 7 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font-family by default.\n2. Use the user's configured `mono` font-feature-settings by default.\n3. Use the user's configured `mono` font-variation-settings by default.\n4. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-feature-settings: normal; /* 2 */\n  font-variation-settings: normal; /* 3 */\n  font-size: 1em; /* 4 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-feature-settings: inherit; /* 1 */\n  font-variation-settings: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  letter-spacing: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\ninput:where([type='button']),\ninput:where([type='reset']),\ninput:where([type='submit']) {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nReset default styling for dialogs.\n*/\ndialog {\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Make elements with the HTML hidden attribute stay hidden by default */\n[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.bottom-0 {\n  bottom: 0px;\n}\n.bottom-10 {\n  bottom: 2.5rem;\n}\n.bottom-4 {\n  bottom: 1rem;\n}\n.left-0 {\n  left: 0px;\n}\n.right-0 {\n  right: 0px;\n}\n.right-10 {\n  right: 2.5rem;\n}\n.right-8 {\n  right: 2rem;\n}\n.top-0 {\n  top: 0px;\n}\n.top-32 {\n  top: 8rem;\n}\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n.mb-0 {\n  margin-bottom: 0px;\n}\n.mb-1 {\n  margin-bottom: 0.25rem;\n}\n.mb-10 {\n  margin-bottom: 2.5rem;\n}\n.mb-2 {\n  margin-bottom: 0.5rem;\n}\n.mb-4 {\n  margin-bottom: 1rem;\n}\n.mb-8 {\n  margin-bottom: 2rem;\n}\n.ml-4 {\n  margin-left: 1rem;\n}\n.mr-1 {\n  margin-right: 0.25rem;\n}\n.mr-2 {\n  margin-right: 0.5rem;\n}\n.mt-10 {\n  margin-top: 2.5rem;\n}\n.inline {\n  display: inline;\n}\n.grid {\n  display: grid;\n}\n.h-12 {\n  height: 3rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-8 {\n  height: 2rem;\n}\n.h-full {\n  height: 100%;\n}\n.w-0 {\n  width: 0px;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/3 {\n  width: 33.333333%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-12 {\n  width: 3rem;\n}\n.w-28 {\n  width: 7rem;\n}\n.w-3\\/4 {\n  width: 75%;\n}\n.w-32 {\n  width: 8rem;\n}\n.w-4 {\n  width: 1rem;\n}\n.w-6 {\n  width: 1.5rem;\n}\n.w-80 {\n  width: 20rem;\n}\n.w-full {\n  width: 100%;\n}\n.flex-1 {\n  flex: 1 1 0%;\n}\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\n.animate-pulse {\n  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\n.flex-row {\n  flex-direction: row;\n}\n.flex-col {\n  flex-direction: column;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-end {\n  align-items: flex-end;\n}\n.items-center {\n  align-items: center;\n}\n.items-baseline {\n  align-items: baseline;\n}\n.justify-start {\n  justify-content: flex-start;\n}\n.justify-end {\n  justify-content: flex-end;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.gap-1 {\n  gap: 0.25rem;\n}\n.gap-4 {\n  gap: 1rem;\n}\n.overflow-hidden {\n  overflow: hidden;\n}\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.border {\n  border-width: 1px;\n}\n.border-4 {\n  border-width: 4px;\n}\n.border-b {\n  border-bottom-width: 1px;\n}\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n.border-l-2 {\n  border-left-width: 2px;\n}\n.border-r-2 {\n  border-right-width: 2px;\n}\n.border-\\[\\#00ffff\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(0 255 255 / var(--tw-border-opacity, 1));\n}\n.border-\\[\\#ff3333\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 51 51 / var(--tw-border-opacity, 1));\n}\n.border-cyan-900 {\n  --tw-border-opacity: 1;\n  border-color: rgb(22 78 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));\n}\n.border-gray-800 {\n  --tw-border-opacity: 1;\n  border-color: rgb(31 41 55 / var(--tw-border-opacity, 1));\n}\n.border-t-cyan-400 {\n  --tw-border-opacity: 1;\n  border-top-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.bg-\\[\\#00ffff\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-\\[\\#ff3333\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 51 51 / var(--tw-bg-opacity, 1));\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(22 78 99 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));\n}\n.bg-opacity-10 {\n  --tw-bg-opacity: 0.1;\n}\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n.bg-opacity-80 {\n  --tw-bg-opacity: 0.8;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-8 {\n  padding: 2rem;\n}\n.px-10 {\n  padding-left: 2.5rem;\n  padding-right: 2.5rem;\n}\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n.py-3 {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n}\n.pb-1 {\n  padding-bottom: 0.25rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pb-20 {\n  padding-bottom: 5rem;\n}\n.pl-2 {\n  padding-left: 0.5rem;\n}\n.pl-24 {\n  padding-left: 6rem;\n}\n.pl-8 {\n  padding-left: 2rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.text-center {\n  text-align: center;\n}\n.text-right {\n  text-align: right;\n}\n.font-mono {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n.font-sans {\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n}\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\n.text-5xl {\n  font-size: 3rem;\n  line-height: 1;\n}\n.text-base {\n  font-size: 1rem;\n  line-height: 1.5rem;\n}\n.text-lg {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.font-bold {\n  font-weight: 700;\n}\n.leading-none {\n  line-height: 1;\n}\n.tracking-tighter {\n  letter-spacing: -0.05em;\n}\n.tracking-widest {\n  letter-spacing: 0.1em;\n}\n.text-\\[\\#00ffff\\] {\n  --tw-text-opacity: 1;\n  color: rgb(0 255 255 / var(--tw-text-opacity, 1));\n}\n.text-\\[\\#e2e8f0\\] {\n  --tw-text-opacity: 1;\n  color: rgb(226 232 240 / var(--tw-text-opacity, 1));\n}\n.text-cyan-400 {\n  --tw-text-opacity: 1;\n  color: rgb(34 211 238 / var(--tw-text-opacity, 1));\n}\n.text-cyan-500 {\n  --tw-text-opacity: 1;\n  color: rgb(6 182 212 / var(--tw-text-opacity, 1));\n}\n.text-cyan-600 {\n  --tw-text-opacity: 1;\n  color: rgb(8 145 178 / var(--tw-text-opacity, 1));\n}\n.text-gray-300 {\n  --tw-text-opacity: 1;\n  color: rgb(209 213 219 / var(--tw-text-opacity, 1));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity, 1));\n}\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity, 1));\n}\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity, 1));\n}\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity, 1));\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity, 1));\n}\n.opacity-0 {\n  opacity: 0;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-30 {\n  opacity: 0.3;\n}\n.opacity-70 {\n  opacity: 0.7;\n}\n.shadow-\\[0_0_15px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 15px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition-all {\n  transition-property: all;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-colors {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-300 {\n  transition-duration: 300ms;\n}\n.duration-500 {\n  transition-duration: 500ms;\n}\n\n@font-face {\n  font-family: 'Melete-Bold';\n  src: url('res:Fonts/Melete-Bold');\n}\n\n@font-face {\n  font-family: 'Melete-Medium';\n  src: url('res:Fonts/Melete-Medium');\n}\n\n@font-face {\n  font-family: 'Melete-Regular';\n  src: url('res:Fonts/Melete-Regular');\n}\n\n@font-face {\n  font-family: 'Melete-Light';\n  src: url('res:Fonts/Melete-Light');\n}\n\n@font-face {\n  font-family: 'Melete-UltraLight';\n  src: url('res:Fonts/Melete-UltraLight');\n}\n\n@font-face {\n  font-family: 'SourceHanCodeJP';\n  src: url('res:Fonts/SourceHanCodeJP');\n}\n\n/* コントローラーアイコン用フォント */\n@font-face {\n  font-family: 'kenney_input_keyboard_&_mouse';\n  src: url('res:Fonts/kenney_input_keyboard_&_mouse');\n}\n\n@font-face {\n  font-family: 'kenney_input_nintendo_switch_2';\n  src: url('res:Fonts/kenney_input_nintendo_switch_2');\n}\n\n@font-face {\n  font-family: 'kenney_input_playstation_series';\n  src: url('res:Fonts/kenney_input_playstation_series');\n}\n\n:root {\n  font-family: sans-serif;\n  font-size: 16px;\n}\n\n/* 回転のアニメーション定義 */\n@keyframes custom-spin {\n  from {\n    /* ReactUnityでは rotate 単体プロパティが安定します */\n    /* transform: rotate(...) よりも処理負荷が軽く、ReactUnityでの動作が安定しているため採用 */\n    rotate: 0deg;\n  }\n\n  to {\n    rotate: 360deg;\n  }\n}\n\n.custom-spin {\n  animation-name: custom-spin;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n\n  /* 回転の中心を要素の真ん中に固定 */\n  transform-origin: center;\n}/*$vite$:1*/";
+  __vite_style__.textContent = "*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}/*\n! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n5. Use the user's configured `sans` font-feature-settings by default.\n6. Use the user's configured `sans` font-variation-settings by default.\n7. Disable tap highlights on iOS\n*/\n\nhtml,\n:host {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n  font-feature-settings: normal; /* 5 */\n  font-variation-settings: normal; /* 6 */\n  -webkit-tap-highlight-color: transparent; /* 7 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font-family by default.\n2. Use the user's configured `mono` font-feature-settings by default.\n3. Use the user's configured `mono` font-variation-settings by default.\n4. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-feature-settings: normal; /* 2 */\n  font-variation-settings: normal; /* 3 */\n  font-size: 1em; /* 4 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-feature-settings: inherit; /* 1 */\n  font-variation-settings: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  letter-spacing: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\ninput:where([type='button']),\ninput:where([type='reset']),\ninput:where([type='submit']) {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nReset default styling for dialogs.\n*/\ndialog {\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Make elements with the HTML hidden attribute stay hidden by default */\n[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.bottom-0 {\n  bottom: 0px;\n}\n.bottom-10 {\n  bottom: 2.5rem;\n}\n.bottom-4 {\n  bottom: 1rem;\n}\n.left-0 {\n  left: 0px;\n}\n.right-0 {\n  right: 0px;\n}\n.right-10 {\n  right: 2.5rem;\n}\n.right-8 {\n  right: 2rem;\n}\n.top-0 {\n  top: 0px;\n}\n.top-32 {\n  top: 8rem;\n}\n.left-8 {\n  left: 2rem;\n}\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n.mb-0 {\n  margin-bottom: 0px;\n}\n.mb-1 {\n  margin-bottom: 0.25rem;\n}\n.mb-10 {\n  margin-bottom: 2.5rem;\n}\n.mb-2 {\n  margin-bottom: 0.5rem;\n}\n.mb-4 {\n  margin-bottom: 1rem;\n}\n.mb-8 {\n  margin-bottom: 2rem;\n}\n.ml-4 {\n  margin-left: 1rem;\n}\n.mr-1 {\n  margin-right: 0.25rem;\n}\n.mr-2 {\n  margin-right: 0.5rem;\n}\n.mt-10 {\n  margin-top: 2.5rem;\n}\n.ml-2 {\n  margin-left: 0.5rem;\n}\n.mt-4 {\n  margin-top: 1rem;\n}\n.mt-2 {\n  margin-top: 0.5rem;\n}\n.mr-6 {\n  margin-right: 1.5rem;\n}\n.inline {\n  display: inline;\n}\n.flex {\n  display: flex;\n}\n.grid {\n  display: grid;\n}\n.hidden {\n  display: none;\n}\n.h-12 {\n  height: 3rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-8 {\n  height: 2rem;\n}\n.h-full {\n  height: 100%;\n}\n.h-10 {\n  height: 2.5rem;\n}\n.w-0 {\n  width: 0px;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/3 {\n  width: 33.333333%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-12 {\n  width: 3rem;\n}\n.w-28 {\n  width: 7rem;\n}\n.w-3\\/4 {\n  width: 75%;\n}\n.w-32 {\n  width: 8rem;\n}\n.w-4 {\n  width: 1rem;\n}\n.w-6 {\n  width: 1.5rem;\n}\n.w-80 {\n  width: 20rem;\n}\n.w-full {\n  width: 100%;\n}\n.w-48 {\n  width: 12rem;\n}\n.w-24 {\n  width: 6rem;\n}\n.w-auto {\n  width: auto;\n}\n.flex-1 {\n  flex: 1 1 0%;\n}\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\n.animate-pulse {\n  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\n.flex-row {\n  flex-direction: row;\n}\n.flex-col {\n  flex-direction: column;\n}\n.flex-wrap {\n  flex-wrap: wrap;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-end {\n  align-items: flex-end;\n}\n.items-center {\n  align-items: center;\n}\n.items-baseline {\n  align-items: baseline;\n}\n.justify-start {\n  justify-content: flex-start;\n}\n.justify-end {\n  justify-content: flex-end;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.gap-1 {\n  gap: 0.25rem;\n}\n.gap-4 {\n  gap: 1rem;\n}\n.gap-2 {\n  gap: 0.5rem;\n}\n.overflow-hidden {\n  overflow: hidden;\n}\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.border {\n  border-width: 1px;\n}\n.border-4 {\n  border-width: 4px;\n}\n.border-b {\n  border-bottom-width: 1px;\n}\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n.border-l-2 {\n  border-left-width: 2px;\n}\n.border-r-2 {\n  border-right-width: 2px;\n}\n.border-l-4 {\n  border-left-width: 4px;\n}\n.border-\\[\\#00ffff\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(0 255 255 / var(--tw-border-opacity, 1));\n}\n.border-\\[\\#ff3333\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 51 51 / var(--tw-border-opacity, 1));\n}\n.border-cyan-900 {\n  --tw-border-opacity: 1;\n  border-color: rgb(22 78 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));\n}\n.border-gray-800 {\n  --tw-border-opacity: 1;\n  border-color: rgb(31 41 55 / var(--tw-border-opacity, 1));\n}\n.border-cyan-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.border-transparent {\n  border-color: transparent;\n}\n.border-white {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));\n}\n.border-t-cyan-400 {\n  --tw-border-opacity: 1;\n  border-top-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.bg-\\[\\#00ffff\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-\\[\\#ff3333\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 51 51 / var(--tw-bg-opacity, 1));\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(22 78 99 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-800 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(34 211 238 / var(--tw-bg-opacity, 1));\n}\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-opacity-10 {\n  --tw-bg-opacity: 0.1;\n}\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n.bg-opacity-80 {\n  --tw-bg-opacity: 0.8;\n}\n.bg-opacity-100 {\n  --tw-bg-opacity: 1;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-8 {\n  padding: 2rem;\n}\n.p-3 {\n  padding: 0.75rem;\n}\n.px-10 {\n  padding-left: 2.5rem;\n  padding-right: 2.5rem;\n}\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n.py-3 {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n}\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n.pb-1 {\n  padding-bottom: 0.25rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pb-20 {\n  padding-bottom: 5rem;\n}\n.pl-2 {\n  padding-left: 0.5rem;\n}\n.pl-24 {\n  padding-left: 6rem;\n}\n.pl-8 {\n  padding-left: 2rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.pb-4 {\n  padding-bottom: 1rem;\n}\n.pt-2 {\n  padding-top: 0.5rem;\n}\n.pl-5 {\n  padding-left: 1.25rem;\n}\n.pr-3 {\n  padding-right: 0.75rem;\n}\n.text-center {\n  text-align: center;\n}\n.text-right {\n  text-align: right;\n}\n.font-mono {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n.font-sans {\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n}\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\n.text-5xl {\n  font-size: 3rem;\n  line-height: 1;\n}\n.text-base {\n  font-size: 1rem;\n  line-height: 1.5rem;\n}\n.text-lg {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.font-bold {\n  font-weight: 700;\n}\n.leading-none {\n  line-height: 1;\n}\n.tracking-tighter {\n  letter-spacing: -0.05em;\n}\n.tracking-widest {\n  letter-spacing: 0.1em;\n}\n.text-\\[\\#00ffff\\] {\n  --tw-text-opacity: 1;\n  color: rgb(0 255 255 / var(--tw-text-opacity, 1));\n}\n.text-\\[\\#e2e8f0\\] {\n  --tw-text-opacity: 1;\n  color: rgb(226 232 240 / var(--tw-text-opacity, 1));\n}\n.text-cyan-400 {\n  --tw-text-opacity: 1;\n  color: rgb(34 211 238 / var(--tw-text-opacity, 1));\n}\n.text-cyan-500 {\n  --tw-text-opacity: 1;\n  color: rgb(6 182 212 / var(--tw-text-opacity, 1));\n}\n.text-cyan-600 {\n  --tw-text-opacity: 1;\n  color: rgb(8 145 178 / var(--tw-text-opacity, 1));\n}\n.text-gray-300 {\n  --tw-text-opacity: 1;\n  color: rgb(209 213 219 / var(--tw-text-opacity, 1));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity, 1));\n}\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity, 1));\n}\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity, 1));\n}\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity, 1));\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity, 1));\n}\n.text-yellow-400 {\n  --tw-text-opacity: 1;\n  color: rgb(250 204 21 / var(--tw-text-opacity, 1));\n}\n.text-black {\n  --tw-text-opacity: 1;\n  color: rgb(0 0 0 / var(--tw-text-opacity, 1));\n}\n.opacity-0 {\n  opacity: 0;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-30 {\n  opacity: 0.3;\n}\n.opacity-70 {\n  opacity: 0.7;\n}\n.opacity-60 {\n  opacity: 0.6;\n}\n.shadow-\\[0_0_15px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 15px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition-all {\n  transition-property: all;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-colors {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-300 {\n  transition-duration: 300ms;\n}\n.duration-500 {\n  transition-duration: 500ms;\n}\n.duration-200 {\n  transition-duration: 200ms;\n}\n.duration-75 {\n  transition-duration: 75ms;\n}\n.ease-out {\n  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);\n}\n\n@font-face {\n  font-family: 'Melete-Bold';\n  src: url('res:Fonts/Melete-Bold');\n}\n\n@font-face {\n  font-family: 'Melete-Medium';\n  src: url('res:Fonts/Melete-Medium');\n}\n\n@font-face {\n  font-family: 'Melete-Regular';\n  src: url('res:Fonts/Melete-Regular');\n}\n\n@font-face {\n  font-family: 'Melete-Light';\n  src: url('res:Fonts/Melete-Light');\n}\n\n@font-face {\n  font-family: 'Melete-UltraLight';\n  src: url('res:Fonts/Melete-UltraLight');\n}\n\n@font-face {\n  font-family: 'SourceHanCodeJP';\n  src: url('res:Fonts/SourceHanCodeJP');\n}\n\n/* コントローラーアイコン用フォント */\n@font-face {\n  font-family: 'kenney_input_keyboard_&_mouse';\n  src: url('res:Fonts/kenney_input_keyboard_&_mouse');\n}\n\n@font-face {\n  font-family: 'kenney_input_nintendo_switch_2';\n  src: url('res:Fonts/kenney_input_nintendo_switch_2');\n}\n\n@font-face {\n  font-family: 'kenney_input_playstation_series';\n  src: url('res:Fonts/kenney_input_playstation_series');\n}\n\n:root {\n  font-family: sans-serif;\n  font-size: 16px;\n}\n\n/* 回転のアニメーション定義 */\n@keyframes custom-spin {\n  from {\n    /* ReactUnityでは rotate 単体プロパティが安定します */\n    /* transform: rotate(...) よりも処理負荷が軽く、ReactUnityでの動作が安定しているため採用 */\n    rotate: 0deg;\n  }\n\n  to {\n    rotate: 360deg;\n  }\n}\n\n.custom-spin {\n  animation-name: custom-spin;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n\n  /* 回転の中心を要素の真ん中に固定 */\n  transform-origin: center;\n}/*$vite$:1*/";
   document.head.appendChild(__vite_style__);
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -9928,7 +9928,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     });
     return rc;
   }
-  const MenuButton = ({ label, isSelected, onClick, style, className, barClass }) => {
+  const MenuButton = ({ label, isSelected, isPressed, onClick, style, className, barClass }) => {
     const barWidth = barClass || "w-80";
     return /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "view",
@@ -9940,14 +9940,14 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "view",
             {
-              className: `bg-[#ff3333] border border-[#ff3333] transition-all duration-300 absolute left-0 top-0 bottom-0 bg-opacity-10 ${isSelected ? barWidth : "w-0"}`
+              className: `border transition-all absolute left-0 top-0 bottom-0 ${isPressed ? "bg-white border-white duration-75 bg-opacity-100" : "bg-[#ff3333] border-[#ff3333] duration-300 bg-opacity-10"} ${isSelected ? barWidth : "w-0"}`
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "absolute left-0 top-0 bottom-0 right-0 flex-row items-center pl-2", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               "text",
               {
-                className: `text-sm mr-1 transition-colors duration-300 ${isSelected ? "text-white opacity-100" : "text-gray-300 opacity-0"}`,
+                className: `text-sm mr-1 transition-colors duration-300 ${isPressed ? "text-black" : "text-white"} ${isSelected ? "opacity-100" : "opacity-0"}`,
                 style: { top: -1 },
                 children: "▶"
               }
@@ -9955,7 +9955,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               "text",
               {
-                className: `text-sm transition-colors duration-300 ${isSelected ? "text-white" : "text-[#e2e8f0]"}`,
+                className: `text-sm transition-colors duration-300 ${isPressed ? "text-black font-bold" : isSelected ? "text-white" : "text-[#e2e8f0]"}`,
                 style: { opacity: isSelected ? 1 : 0.6 },
                 children: label
               }
@@ -10026,6 +10026,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             {
               label: item.label,
               isSelected,
+              isPressed: isNavigating && isSelected,
               style: { opacity, transitionDelay: `${isExiting || isNavigating ? 0 : index * 120}ms` }
             },
             index
@@ -10152,6 +10153,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         {
           label: stage.label,
           isSelected: idx === selectedIndex,
+          isPressed: isStarting && idx === selectedIndex,
           barClass: "w-full",
           className: "h-12 mb-4"
         },
@@ -10172,6 +10174,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const [isExiting, setIsExiting] = reactExports.useState(false);
     const [selectedStageIndex, setSelectedStageIndex] = reactExports.useState(0);
     const [focusArea, setFocusArea] = reactExports.useState("stage");
+    const [isStagePressed, setIsStagePressed] = reactExports.useState(false);
     const [filterRowIndex, setFilterRowIndex] = reactExports.useState(0);
     const [filters, setFilters] = reactExports.useState({
       hp: "ANY",
@@ -10266,6 +10269,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           }
           if (event === "right" || event === "submit") {
             interop == null ? void 0 : interop.PlaySound("submit");
+            setIsStagePressed(true);
+            setTimeout(() => setIsStagePressed(false), 100);
             setFocusArea("filter");
           }
         } else {
@@ -10336,6 +10341,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             {
               label: stage,
               isSelected: idx === selectedStageIndex,
+              isPressed: isStagePressed && idx === selectedStageIndex,
               barClass: "w-full",
               className: "h-8 mb-2",
               style: { opacity: focusArea === "stage" ? 1 : 0.4 }
@@ -10357,7 +10363,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
                   ] }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `${isFocused ? "text-white bg-cyan-900" : "text-gray-400"}`, children: display.text })
                 ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-600 text-xs tracking-widest", children: display.gauge })
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-600 text-xs tracking-widest", style: { fontFamily: "SourceHanCodeJP" }, children: display.gauge })
               ] }, key);
             })
           ] }),
@@ -10372,42 +10378,450 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
                 /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-xs text-cyan-600 w-28 text-right", children: "DATE" })
               ] })
             ] }),
-            filteredScores.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-center text-gray-600 mt-10", children: "NO RECORDS FOUND" }) : filteredScores.map((score, idx) => /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-center bg-gray-900 p-2 border-l-2 border-gray-700", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-lg font-bold text-cyan-500 w-12", children: `${idx + 1}.` }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-lg text-white w-32", children: score.score.toLocaleString() })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center gap-4", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-xs text-gray-500", children: `HP:${score.hp} SP:${score.sp} Auto:${score.autoFire ? "ON" : "OFF"}` }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-xs text-gray-500 w-28 text-right", children: score.date })
-              ] })
-            ] }, idx))
+            filteredScores.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-center text-gray-600 mt-10", children: "NO RECORDS FOUND" }) : (
+              // FHD環境での表示崩れを防ぐため、最大5件までに制限して表示する
+              filteredScores.slice(0, 5).map((score, idx) => /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-center bg-gray-900 p-2 border-l-2 border-gray-700", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-lg font-bold text-cyan-500 w-12", children: `${idx + 1}.` }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-lg text-white w-32", children: score.score.toLocaleString() })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center gap-4", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-xs text-gray-500", children: `HP:${score.hp} SP:${score.sp} Auto:${score.autoFire ? "ON" : "OFF"}` }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-xs text-gray-500 w-28 text-right", children: score.date })
+                ] })
+              ] }, idx))
+            )
           ] })
         ] })
       ] })
     ] });
   };
-  const Button = ({ children, onClick, style, className }) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "button",
-      {
-        className,
-        onClick,
-        style: __spreadValues({
-          padding: "10px 20px",
-          backgroundColor: "#eee",
-          borderRadius: "5px",
-          alignItems: "center",
-          justifyContent: "center"
-        }, style),
-        children: typeof children === "string" ? /* @__PURE__ */ jsxRuntimeExports.jsx("text", { children }) : children
-      }
-    );
+  const CATEGORIES = ["GAMEPLAY", "AUDIO", "SYSTEM", "STATS", "RESET"];
+  const CHAR_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._!?&@";
+  const SETTINGS_MAP = {
+    "GAMEPLAY": [
+      { id: "hp", label: "INITIAL HP", type: "slider", min: 1, max: 10, description: "Set the initial Hit Points (1-10)." },
+      { id: "sp", label: "INITIAL SP", type: "slider", min: 0, max: 10, description: "Set the initial Special Points (0-10)." },
+      { id: "auto_fire", label: "AUTO FIRE", type: "toggle", description: "Toggle automatic firing." }
+    ],
+    "AUDIO": [
+      { id: "bgm_vol", label: "BGM VOLUME", type: "slider", min: 0, max: 100, description: "Adjust the volume level of background music." },
+      { id: "se_vol", label: "SE VOLUME", type: "slider", min: 0, max: 100, description: "Adjust the volume level of sound effects." }
+    ],
+    "SYSTEM": [
+      // Player Name: 決定キーで編集モードに入り、上下で文字変更、左右でカーソル移動
+      { id: "player_name", label: "PLAYER NAME", type: "text", description: "Set your pilot name." },
+      { id: "vibration", label: "VIBRATION", type: "toggle", description: "Enable or disable controller vibration feedback." },
+      { id: "crt_filter", label: "CRT FILTER", type: "toggle", description: "Toggle the retro CRT monitor visual effect." }
+    ],
+    "STATS": [
+      { id: "total_games_played", label: "GAMES PLAYED", type: "stat", description: "Total number of games played." },
+      { id: "total_play_time", label: "PLAY TIME", type: "stat", description: "Total time spent in game." },
+      { id: "total_enemies_defeated", label: "ENEMIES DEFEATED", type: "stat", description: "Total number of enemies destroyed." },
+      { id: "total_shots_fired", label: "SHOTS FIRED", type: "stat", description: "Total number of bullets fired." },
+      { id: "total_damage_taken", label: "DAMAGE TAKEN", type: "stat", description: "Total damage received from enemies." }
+    ],
+    "RESET": [
+      { id: "reset_defaults", label: "RESET ALL", type: "button", description: "Restore all settings to default values." }
+    ]
   };
   const Settings = ({ onBack }) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col items-center w-full", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-white", style: { fontSize: 30 }, children: "Settings" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { style: { marginTop: 20 }, onClick: onBack, children: "Back" })
+    const globals = useGlobals();
+    const interop = globals.GameInterop;
+    const [opacity, setOpacity] = reactExports.useState(0);
+    const [isExiting, setIsExiting] = reactExports.useState(false);
+    const [selectedCategoryIndex, setSelectedCategoryIndex] = reactExports.useState(0);
+    const [selectedItemIndex, setSelectedItemIndex] = reactExports.useState(0);
+    const [focusArea, setFocusArea] = reactExports.useState("category");
+    const [isCategoryPressed, setIsCategoryPressed] = reactExports.useState(false);
+    const [isEditingName, setIsEditingName] = reactExports.useState(false);
+    const [editCursor, setEditCursor] = reactExports.useState(0);
+    const [values, setValues] = reactExports.useState({
+      "hp": 3,
+      "sp": 3,
+      "auto_fire": false,
+      "bgm_vol": 80,
+      "se_vol": 100,
+      "player_name": "PLAYER",
+      "vibration": true,
+      "crt_filter": true,
+      "total_games_played": 0,
+      "total_play_time": 0,
+      "total_enemies_defeated": 0,
+      "total_shots_fired": 0,
+      "total_damage_taken": 0
+    });
+    reactExports.useEffect(() => {
+      if (interop && typeof interop.GetSettings === "function") {
+        try {
+          const json = interop.GetSettings();
+          const data = JSON.parse(json);
+          setValues(data);
+        } catch (e) {
+          console.error("Failed to parse settings:", e);
+          setValues({
+            "hp": 3,
+            "sp": 3,
+            "auto_fire": false,
+            "player_name": "PLAYER",
+            "bgm_vol": 80,
+            "se_vol": 100,
+            "vibration": true,
+            "crt_filter": true,
+            "total_games_played": 0,
+            "total_play_time": 0,
+            "total_enemies_defeated": 0,
+            "total_shots_fired": 0,
+            "total_damage_taken": 0
+          });
+        }
+      } else {
+        setValues({
+          "hp": 3,
+          "sp": 3,
+          "auto_fire": false,
+          "player_name": "PLAYER",
+          "bgm_vol": 80,
+          "se_vol": 100,
+          "vibration": true,
+          "crt_filter": true
+        });
+      }
+    }, [interop]);
+    reactExports.useEffect(() => {
+      if (isExiting) {
+        setOpacity(0);
+        const timer = setTimeout(() => {
+          interop == null ? void 0 : interop.SaveSettings();
+          onBack();
+        }, 300);
+        return () => clearTimeout(timer);
+      } else {
+        const timer = setTimeout(() => setOpacity(1), 50);
+        return () => clearTimeout(timer);
+      }
+    }, [isExiting, onBack]);
+    const currentCategory = CATEGORIES[selectedCategoryIndex];
+    const currentItems = SETTINGS_MAP[currentCategory];
+    const updateUnity = reactExports.useCallback((key, val) => {
+      if (interop && typeof interop.UpdateSetting === "function") {
+        interop.UpdateSetting(key, val.toString());
+      }
+    }, [interop]);
+    const handleReset = reactExports.useCallback(() => {
+      const defaults = {
+        "hp": 3,
+        "sp": 3,
+        "auto_fire": false,
+        "bgm_vol": 80,
+        "se_vol": 100,
+        "player_name": "PLAYER",
+        "vibration": true,
+        "crt_filter": true
+        // 統計情報はリセット対象外とする
+      };
+      setValues((prev) => __spreadValues(__spreadValues({}, prev), defaults));
+      Object.entries(defaults).forEach(([key, val]) => {
+        updateUnity(key, val);
+      });
+      interop == null ? void 0 : interop.PlaySound("submit");
+    }, [updateUnity, interop]);
+    const changeValue = reactExports.useCallback((itemId, delta) => {
+      setValues((prev) => {
+        var _a, _b;
+        const currentVal = prev[itemId];
+        const itemDef = currentItems.find((i) => i.id === itemId);
+        if (!itemDef) return prev;
+        let nextVal = currentVal;
+        if (itemDef.type === "slider") {
+          const min = (_a = itemDef.min) != null ? _a : 0;
+          const max = (_b = itemDef.max) != null ? _b : 100;
+          const step = max - min <= 20 ? 1 : 10;
+          const numVal = currentVal;
+          nextVal = Math.max(min, Math.min(max, numVal + delta * step));
+        } else if (itemDef.type === "toggle") {
+          nextVal = !currentVal;
+        } else if (itemDef.type === "text") {
+          return prev;
+        } else if (itemDef.type === "button") {
+          return prev;
+        } else if (itemDef.type === "stat") {
+          return prev;
+        }
+        updateUnity(itemId, nextVal);
+        return __spreadProps(__spreadValues({}, prev), { [itemId]: nextVal });
+      });
+    }, [currentItems, updateUnity]);
+    reactExports.useEffect(() => {
+      window.onTextInput = (char) => {
+        if (!isEditingName) return;
+        const upperChar = char.toUpperCase();
+        if (!CHAR_SET.includes(upperChar)) return;
+        setValues((prev) => {
+          const currentName = prev["player_name"];
+          const chars = currentName.split("");
+          chars.splice(editCursor, 0, upperChar);
+          const newName = chars.join("").slice(0, 8);
+          return __spreadProps(__spreadValues({}, prev), { "player_name": newName });
+        });
+        setEditCursor((prev) => Math.min(7, prev + 1));
+        interop == null ? void 0 : interop.PlaySound("move");
+      };
+      window.onMenuInput = (event) => {
+        if (isExiting) return;
+        const playerName = values["player_name"];
+        if (isEditingName) {
+          if (event === "backspace") {
+            if (editCursor >= playerName.length && playerName.length < 8) {
+              if (editCursor > 0) {
+                setValues((prev) => {
+                  const chars = prev["player_name"].split("");
+                  chars.splice(editCursor - 1, 1);
+                  return __spreadProps(__spreadValues({}, prev), { "player_name": chars.join("") });
+                });
+                setEditCursor((prev) => Math.max(0, prev - 1));
+                interop == null ? void 0 : interop.PlaySound("cancel");
+              }
+            } else {
+              setValues((prev) => {
+                const chars = prev["player_name"].split("");
+                chars.splice(editCursor, 1);
+                return __spreadProps(__spreadValues({}, prev), { "player_name": chars.join("") });
+              });
+              interop == null ? void 0 : interop.PlaySound("cancel");
+            }
+            return;
+          }
+          if (event === "submit" || event === "cancel") {
+            setIsEditingName(false);
+            interop == null ? void 0 : interop.PlaySound("submit");
+            updateUnity("player_name", values["player_name"]);
+            return;
+          }
+          if (event === "left") {
+            setEditCursor((prev) => Math.max(0, prev - 1));
+            interop == null ? void 0 : interop.PlaySound("move");
+          }
+          if (event === "right") {
+            setEditCursor((prev) => Math.min(playerName.length, 7, prev + 1));
+            interop == null ? void 0 : interop.PlaySound("move");
+          }
+          if (event === "up" || event === "down") {
+            setValues((prev) => {
+              const currentName = prev["player_name"];
+              const chars = currentName.split("");
+              const currentChar = chars[editCursor];
+              let charIndex = -1;
+              if (currentChar) {
+                charIndex = CHAR_SET.indexOf(currentChar);
+              }
+              const baseIndex = charIndex === -1 ? -1 : charIndex;
+              const direction = event === "down" ? 1 : -1;
+              let nextIndex;
+              if (baseIndex === -1) {
+                nextIndex = direction === 1 ? 0 : CHAR_SET.length - 1;
+              } else {
+                nextIndex = (baseIndex + direction + CHAR_SET.length) % CHAR_SET.length;
+              }
+              chars[editCursor] = CHAR_SET[nextIndex];
+              const newName = chars.join("").slice(0, 8);
+              return __spreadProps(__spreadValues({}, prev), { "player_name": newName });
+            });
+            interop == null ? void 0 : interop.PlaySound("move");
+          }
+          return;
+        }
+        if (event === "cancel") {
+          interop == null ? void 0 : interop.PlaySound("cancel");
+          if (focusArea === "item") {
+            setFocusArea("category");
+          } else {
+            setIsExiting(true);
+          }
+          return;
+        }
+        if (focusArea === "category") {
+          if (event === "up") {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedCategoryIndex((prev) => (prev - 1 + CATEGORIES.length) % CATEGORIES.length);
+            setSelectedItemIndex(0);
+          }
+          if (event === "down") {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedCategoryIndex((prev) => (prev + 1) % CATEGORIES.length);
+            setSelectedItemIndex(0);
+          }
+          if (event === "right" || event === "submit") {
+            interop == null ? void 0 : interop.PlaySound("submit");
+            setIsCategoryPressed(true);
+            setTimeout(() => setIsCategoryPressed(false), 100);
+            setFocusArea("item");
+          }
+        } else {
+          if (event === "up") {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedItemIndex((prev) => (prev - 1 + currentItems.length) % currentItems.length);
+          }
+          if (event === "down") {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedItemIndex((prev) => (prev + 1) % currentItems.length);
+          }
+          if (event === "left") {
+            const item = currentItems[selectedItemIndex];
+            if (item.type !== "text" && item.type !== "stat" && item.type !== "button") {
+              interop == null ? void 0 : interop.PlaySound("move");
+              changeValue(item.id, -1);
+            }
+          }
+          if (event === "right") {
+            const item = currentItems[selectedItemIndex];
+            if (item.type !== "text" && item.type !== "stat" && item.type !== "button") {
+              interop == null ? void 0 : interop.PlaySound("move");
+              changeValue(item.id, 1);
+            }
+          }
+          if (event === "submit") {
+            const item = currentItems[selectedItemIndex];
+            if (item.type === "text") {
+              interop == null ? void 0 : interop.PlaySound("submit");
+              setIsEditingName(true);
+              setEditCursor(0);
+            } else if (item.type === "button") {
+              if (item.id === "reset_defaults") {
+                handleReset();
+              }
+            }
+          }
+        }
+      };
+      return () => {
+        window.onMenuInput = () => {
+        };
+        window.onTextInput = () => {
+        };
+      };
+    }, [focusArea, selectedCategoryIndex, selectedItemIndex, currentItems, isExiting, interop, changeValue, isEditingName, editCursor, values, handleReset]);
+    const renderGauge = (value, max) => {
+      const total = 10;
+      const filled = Math.max(0, Math.min(total, Math.round(value / max * total)));
+      const bar = "=".repeat(filled) + "-".repeat(total - filled);
+      return { bar: `[${bar}]`, value: (value != null ? value : 0).toString() };
+    };
+    const formatTime = (seconds) => {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor(seconds % 3600 / 60);
+      const s = Math.floor(seconds % 60);
+      return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    };
+    let currentDescription = "";
+    if (focusArea === "item") {
+      currentDescription = currentItems[selectedItemIndex].description;
+    } else {
+      currentDescription = currentCategory === "STATS" ? "View play statistics." : `Configure ${currentCategory.toLowerCase()} settings.`;
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-8 text-white font-mono transition-opacity duration-300", style: { opacity }, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "SETTINGS", className: "text-4xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-sm text-cyan-600", children: "SYSTEM CONFIGURATION" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row w-full flex-1", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-1/4 border-r-2 border-cyan-900 pr-4 h-full", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-lg mb-2 text-cyan-400 font-bold tracking-widest", children: "CATEGORY" }),
+          CATEGORIES.map((cat, idx) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            MenuButton,
+            {
+              label: cat,
+              isSelected: idx === selectedCategoryIndex,
+              isPressed: isCategoryPressed && idx === selectedCategoryIndex,
+              barClass: "w-full",
+              className: "h-10 mb-2",
+              style: { opacity: focusArea === "category" ? 1 : 0.4 }
+            },
+            cat
+          ))
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-3/4 pl-8 flex-col h-full", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-lg mb-2 text-cyan-400 font-bold tracking-widest", children: currentCategory === "STATS" ? "STATISTICS" : "CONFIGURATION" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `flex-col flex-1 ${focusArea === "item" ? "opacity-100" : "opacity-60"}`, children: currentItems.map((item, idx) => {
+            var _a;
+            const isSelected = idx === selectedItemIndex;
+            const val = values[item.id];
+            let displayValue = "";
+            let displayBar = "";
+            if (item.type === "slider") {
+              const gauge = renderGauge(val, (_a = item.max) != null ? _a : 100);
+              displayBar = gauge.bar;
+              displayValue = gauge.value;
+            } else if (item.type === "toggle") {
+              displayValue = val ? "ON" : "OFF";
+            } else if (item.type === "button") {
+              displayValue = "EXECUTE";
+            } else if (item.type === "stat") {
+              if (item.id === "total_play_time") {
+                displayValue = formatTime(val || 0);
+              } else {
+                displayValue = (val || 0).toLocaleString();
+              }
+            } else {
+              displayValue = val;
+            }
+            const renderNameInput = () => {
+              const strVal = val || "";
+              return /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-row", children: Array.from({ length: 8 }).map((_, i) => {
+                const char = strVal[i] || "_";
+                const isPlaceholder = i >= strVal.length;
+                const isCursor = isEditingName && isSelected && i === editCursor;
+                return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "text",
+                  {
+                    className: `font-mono w-4 text-center text-sm ${isCursor ? "text-black bg-cyan-400" : isPlaceholder ? "text-gray-600" : "text-yellow-400"}`,
+                    style: { fontFamily: "SourceHanCodeJP" },
+                    children: char
+                  },
+                  i
+                );
+              }) });
+            };
+            return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "view",
+              {
+                className: `flex-row justify-between items-center py-1 pl-5 pr-3 mb-1 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === "item" ? "bg-gray-800 border-cyan-400" : "border-transparent"}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `text-sm ${isSelected && focusArea === "item" ? "text-white" : "text-gray-400"}`, children: item.label }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `mr-2 text-cyan-400 text-sm ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" ? "opacity-100" : "opacity-0"}`, children: "◀" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `flex-row items-center ${item.type === "slider" ? "w-48 justify-end" : item.type === "stat" ? "w-32 justify-end" : "w-32 justify-center"}`, children: item.type === "text" ? renderNameInput() : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                      displayBar && /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-yellow-400 text-sm", style: { fontFamily: "SourceHanCodeJP" }, children: displayBar }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `${item.type === "button" || item.type === "stat" ? "w-auto" : "w-12 text-right"} text-yellow-400 text-sm`, style: { fontFamily: "SourceHanCodeJP" }, children: displayValue })
+                    ] }) }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `ml-2 text-cyan-400 text-sm ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" ? "opacity-100" : "opacity-0"}`, children: "▶" })
+                  ] })
+                ]
+              },
+              item.id
+            );
+          }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mt-2 p-2 border border-cyan-900 bg-black bg-opacity-80", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-xs mb-1", children: ">> INFO_PANEL" }),
+            isEditingName ? /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row mb-1", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-xs", children: "[UP/DOWN]" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-xs mr-6", children: ":CHANGE CHAR" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-xs", children: "[LEFT/RIGHT]" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-xs", children: ":MOVE CURSOR" })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-xs", children: "[SOUTH]" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-xs mr-6", children: ":OK" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-xs", children: "[EAST]" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-xs mr-6", children: ":CANCEL" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-xs", children: "[WEST]" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-xs", children: ":DELETE" })
+              ] })
+            ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-xs", children: currentDescription })
+          ] })
+        ] })
+      ] })
     ] });
   };
   const GridBackground = () => {
@@ -10557,14 +10971,19 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   };
   const ConnectionSequence = ({ onComplete }) => {
     const [logs, setLogs] = reactExports.useState([]);
+    const [windowStyle, setWindowStyle] = reactExports.useState({ height: 0, opacity: 0 });
     reactExports.useEffect(() => {
+      const animTimer = setTimeout(() => {
+        setWindowStyle({ height: 125, opacity: 1 });
+      }, 50);
       const sequence = [
-        { text: "> ESTABLISHING CONNECTION...", delay: 0 },
-        { text: "> HANDSHAKE INITIATED...", delay: 200 },
-        { text: "> VERIFYING CREDENTIALS...", delay: 400 },
-        { text: "> BYPASSING FIREWALL...", delay: 700 },
-        { text: "> ACCESS GRANTED.", delay: 1e3 },
-        { text: "> SYSTEM ALERT: INTRUDER DETECTED.", delay: 1300, isAlert: true }
+        { text: "> ESTABLISHING CONNECTION...", delay: 100 },
+        // ウィンドウが開き始めてから表示
+        { text: "> HANDSHAKE INITIATED...", delay: 300 },
+        { text: "> VERIFYING CREDENTIALS...", delay: 500 },
+        { text: "> BYPASSING FIREWALL...", delay: 800 },
+        { text: "> ACCESS GRANTED.", delay: 1100 },
+        { text: "> SYSTEM ALERT: INTRUDER DETECTED.", delay: 1400, isAlert: true }
       ];
       let timeouts = [];
       sequence.forEach(({ text, delay, isAlert: isAlert2 }, index) => {
@@ -10576,24 +10995,47 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         }, delay);
         timeouts.push(timeout);
       });
-      return () => timeouts.forEach(clearTimeout);
+      return () => {
+        clearTimeout(animTimer);
+        timeouts.forEach(clearTimeout);
+      };
     }, [onComplete]);
     const isAlert = logs.length > 0 && logs[logs.length - 1].isAlert;
-    return /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-col items-start p-2 bg-black bg-opacity-80 border", style: { width: 300, height: 125, justifyContent: "flex-start", flexShrink: 0, borderColor: isAlert ? "#ff3333" : "#00ffff", fontFamily: "SourceHanCodeJP" }, children: logs.map((log, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "text",
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "view",
       {
-        className: "text-xs font-mono",
+        className: "flex-col items-start p-2 bg-black bg-opacity-80 border transition-all duration-300 ease-out",
         style: {
-          color: log.isAlert ? "#ff3333" : "#00ffff",
-          fontFamily: "monospace",
-          textShadow: "0 0 5px currentColor",
+          width: 300,
+          height: windowStyle.height,
+          // アニメーション
+          opacity: windowStyle.opacity,
+          // アニメーション
+          justifyContent: "flex-start",
           flexShrink: 0,
-          marginBottom: 2
+          borderColor: isAlert ? "#ff3333" : "#00ffff",
+          fontFamily: "SourceHanCodeJP",
+          overflow: "hidden"
+          // アニメーション中の中身のはみ出し防止
         },
-        children: log.text
-      },
-      i
-    )) });
+        children: logs.map((log, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "text",
+          {
+            className: "text-xs font-mono",
+            style: {
+              color: log.isAlert ? "#ff3333" : "#00ffff",
+              fontFamily: "monospace",
+              textShadow: "0 0 5px currentColor",
+              flexShrink: 0,
+              marginBottom: 2,
+              whiteSpace: "nowrap"
+            },
+            children: log.text
+          },
+          i
+        ))
+      }
+    );
   };
   const GlitchLogo = ({ isAlert }) => {
     const { offset, isGlitching } = useGlitch();

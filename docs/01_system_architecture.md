@@ -48,6 +48,7 @@ Unity側のゲームロジックは、各オブジェクト（自機、敵、UI�
 - **PlayerController:** 自機の操作を担当。
 - **EnemySpawner:** 敵の出現タイミングと生成を担当。
 - **UIManager (SceneUIManager):** スコア表示やHPゲージの更新を担当。
+- **SettingsManager:** ゲーム設定（音量、振動など）の管理と永続化（PlayerPrefs）を担当する静的クラス。
 
 ### 3.2 シングルトンパターン (Singleton Pattern)
 `GameManager` は、ゲーム中に常に1つだけ存在し、どこからでもアクセス可能にするために **シングルトンパターン** を採用しています。
@@ -129,7 +130,29 @@ private void Update()
 
 ---
 
-## 5. 画面遷移フロー (Scene Transition)
+## 5. 統計情報の記録 (Statistics Tracking)
+
+プレイヤーの活動記録を `GameData` 内の `PlayerStats` 構造体に保持し、ゲームプレイの節目で更新・保存しています。
+
+*   **記録項目:** 総プレイ時間、総撃破数、総プレイ回数、総被ダメージ数、総発射数。
+*   **更新タイミング:**
+    *   敵撃破時、被弾時、発射時（メモリ上での加算）。
+    *   ゲーム開始時、ゲームオーバー時、タイトルへ戻る時（ファイルへの保存）。
+
+---
+
+## 6. 設定データの管理 (Settings Management)
+
+設定データは、その性質に応じて保存先を分けています。
+
+*   **セーブデータ (`GameData.json`):** ユーザーの進行状況やプレイスタイルに関わる設定（HP, SP, AutoFire, PlayerName）。`GameManager` が管理。
+*   **グローバル設定 (`PlayerPrefs`):** アプリケーション全体で共有される環境設定（BGM/SE音量, 振動, CRTフィルタ）。`SettingsManager` が管理。
+
+ReactUIの `Settings` 画面での変更は即座にメモリ上に反映されますが、ファイルへの書き込み（永続化）は画面を閉じるタイミングで一括して行われます。
+
+---
+
+## 7. 画面遷移フロー (Scene Transition)
 
 タイトル画面内の遷移は React の State (`currentScreen`) で管理し、ゲームプレイへの遷移は Unity の `SceneManager` を使用します。
 
@@ -153,7 +176,7 @@ ReactUIによるリッチな演出と、Unityのシーンロードによるフ�
 
 ---
 
-## 6. ディレクトリ構成
+## 8. ディレクトリ構成
 
 *   `Assets/Scripts/`: Unity C# スクリプト (`GameManager`, `ReactInputBridge` 等)。
 *   `ReactUI/`: React プロジェクト。

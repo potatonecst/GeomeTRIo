@@ -33,11 +33,15 @@ public struct PlayerSettings
     }
 }
 
+// プレイヤーの累積統計データ
 [System.Serializable]
 public struct PlayerStats
 {
-    public float totalPlayTime;
-    public int totalEnemiesDefeated;
+    public float totalPlayTime;       // 総プレイ時間（秒）
+    public int totalEnemiesDefeated;  // 総撃破数
+    public int totalGamesPlayed;      // 総プレイ回数（ステージ開始回数）
+    public int totalDamageTaken;      // 総被ダメージ量
+    public int totalShotsFired;       // 総発射弾数
 }
 
 [System.Serializable]

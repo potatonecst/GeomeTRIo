@@ -91,6 +91,7 @@ public class CheserEnemyController : MonoBehaviour
         if (currentHP <= 0)
         {
             GameManager.instance.AddScore(20);
+            GameManager.instance.IncrementEnemiesDefeated(); //撃破数カウント
             Destroy(gameObject);
         }
     }
@@ -105,7 +106,7 @@ public class CheserEnemyController : MonoBehaviour
         }
     }
 
-        //他の敵に当たった場合
+    //他の敵に当たった場合
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))

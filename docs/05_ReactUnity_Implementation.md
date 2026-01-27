@@ -139,6 +139,22 @@ className={`
 ReactUnity環境でのパフォーマンス安定のため、JSによる毎フレーム更新ではなく、CSS Animationを使用しています。
 *   **スピナー:** `.custom-spin` クラスで `@keyframes` を定義し、`rotate` プロパティを変化させています。
 
+### 2.11 Settings (`src/title/Settings.tsx`)
+*   **構成:** 左側にカテゴリ、右側に設定項目を表示する2カラムレイアウト。
+*   **カテゴリ:** GAMEPLAY, AUDIO, SYSTEM, STATS, RESET。
+*   **Unity連携:**
+    *   マウント時に `interop.GetSettings()` で現在の設定値（統計情報含む）を取得。
+    *   値の変更は `interop.UpdateSetting()` で即座にUnity側へ通知（プレビュー用）。
+    *   画面終了時に `interop.SaveSettings()` でファイルへ保存。
+*   **文字入力:**
+    *   ゲームパッド操作を考慮し、ドラムロール式の文字入力UIを独自実装。
+    *   キーボード入力も `window.onTextInput` イベント経由でサポート。
+    *   バックスペース操作（キーボード/ゲームパッド西ボタン）に対応し、カーソル位置に応じた削除挙動（Delete/Backspace）を実装。
+
+### 2.12 Visual Feedback (`src/components/MenuButton.tsx`)
+*   **isPressedプロパティ**: ボタンが押された瞬間のフィードバック（白く発光）を制御するプロパティを追加。
+*   **実装**: `Menu`, `StageSelect`, `Ranking`, `Settings` 各画面で、決定操作時に一時的にこのフラグを有効化することで、操作のレスポンスを視覚的に伝えています。
+
 ## 3. 技術的なポイントまとめ
 1.  **宣言的UI**: 「ボタンの色を赤にする」という命令を書くのではなく、「エラー状態なら赤になる」という**ルール**を書くのがReact流です。
 2.  **コンポーネント指向**: 画面を「背景」「ロゴ」「メニュー」といった部品に分け、それぞれを独立して作ることで、複雑な画面も管理しやすくなります。
