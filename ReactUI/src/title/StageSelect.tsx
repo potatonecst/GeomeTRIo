@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { MenuButton } from '../components/MenuButton';
 import { GlitchText } from '../components/GlitchText';
 import { useGlobals } from '@reactunity/renderer';

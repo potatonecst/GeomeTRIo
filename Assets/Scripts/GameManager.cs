@@ -26,7 +26,10 @@ public class GameManager : MonoBehaviour
     public int rankingLimit = 5; //何位まで保存するか
 
     //スコア関連
-    private int score = 0;
+    // React側から参照できるようにプロパティ化
+    public int CurrentScore { get; private set; } = 0;
+    public int CurrentHP { get; private set; }
+    public int CurrentSP { get; private set; }
 
     //ポーズ関連
     private bool isPaused = false;
@@ -121,7 +124,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //ゲーム開始時にスコア表示を初期化
-        sceneUI?.UpdateScoreValueText(score);
+        sceneUI?.UpdateScoreValueText(CurrentScore);
 
         // 音量設定を適用
         ApplyAudioSettings();
@@ -270,8 +273,8 @@ public class GameManager : MonoBehaviour
     //スコアと経過時間をリセット
     public void ResetScore()
     {
-        score = 0;
-        sceneUI?.UpdateScoreValueText(score);
+        CurrentScore = 0;
+        sceneUI?.UpdateScoreValueText(CurrentScore);
 
         timeElapsed = 0;
     }
@@ -279,20 +282,22 @@ public class GameManager : MonoBehaviour
     //スコアを加算
     public void AddScore(int points)
     {
-        score += points;
+        CurrentScore += points;
         //UIの更新はSceneUIManagerに依頼
-        sceneUI?.UpdateScoreValueText(score);
+        sceneUI?.UpdateScoreValueText(CurrentScore);
     }
 
     //HP表示を更新
     public void UpdateHPDisplay(int currentHP)
     {
+        CurrentHP = currentHP; // 現在値を保持
         sceneUI?.UpdateHPValueText(currentHP);
     }
 
     //SP表示を更新
     public void UpdateSPDisplay(int currentSP)
     {
+        CurrentSP = currentSP; // 現在値を保持
         sceneUI?.UpdateSPValueText(currentSP);
     }
 
@@ -366,14 +371,14 @@ public class GameManager : MonoBehaviour
             // その設定でのランキングに空きがあるか
             bool hasRankingSlot = filteredScores.Count < rankingLimit;
             // その設定での最下位よりも高スコアか
-            bool isHigherThanLastPlace = filteredScores.Count > 0 && score > filteredScores.Last().score;
+            bool isHigherThanLastPlace = filteredScores.Count > 0 && CurrentScore > filteredScores.Last().score;
 
             if (hasRankingSlot || isHigherThanLastPlace)
             {
                 // その設定でのハイスコア更新か
-                bool isHigherThanHighScore = filteredScores.Count == 0 || score > filteredScores.First().score;
+                bool isHigherThanHighScore = filteredScores.Count == 0 || CurrentScore > filteredScores.First().score;
                 //SceneManegerにScoreEntryPanelの表示を依頼
-                sceneUI?.ShowScoreEntryPanel(score, isHigherThanHighScore);
+                sceneUI?.ShowScoreEntryPanel(CurrentScore, isHigherThanHighScore);
             }
         }
     }
@@ -398,7 +403,7 @@ public class GameManager : MonoBehaviour
             //ランキングに今回の結果を追加
             ScoreRecord newRecord = new ScoreRecord
             {
-                score = score,
+                score = CurrentScore,
                 date = System.DateTime.Now.ToString("yyyy/MM/dd HH:mm"),
                 hp = currentInitialHp,
                 sp = currentInitialSp,

@@ -42,6 +42,15 @@ public class GameInterop
         public int total_shots_fired;
     }
 
+    // ゲームプレイ中のステータスデータ
+    [System.Serializable]
+    private class InGameStatus
+    {
+        public int score;
+        public int hp;
+        public int sp;
+    }
+
     // 現在の設定値をJSONで取得するメソッド
     public string GetSettings()
     {
@@ -69,6 +78,21 @@ public class GameInterop
         };
         // 設定データをJSON文字列に変換して返します。
         return JsonUtility.ToJson(settings);
+    }
+
+    // ゲーム中のステータス（スコア、HP、SP）をJSONで取得するメソッド
+    // React側で毎フレーム呼び出して表示を更新するために使用します。
+    public string GetInGameStatus()
+    {
+        if (GameManager.instance == null) return "{}";
+
+        var status = new InGameStatus
+        {
+            score = GameManager.instance.CurrentScore,
+            hp = GameManager.instance.CurrentHP,
+            sp = GameManager.instance.CurrentSP
+        };
+        return JsonUtility.ToJson(status);
     }
 
     // 設定値を更新するメソッド

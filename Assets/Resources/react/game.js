@@ -1,7 +1,26 @@
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 (function() {
   "use strict";
   var __vite_style__ = document.createElement("style");
-  __vite_style__.textContent = "/* Standard CSS *//*$vite$:1*/";
+  __vite_style__.textContent = "*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}/*\n! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n5. Use the user's configured `sans` font-feature-settings by default.\n6. Use the user's configured `sans` font-variation-settings by default.\n7. Disable tap highlights on iOS\n*/\n\nhtml,\n:host {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n  font-feature-settings: normal; /* 5 */\n  font-variation-settings: normal; /* 6 */\n  -webkit-tap-highlight-color: transparent; /* 7 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font-family by default.\n2. Use the user's configured `mono` font-feature-settings by default.\n3. Use the user's configured `mono` font-variation-settings by default.\n4. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-feature-settings: normal; /* 2 */\n  font-variation-settings: normal; /* 3 */\n  font-size: 1em; /* 4 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-feature-settings: inherit; /* 1 */\n  font-variation-settings: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  letter-spacing: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\ninput:where([type='button']),\ninput:where([type='reset']),\ninput:where([type='submit']) {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nReset default styling for dialogs.\n*/\ndialog {\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Make elements with the HTML hidden attribute stay hidden by default */\n[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.pointer-events-auto {\n  pointer-events: auto;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.inset-0 {\n  inset: 0px;\n}\n.bottom-0 {\n  bottom: 0px;\n}\n.bottom-10 {\n  bottom: 2.5rem;\n}\n.bottom-4 {\n  bottom: 1rem;\n}\n.left-0 {\n  left: 0px;\n}\n.right-0 {\n  right: 0px;\n}\n.right-10 {\n  right: 2.5rem;\n}\n.right-8 {\n  right: 2rem;\n}\n.top-0 {\n  top: 0px;\n}\n.top-32 {\n  top: 8rem;\n}\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n.mb-0 {\n  margin-bottom: 0px;\n}\n.mb-1 {\n  margin-bottom: 0.25rem;\n}\n.mb-10 {\n  margin-bottom: 2.5rem;\n}\n.mb-2 {\n  margin-bottom: 0.5rem;\n}\n.mb-4 {\n  margin-bottom: 1rem;\n}\n.mb-6 {\n  margin-bottom: 1.5rem;\n}\n.mb-8 {\n  margin-bottom: 2rem;\n}\n.ml-2 {\n  margin-left: 0.5rem;\n}\n.ml-4 {\n  margin-left: 1rem;\n}\n.mr-1 {\n  margin-right: 0.25rem;\n}\n.mr-2 {\n  margin-right: 0.5rem;\n}\n.mr-6 {\n  margin-right: 1.5rem;\n}\n.mt-10 {\n  margin-top: 2.5rem;\n}\n.mt-2 {\n  margin-top: 0.5rem;\n}\n.mt-auto {\n  margin-top: auto;\n}\n.inline {\n  display: inline;\n}\n.flex {\n  display: flex;\n}\n.grid {\n  display: grid;\n}\n.hidden {\n  display: none;\n}\n.h-10 {\n  height: 2.5rem;\n}\n.h-12 {\n  height: 3rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-8 {\n  height: 2rem;\n}\n.h-full {\n  height: 100%;\n}\n.w-0 {\n  width: 0px;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/3 {\n  width: 33.333333%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-12 {\n  width: 3rem;\n}\n.w-28 {\n  width: 7rem;\n}\n.w-3\\/4 {\n  width: 75%;\n}\n.w-32 {\n  width: 8rem;\n}\n.w-4 {\n  width: 1rem;\n}\n.w-48 {\n  width: 12rem;\n}\n.w-6 {\n  width: 1.5rem;\n}\n.w-80 {\n  width: 20rem;\n}\n.w-\\[1px\\] {\n  width: 1px;\n}\n.w-\\[325px\\] {\n  width: 325px;\n}\n.w-auto {\n  width: auto;\n}\n.w-full {\n  width: 100%;\n}\n.flex-1 {\n  flex: 1 1 0%;\n}\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\n.animate-pulse {\n  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\n.flex-row {\n  flex-direction: row;\n}\n.flex-col {\n  flex-direction: column;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-end {\n  align-items: flex-end;\n}\n.items-center {\n  align-items: center;\n}\n.items-baseline {\n  align-items: baseline;\n}\n.justify-start {\n  justify-content: flex-start;\n}\n.justify-end {\n  justify-content: flex-end;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.gap-1 {\n  gap: 0.25rem;\n}\n.gap-2 {\n  gap: 0.5rem;\n}\n.gap-4 {\n  gap: 1rem;\n}\n.overflow-hidden {\n  overflow: hidden;\n}\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.border {\n  border-width: 1px;\n}\n.border-2 {\n  border-width: 2px;\n}\n.border-4 {\n  border-width: 4px;\n}\n.border-b {\n  border-bottom-width: 1px;\n}\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n.border-l-2 {\n  border-left-width: 2px;\n}\n.border-l-4 {\n  border-left-width: 4px;\n}\n.border-r-2 {\n  border-right-width: 2px;\n}\n.border-t-2 {\n  border-top-width: 2px;\n}\n.border-\\[\\#00ffff\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(0 255 255 / var(--tw-border-opacity, 1));\n}\n.border-\\[\\#ff3333\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 51 51 / var(--tw-border-opacity, 1));\n}\n.border-cyan-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.border-cyan-900 {\n  --tw-border-opacity: 1;\n  border-color: rgb(22 78 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));\n}\n.border-gray-800 {\n  --tw-border-opacity: 1;\n  border-color: rgb(31 41 55 / var(--tw-border-opacity, 1));\n}\n.border-red-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(220 38 38 / var(--tw-border-opacity, 1));\n}\n.border-transparent {\n  border-color: transparent;\n}\n.border-white {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));\n}\n.border-t-cyan-400 {\n  --tw-border-opacity: 1;\n  border-top-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.bg-\\[\\#00ffff\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-\\[\\#ff3333\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 51 51 / var(--tw-bg-opacity, 1));\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(34 211 238 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(22 78 99 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-800 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));\n}\n.bg-red-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(127 29 29 / var(--tw-bg-opacity, 1));\n}\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-opacity-10 {\n  --tw-bg-opacity: 0.1;\n}\n.bg-opacity-100 {\n  --tw-bg-opacity: 1;\n}\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n.bg-opacity-80 {\n  --tw-bg-opacity: 0.8;\n}\n.p-10 {\n  padding: 2.5rem;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-6 {\n  padding: 1.5rem;\n}\n.p-8 {\n  padding: 2rem;\n}\n.px-1 {\n  padding-left: 0.25rem;\n  padding-right: 0.25rem;\n}\n.px-10 {\n  padding-left: 2.5rem;\n  padding-right: 2.5rem;\n}\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n.px-6 {\n  padding-left: 1.5rem;\n  padding-right: 1.5rem;\n}\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n.py-3 {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n}\n.pb-1 {\n  padding-bottom: 0.25rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pb-20 {\n  padding-bottom: 5rem;\n}\n.pl-2 {\n  padding-left: 0.5rem;\n}\n.pl-24 {\n  padding-left: 6rem;\n}\n.pl-5 {\n  padding-left: 1.25rem;\n}\n.pl-8 {\n  padding-left: 2rem;\n}\n.pr-3 {\n  padding-right: 0.75rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.pt-4 {\n  padding-top: 1rem;\n}\n.text-center {\n  text-align: center;\n}\n.text-right {\n  text-align: right;\n}\n.font-mono {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n.font-sans {\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n}\n.text-3xl {\n  font-size: 1.875rem;\n  line-height: 2.25rem;\n}\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\n.text-5xl {\n  font-size: 3rem;\n  line-height: 1;\n}\n.text-6xl {\n  font-size: 3.75rem;\n  line-height: 1;\n}\n.text-base {\n  font-size: 1rem;\n  line-height: 1.5rem;\n}\n.text-lg {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.font-bold {\n  font-weight: 700;\n}\n.leading-none {\n  line-height: 1;\n}\n.tracking-tighter {\n  letter-spacing: -0.05em;\n}\n.tracking-widest {\n  letter-spacing: 0.1em;\n}\n.text-\\[\\#00ffff\\] {\n  --tw-text-opacity: 1;\n  color: rgb(0 255 255 / var(--tw-text-opacity, 1));\n}\n.text-\\[\\#e2e8f0\\] {\n  --tw-text-opacity: 1;\n  color: rgb(226 232 240 / var(--tw-text-opacity, 1));\n}\n.text-black {\n  --tw-text-opacity: 1;\n  color: rgb(0 0 0 / var(--tw-text-opacity, 1));\n}\n.text-cyan-400 {\n  --tw-text-opacity: 1;\n  color: rgb(34 211 238 / var(--tw-text-opacity, 1));\n}\n.text-cyan-500 {\n  --tw-text-opacity: 1;\n  color: rgb(6 182 212 / var(--tw-text-opacity, 1));\n}\n.text-cyan-600 {\n  --tw-text-opacity: 1;\n  color: rgb(8 145 178 / var(--tw-text-opacity, 1));\n}\n.text-cyan-900 {\n  --tw-text-opacity: 1;\n  color: rgb(22 78 99 / var(--tw-text-opacity, 1));\n}\n.text-gray-300 {\n  --tw-text-opacity: 1;\n  color: rgb(209 213 219 / var(--tw-text-opacity, 1));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity, 1));\n}\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity, 1));\n}\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity, 1));\n}\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity, 1));\n}\n.text-red-600 {\n  --tw-text-opacity: 1;\n  color: rgb(220 38 38 / var(--tw-text-opacity, 1));\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity, 1));\n}\n.text-yellow-400 {\n  --tw-text-opacity: 1;\n  color: rgb(250 204 21 / var(--tw-text-opacity, 1));\n}\n.opacity-0 {\n  opacity: 0;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-30 {\n  opacity: 0.3;\n}\n.opacity-50 {\n  opacity: 0.5;\n}\n.opacity-60 {\n  opacity: 0.6;\n}\n.opacity-70 {\n  opacity: 0.7;\n}\n.shadow-\\[0_0_15px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 15px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-all {\n  transition-property: all;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-colors {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-200 {\n  transition-duration: 200ms;\n}\n.duration-300 {\n  transition-duration: 300ms;\n}\n.duration-500 {\n  transition-duration: 500ms;\n}\n.duration-75 {\n  transition-duration: 75ms;\n}\n.ease-out {\n  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);\n}\n\n@font-face {\n  font-family: 'Melete-Bold';\n  src: url('res:Fonts/Melete-Bold');\n}\n\n@font-face {\n  font-family: 'Melete-Medium';\n  src: url('res:Fonts/Melete-Medium');\n}\n\n@font-face {\n  font-family: 'Melete-Regular';\n  src: url('res:Fonts/Melete-Regular');\n}\n\n@font-face {\n  font-family: 'Melete-Light';\n  src: url('res:Fonts/Melete-Light');\n}\n\n@font-face {\n  font-family: 'Melete-UltraLight';\n  src: url('res:Fonts/Melete-UltraLight');\n}\n\n@font-face {\n  font-family: 'SourceHanCodeJP';\n  src: url('res:Fonts/SourceHanCodeJP');\n}\n\n/* コントローラーアイコン用フォント */\n@font-face {\n  font-family: 'kenney_input_keyboard_&_mouse';\n  src: url('res:Fonts/kenney_input_keyboard_&_mouse');\n}\n\n@font-face {\n  font-family: 'kenney_input_nintendo_switch_2';\n  src: url('res:Fonts/kenney_input_nintendo_switch_2');\n}\n\n@font-face {\n  font-family: 'kenney_input_playstation_series';\n  src: url('res:Fonts/kenney_input_playstation_series');\n}\n\n:root {\n  font-family: sans-serif;\n  font-size: 16px;\n}\n\n/* 回転のアニメーション定義 */\n@keyframes custom-spin {\n  from {\n    /* ReactUnityでは rotate 単体プロパティが安定します */\n    /* transform: rotate(...) よりも処理負荷が軽く、ReactUnityでの動作が安定しているため採用 */\n    rotate: 0deg;\n  }\n\n  to {\n    rotate: 360deg;\n  }\n}\n\n.custom-spin {\n  animation-name: custom-spin;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n\n  /* 回転の中心を要素の真ん中に固定 */\n  transform-origin: center;\n}/*$vite$:1*/";
   document.head.appendChild(__vite_style__);
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -482,6 +501,237 @@
     return react.exports;
   }
   var reactExports = requireReact();
+  var shim = { exports: {} };
+  var useSyncExternalStoreShim_production = {};
+  var hasRequiredUseSyncExternalStoreShim_production;
+  function requireUseSyncExternalStoreShim_production() {
+    if (hasRequiredUseSyncExternalStoreShim_production) return useSyncExternalStoreShim_production;
+    hasRequiredUseSyncExternalStoreShim_production = 1;
+    var React = requireReact();
+    function is(x, y) {
+      return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
+    }
+    var objectIs = "function" === typeof Object.is ? Object.is : is, useState = React.useState, useEffect = React.useEffect, useLayoutEffect = React.useLayoutEffect, useDebugValue = React.useDebugValue;
+    function useSyncExternalStore$2(subscribe, getSnapshot) {
+      var value = getSnapshot(), _useState = useState({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
+      useLayoutEffect(
+        function() {
+          inst.value = value;
+          inst.getSnapshot = getSnapshot;
+          checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+        },
+        [subscribe, value, getSnapshot]
+      );
+      useEffect(
+        function() {
+          checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+          return subscribe(function() {
+            checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+          });
+        },
+        [subscribe]
+      );
+      useDebugValue(value);
+      return value;
+    }
+    function checkIfSnapshotChanged(inst) {
+      var latestGetSnapshot = inst.getSnapshot;
+      inst = inst.value;
+      try {
+        var nextValue = latestGetSnapshot();
+        return !objectIs(inst, nextValue);
+      } catch (error) {
+        return true;
+      }
+    }
+    function useSyncExternalStore$1(subscribe, getSnapshot) {
+      return getSnapshot();
+    }
+    var shim2 = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+    useSyncExternalStoreShim_production.useSyncExternalStore = void 0 !== React.useSyncExternalStore ? React.useSyncExternalStore : shim2;
+    return useSyncExternalStoreShim_production;
+  }
+  var hasRequiredShim;
+  function requireShim() {
+    if (hasRequiredShim) return shim.exports;
+    hasRequiredShim = 1;
+    {
+      shim.exports = requireUseSyncExternalStoreShim_production();
+    }
+    return shim.exports;
+  }
+  var shimExports = requireShim();
+  var withSelector = { exports: {} };
+  var useSyncExternalStoreWithSelector_production = {};
+  var hasRequiredUseSyncExternalStoreWithSelector_production;
+  function requireUseSyncExternalStoreWithSelector_production() {
+    if (hasRequiredUseSyncExternalStoreWithSelector_production) return useSyncExternalStoreWithSelector_production;
+    hasRequiredUseSyncExternalStoreWithSelector_production = 1;
+    var React = requireReact();
+    function is(x, y) {
+      return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
+    }
+    var objectIs = "function" === typeof Object.is ? Object.is : is, useSyncExternalStore = React.useSyncExternalStore, useRef = React.useRef, useEffect = React.useEffect, useMemo = React.useMemo, useDebugValue = React.useDebugValue;
+    useSyncExternalStoreWithSelector_production.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
+      var instRef = useRef(null);
+      if (null === instRef.current) {
+        var inst = { hasValue: false, value: null };
+        instRef.current = inst;
+      } else inst = instRef.current;
+      instRef = useMemo(
+        function() {
+          function memoizedSelector(nextSnapshot) {
+            if (!hasMemo) {
+              hasMemo = true;
+              memoizedSnapshot = nextSnapshot;
+              nextSnapshot = selector(nextSnapshot);
+              if (void 0 !== isEqual && inst.hasValue) {
+                var currentSelection = inst.value;
+                if (isEqual(currentSelection, nextSnapshot))
+                  return memoizedSelection = currentSelection;
+              }
+              return memoizedSelection = nextSnapshot;
+            }
+            currentSelection = memoizedSelection;
+            if (objectIs(memoizedSnapshot, nextSnapshot)) return currentSelection;
+            var nextSelection = selector(nextSnapshot);
+            if (void 0 !== isEqual && isEqual(currentSelection, nextSelection))
+              return memoizedSnapshot = nextSnapshot, currentSelection;
+            memoizedSnapshot = nextSnapshot;
+            return memoizedSelection = nextSelection;
+          }
+          var hasMemo = false, memoizedSnapshot, memoizedSelection, maybeGetServerSnapshot = void 0 === getServerSnapshot ? null : getServerSnapshot;
+          return [
+            function() {
+              return memoizedSelector(getSnapshot());
+            },
+            null === maybeGetServerSnapshot ? void 0 : function() {
+              return memoizedSelector(maybeGetServerSnapshot());
+            }
+          ];
+        },
+        [getSnapshot, getServerSnapshot, selector, isEqual]
+      );
+      var value = useSyncExternalStore(subscribe, instRef[0], instRef[1]);
+      useEffect(
+        function() {
+          inst.hasValue = true;
+          inst.value = value;
+        },
+        [value]
+      );
+      useDebugValue(value);
+      return value;
+    };
+    return useSyncExternalStoreWithSelector_production;
+  }
+  var hasRequiredWithSelector;
+  function requireWithSelector() {
+    if (hasRequiredWithSelector) return withSelector.exports;
+    hasRequiredWithSelector = 1;
+    {
+      withSelector.exports = requireUseSyncExternalStoreWithSelector_production();
+    }
+    return withSelector.exports;
+  }
+  var withSelectorExports = requireWithSelector();
+  var __assign$3 = function() {
+    __assign$3 = Object.assign || function(t) {
+      for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+          t[p] = s[p];
+      }
+      return t;
+    };
+    return __assign$3.apply(this, arguments);
+  };
+  function createDictionaryWatcher(dictionary, displayName) {
+    var ctx = reactExports.createContext(void 0);
+    ctx.displayName = displayName;
+    var createSubscriber = function(fields, isEqual) {
+      var snapshot = __assign$3({}, dictionary);
+      return {
+        subscribe: function(onStoreChange) {
+          snapshot = __assign$3({}, dictionary);
+          var remove = dictionary === null || dictionary === void 0 ? void 0 : dictionary.AddListener(function() {
+            var prev = snapshot;
+            snapshot = __assign$3({}, dictionary);
+            if (!fields)
+              onStoreChange();
+            else {
+              var it = fields.values();
+              for (var field = it.next().value; field; field = it.next().value) {
+                if (isEqual ? !isEqual(prev[field], snapshot[field]) : prev[field] !== snapshot[field]) {
+                  onStoreChange();
+                  break;
+                }
+              }
+            }
+          });
+          if (!remove) {
+            console.warn("".concat(displayName, " dictionary does not provide a change listener"));
+          }
+          return function() {
+            return remove === null || remove === void 0 ? void 0 : remove();
+          };
+        },
+        getSnapshot: function() {
+          return snapshot;
+        }
+      };
+    };
+    var defaultSubscriber = createSubscriber();
+    var Provider = function GlobalsProvider(_a) {
+      var children = _a.children;
+      var value = shimExports.useSyncExternalStore(defaultSubscriber.subscribe, defaultSubscriber.getSnapshot, defaultSubscriber.getSnapshot);
+      return reactExports.createElement(ctx.Provider, { value }, children);
+    };
+    function useDictionaryContext() {
+      var context = reactExports.useContext(ctx);
+      if (context === void 0) {
+        throw new Error("".concat(displayName, ".useContext must be used within a ").concat(displayName, ".Provider"));
+      }
+      return context;
+    }
+    function useValue(subscribeToAllFields, fieldEqual) {
+      if (subscribeToAllFields === void 0) {
+        subscribeToAllFields = false;
+      }
+      var fields = reactExports.useMemo(function() {
+        return /* @__PURE__ */ new Set();
+      }, []);
+      var fieldsRef = reactExports.useRef(fields);
+      var _a = reactExports.useState(false), allFieldsSubscribed = _a[0], setAllFieldsSubscribed = _a[1];
+      subscribeToAllFields || (subscribeToAllFields = allFieldsSubscribed);
+      var subscriber = reactExports.useMemo(function() {
+        return subscribeToAllFields ? defaultSubscriber : createSubscriber(fieldsRef.current, fieldEqual);
+      }, [subscribeToAllFields, fieldEqual]);
+      var value = shimExports.useSyncExternalStore(subscriber.subscribe, subscriber.getSnapshot, subscriber.getSnapshot);
+      var proxy = new Proxy(value, {
+        get: function(target, p, receiver) {
+          fields.add(p);
+          return value[p];
+        },
+        ownKeys: function(target) {
+          if (!allFieldsSubscribed)
+            setAllFieldsSubscribed(true);
+          return Reflect.ownKeys(target);
+        },
+        getOwnPropertyDescriptor: function(target, p) {
+          fields.add(p);
+          return __assign$3(__assign$3({}, Reflect.getOwnPropertyDescriptor(target, p)), { value: value[p] });
+        }
+      });
+      return proxy;
+    }
+    function useSelector(selector, isEqual) {
+      return withSelectorExports.useSyncExternalStoreWithSelector(defaultSubscriber.subscribe, defaultSubscriber.getSnapshot, defaultSubscriber.getSnapshot, selector, isEqual);
+    }
+    return { context: ctx, Provider, useValue, useContext: useDictionaryContext, useSelector };
+  }
+  var globalsWatcher = createDictionaryWatcher(Globals, "globalsContext");
+  var useGlobals = globalsWatcher.useValue;
   var constants = { exports: {} };
   var reactReconcilerConstants_production = {};
   var hasRequiredReactReconcilerConstants_production;
@@ -9678,8 +9928,169 @@
     });
     return rc;
   }
-  const GameHUD = () => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx("view", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("text", { children: "Game HUD" }) });
+  const useGameStatus = () => {
+    const globals = useGlobals();
+    const interop = globals.GameInterop;
+    const [status, setStatus] = reactExports.useState({ score: 0, hp: 3, sp: 3 });
+    reactExports.useEffect(() => {
+      let handle;
+      const loop = () => {
+        if (interop && typeof interop.GetInGameStatus === "function") {
+          try {
+            const json = interop.GetInGameStatus();
+            const data = JSON.parse(json);
+            setStatus((prev) => __spreadValues(__spreadValues({}, prev), data));
+          } catch (e) {
+          }
+        }
+        handle = requestAnimationFrame(loop);
+      };
+      handle = requestAnimationFrame(loop);
+      return () => cancelAnimationFrame(handle);
+    }, [interop]);
+    return status;
   };
-  render(/* @__PURE__ */ jsxRuntimeExports.jsx(GameHUD, {}));
+  const ProgressBar = ({ value, max, color }) => {
+    const percentage = Math.max(0, Math.min(100, value / max * 100));
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-full h-4 bg-gray-900 border border-gray-700 relative overflow-hidden", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "absolute inset-0 flex-row justify-between px-1 pointer-events-none", children: Array.from({ length: 9 }).map((_, i) => /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "w-[1px] h-full bg-black opacity-50" }, i)) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "view",
+        {
+          className: "h-full transition-all duration-300 ease-out",
+          style: {
+            width: `${percentage}%`,
+            backgroundColor: color,
+            boxShadow: `0 0 10px ${color}`
+            // 発光表現
+          }
+        }
+      )
+    ] });
+  };
+  const HUD = () => {
+    const status = useGameStatus();
+    const sidebarStyle = "h-full bg-black border-cyan-900 flex-col p-6 pointer-events-auto absolute top-0 bottom-0";
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-full h-full pointer-events-none relative", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: `${sidebarStyle} border-r-2 items-end left-0`, style: { width: 600 }, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-900 text-xs tracking-widest mt-auto", children: "SYSTEM: ONLINE" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-900 text-xs tracking-widest", children: "L-MASK: ACTIVE" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: `${sidebarStyle} border-l-2 right-0`, style: { width: 600 }, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mb-8", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-xs tracking-widest mb-1 whitespace-nowrap", children: "SCORE" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-white text-3xl tracking-widest whitespace-nowrap", style: { fontFamily: "SourceHanCodeJP" }, children: status.score.toString().padStart(8, "0") })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mb-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between mb-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-xs tracking-widest", children: "INTEGRITY" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: "text-white text-xs", children: [
+              status.hp,
+              " / 10"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ProgressBar, { value: status.hp, max: 10, color: "#ff3333" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mb-8", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between mb-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-xs tracking-widest", children: "ENERGY" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: "text-white text-xs", children: [
+              status.sp,
+              " / 10"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ProgressBar, { value: status.sp, max: 10, color: "#00ffff" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-1 border-t-2 border-cyan-900 pt-4 mt-auto", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-xs tracking-widest mb-2", children: "SYSTEM LOG" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col gap-1 opacity-70", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-500 text-xs", children: "> ENGAGING..." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-500 text-xs animate-pulse", children: "> RECORDING" })
+          ] })
+        ] })
+      ] })
+    ] });
+  };
+  const useGlitch = () => {
+    const [offset, setOffset] = reactExports.useState({ x: 0, y: 0 });
+    const [isGlitching, setIsGlitching] = reactExports.useState(false);
+    reactExports.useEffect(() => {
+      let timeoutHandle;
+      let intervalHandle;
+      let isMounted = true;
+      const loop = () => {
+        const nextDelay = Math.random() * 3e3 + 2e3;
+        timeoutHandle = setTimeout(() => {
+          if (!isMounted) return;
+          setIsGlitching(true);
+          const duration = Math.random() * 200 + 100;
+          intervalHandle = setInterval(() => {
+            setOffset({
+              x: (Math.random() - 0.5) * 10,
+              // -5px 〜 +5px の範囲でランダム
+              y: (Math.random() - 0.5) * 4
+              // -2px 〜 +2px の範囲でランダム
+            });
+          }, 50);
+          setTimeout(() => {
+            if (!isMounted) return;
+            clearInterval(intervalHandle);
+            setIsGlitching(false);
+            setOffset({ x: 0, y: 0 });
+            loop();
+          }, duration);
+        }, nextDelay);
+      };
+      loop();
+      return () => {
+        isMounted = false;
+        clearTimeout(timeoutHandle);
+        clearInterval(intervalHandle);
+      };
+    }, []);
+    return { offset, isGlitching };
+  };
+  const GlitchText = ({ text, isAlert, className, style }) => {
+    const { offset, isGlitching } = useGlitch();
+    const safeStyle = style || {};
+    const ghost1Color = isAlert ? "#ff0000" : "#ff0000";
+    const ghost2Color = isAlert ? "#ffff00" : "#00ffff";
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: `relative ${className || ""}`, style: safeStyle, children: [
+      isGlitching && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `absolute ${className || ""}`, style: __spreadProps(__spreadValues({}, safeStyle), { transform: `translate(${offset.x * 2}px, ${offset.y * 2}px)`, opacity: 0.7, color: ghost1Color }), children: text }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `absolute ${className || ""}`, style: __spreadProps(__spreadValues({}, safeStyle), { transform: `translate(${-offset.x}px, ${-offset.y}px)`, opacity: 0.7, color: ghost2Color }), children: text })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className, style: __spreadProps(__spreadValues({}, safeStyle), { transform: `translate(${offset.x}px, ${offset.y}px)` }), children: text })
+    ] });
+  };
+  const GameOverPanel = () => {
+    const globals = useGlobals();
+    const interop = globals.GameInterop;
+    const [isVisible] = reactExports.useState(false);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "view",
+      {
+        className: "absolute inset-0 items-center justify-center bg-black bg-opacity-80 transition-opacity duration-500",
+        style: {
+          opacity: isVisible ? 1 : 0,
+          pointerEvents: isVisible ? "auto" : "none"
+          // 見えない時はクリック判定を消す
+        },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col items-center p-10 border-2 border-red-600 bg-black", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "GAME OVER", isAlert: true, className: "text-6xl text-red-600 mb-8 font-bold tracking-widest" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row gap-4", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("button", { className: "bg-red-900 px-6 py-2", onClick: () => interop == null ? void 0 : interop.PlaySound("submit"), children: /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-white", children: "RETRY" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("button", { className: "bg-gray-800 px-6 py-2", onClick: () => interop == null ? void 0 : interop.PlaySound("cancel"), children: /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-white", children: "TITLE" }) })
+          ] })
+        ] })
+      }
+    );
+  };
+  const GameApp = () => {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-full h-full", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(HUD, {}),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(GameOverPanel, {})
+    ] });
+  };
+  render(/* @__PURE__ */ jsxRuntimeExports.jsx(GameApp, {}));
 })();

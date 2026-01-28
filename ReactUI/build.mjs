@@ -12,7 +12,7 @@ if (fs.existsSync(outDir)) {
 }
 
 // ビルド対象のページ一覧
-const pages = ['title', 'game'];
+const pages = ['title', 'game', 'background'];
 
 for (const page of pages) {
     console.log(`\n--- Building ${page} ---`);

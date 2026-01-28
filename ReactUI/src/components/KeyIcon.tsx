@@ -1,4 +1,3 @@
-import { type ReactNode } from 'react';
 
 interface KeyIconProps {
     icon?: string; // 画像のリソースパス (例: "res:Icons/Button_A")

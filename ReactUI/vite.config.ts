@@ -3,10 +3,11 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(() => {
   const pages = {
     title: path.resolve(__dirname, 'src/title/index.tsx'),
     game: path.resolve(__dirname, 'src/game/index.tsx'),
+    background: path.resolve(__dirname, 'src/game/background.tsx'),
   };
 
   // 環境変数からターゲットを取得、指定がなければ 'title' をデフォルトとする
@@ -27,7 +28,7 @@ export default defineConfig(({ command }) => {
           entryFileNames: '[name].js',
           chunkFileNames: '[name].js',
           assetFileNames: '[name].[ext]',
-          format: 'iife', // ReactUnity用に即時実行関数として出力
+          format: 'iife' as const, // ReactUnity用に即時実行関数として出力
           name: 'ReactApp',
         },
       },
