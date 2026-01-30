@@ -5,10 +5,11 @@ using TMPro;
 
 // React側へ公開するメソッドを持つクラス（独立させる）
 // このクラスのインスタンスがReact側のGlobalsに登録され、JavaScriptから呼び出せるようになります。
+// React側での呼び出し例: useGlobals().GameInterop.GetGameData()
 public class GameInterop
 {
     // ゲームデータをJSON形式で取得するメソッド
-    // React側からは useGlobals().GameInterop.GetGameData() のように呼び出されます。
+    // ReactはC#のオブジェクトを直接扱えないため、JSON文字列に変換して渡します。
     public string GetGameData()
     {
         if (GameManager.instance != null)
@@ -21,6 +22,7 @@ public class GameInterop
     }
 
     // JsonUtility用にシリアライズ可能なクラスを定義
+    // React側に渡したい設定データの構造を定義しています。
     // [System.Serializable]: この属性をクラスや構造体につけることで、
     // Unityのシリアライザ（Inspector表示やJsonUtilityなど）がそのデータを保存・読み込みできるようになります。
     [System.Serializable]
@@ -43,6 +45,7 @@ public class GameInterop
     }
 
     // ゲームプレイ中のステータスデータ
+    // HUD（ヘッドアップディスプレイ）の更新に必要な情報をまとめます。
     [System.Serializable]
     private class InGameStatus
     {
@@ -51,6 +54,8 @@ public class GameInterop
         public int sp;
         public int maxHp;
         public int maxSp;
+        public float spCharge;
+        public float maxSpCharge;
         public bool isGameOver;
         public bool isNewHighScore;
         public bool isPaused;
@@ -98,6 +103,8 @@ public class GameInterop
             sp = GameManager.instance.CurrentSP,
             maxHp = GameManager.instance.MaxHP,
             maxSp = GameManager.instance.MaxSP,
+            spCharge = GameManager.instance.CurrentSPCharge,
+            maxSpCharge = GameManager.instance.MaxSPCharge,
             isGameOver = GameManager.instance.IsGameOver,
             isNewHighScore = GameManager.instance.IsNewHighScore,
             isPaused = GameManager.instance.IsPaused
@@ -106,6 +113,7 @@ public class GameInterop
     }
 
     // 設定値を更新するメソッド
+    // Reactの設定画面で値が変更された時に呼び出されます。
     public void UpdateSetting(string key, string value)
     {
         switch (key)
@@ -131,6 +139,7 @@ public class GameInterop
         // ここでは保存を行わず、メモリ上の値とゲーム挙動への反映のみを行う
     }
 
+    // 設定をファイルに保存するメソッド
     public void SaveSettings()
     {
         // 設定とセーブデータをディスクに書き込みます。
@@ -167,6 +176,7 @@ public class GameInterop
     }
 
     // 指定したステージ（シーン）を開始するメソッド
+    // Reactのステージ選択画面から呼び出されます。
     public void StartGame(string stageName)
     {
         if (GameManager.instance != null)
@@ -229,11 +239,13 @@ public class GameInterop
 // DefaultExecutionOrder(-100): このスクリプトを他のスクリプト（特にReactUnity）より先に実行させるための属性。
 // これにより、ReactUnityが初期化される前にGlobalsへの登録準備を整えることができます。
 [DefaultExecutionOrder(-100)]
-// ReactInputBridge: UnityのInput Systemからの入力を検知し、React側のJavaScript関数を呼び出すブリッジクラス
+// ReactInputBridge: UnityのInput Systemからの入力を検知し、React側のJavaScript関数を呼び出すクラス
+// MonoBehaviourを継承しており、Unityのシーン上のオブジェクトにアタッチして使用します。
 public class ReactInputBridge : MonoBehaviour
 {
     public static ReactInputBridge Instance { get; private set; }
 
+    // プライマリブリッジ: シーン遷移などで複数のブリッジが存在する場合に、メインとなるものを識別するためのフラグ
     [Tooltip("このブリッジをプライマリ（GameManagerからの命令を受け取る唯一のインスタンス）として設定します。")]
     public bool isPrimaryBridge = false;
 
@@ -263,6 +275,7 @@ public class ReactInputBridge : MonoBehaviour
         }
 
         _reactRenderer = GetComponent<ReactRendererBase>();
+        // ReactRendererが見つからない場合はエラーログを出力
         if (!_reactRenderer) Debug.LogError("[ReactInputBridge] ReactRenderer not found!");
 
         // InputActionを初期化
@@ -387,6 +400,7 @@ public class ReactInputBridge : MonoBehaviour
         if (_reactRenderer != null && _reactRenderer.Context != null)
         {
             // JS側のグローバル関数 'onAnyKeyPress' を実行する
+            // ExecuteScript: C#からJavaScriptのコードを文字列として渡し、ReactUnity内で実行させるメソッドです。
             // ExecuteScriptを使うことで、C#からJavaScriptのコードを直接実行できます。
             _reactRenderer.Context.Script.ExecuteScript("if (typeof onAnyKeyPress === 'function') onAnyKeyPress();");
         }
@@ -414,6 +428,7 @@ public class ReactInputBridge : MonoBehaviour
 
     // ナビゲーション操作（矢印キー、スティック、WASD）が行われた時に呼ばれる関数
     // Input System の "Navigate" アクションに紐づけられています。
+    // 引数 value: 入力された方向ベクトル (x, y)。範囲は -1.0 ～ 1.0。
     private void OnNavigate(Vector2 value)
     {
         // 1. クールタイムのチェック
@@ -461,6 +476,7 @@ public class ReactInputBridge : MonoBehaviour
         }
     }
 
+    // React側にイベントを送信する汎用メソッド
     private void SendEvent(string eventName)
     {
         if (_reactRenderer != null && _reactRenderer.Context != null)

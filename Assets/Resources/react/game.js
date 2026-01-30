@@ -9937,6 +9937,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       sp: 3,
       maxHp: 3,
       maxSp: 3,
+      spCharge: 0,
+      maxSpCharge: 1e3,
       isGameOver: false,
       isNewHighScore: false,
       isPaused: false
@@ -10003,14 +10005,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mb-8", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between mb-1", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-2xl tracking-widest", children: "SP" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-2xl tracking-widest", children: "SP CHARGE" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: "text-white text-2xl", children: [
-              status.sp,
-              " / ",
-              status.maxSp
+              "x ",
+              status.sp
             ] })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(ProgressBar, { value: status.sp, max: status.maxSp, color: "#00ffff" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ProgressBar, { value: status.spCharge, max: status.maxSpCharge, color: "#00ffff" })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-1 border-t-2 border-cyan-900 pt-4 mt-auto", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-2xl tracking-widest mb-2", children: "SYSTEM LOG" }),

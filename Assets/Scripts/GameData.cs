@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+// [System.Serializable]: この属性をつけることで、Unityがこのクラスのデータを
+// ファイルに保存したり、Inspectorウィンドウで表示・編集したりできるようになります。
 [System.Serializable]
 public class GameData
 {
@@ -17,6 +19,7 @@ public class GameData
     public List<ScoreRecord> scoreAttackScores = new List<ScoreRecord>();
 }
 
+// プレイヤーの設定項目をまとめた構造体
 [System.Serializable]
 public struct PlayerSettings
 {
@@ -25,7 +28,7 @@ public struct PlayerSettings
     public bool autoFireEnabled;
 
     // 初期値を設定するコンストラクタ
-    public PlayerSettings(int hp = 3, int sp = 3)
+    public PlayerSettings(int hp = 3, int sp = 2)
     {
         initialHp = hp;
         initialSp = sp;
@@ -33,7 +36,7 @@ public struct PlayerSettings
     }
 }
 
-// プレイヤーの累積統計データ
+// プレイヤーの累積統計データ（プレイ時間や撃破数など）
 [System.Serializable]
 public struct PlayerStats
 {
@@ -44,6 +47,7 @@ public struct PlayerStats
     public int totalShotsFired;       // 総発射弾数
 }
 
+// スコアの記録データ
 [System.Serializable]
 public struct ScoreRecord
 {

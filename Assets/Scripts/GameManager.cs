@@ -12,10 +12,13 @@ using UnityEngine.UI; // uGUIを使用するために追加
 public class GameManager : MonoBehaviour
 {
     // シングルトンパターン (Singleton Pattern)
-    //staticなインスタンス。これにより、他のどのスクリプトからでも簡単にアクセスできる。
+    // staticなインスタンス変数。プログラム全体で共有されます。
+    // これにより、他のどのスクリプトからでも GameManager.instance でこのクラスの機能にアクセスできます。
+    // 例: GameManager.instance.AddScore(100);
     public static GameManager instance;
 
     //セーブデータ
+    // GameDataクラスのインスタンスを保持します。ここにはプレイヤー名や設定、ハイスコアなどが格納されます。
     private GameData gameData;
     public GameData Data => gameData; // 外部から読み書きするためのプロパティ
 
@@ -24,26 +27,35 @@ public class GameManager : MonoBehaviour
     private SceneUIManager sceneUI;
 
     //ランキング関連
-    public int rankingLimit = 5; //何位まで保存するか
+    public int rankingLimit = 5; // ランキングに保存する最大順位
 
     //スコア関連
     // React側から参照できるようにプロパティ化
+    // private set にすることで、外部からは読み取り専用（Read Only）にし、
+    // 値の変更はこのクラス内のメソッド（AddScoreなど）を通してのみ行えるように制限しています。
     public int CurrentScore { get; private set; } = 0;
     public int CurrentHP { get; private set; }
     public int CurrentSP { get; private set; }
     public int MaxHP { get; private set; }
     public int MaxSP { get; private set; }
 
+    // SPゲージ（チャージ）関連
+    public float CurrentSPCharge { get; private set; } = 0f; // 現在溜まっているチャージ量
+    public float MaxSPCharge => 1000f; // 1ストック溜まるのに必要なポイント（仮）
+
     // ゲーム状態フラグ
     public bool IsGameOver { get; private set; } = false;
     public bool IsNewHighScore { get; private set; } = false;
 
     // タイトル画面の演出（Press Any Button -> ログ）をスキップするかどうかのフラグ
+    // ゲームプレイからタイトルに戻った際に、演出を飛ばしてすぐにメニューを表示するために使用します。
     public bool SkipTitleSequence { get; set; } = false;
 
     //ポーズ関連
     private bool isPaused = false;
     public bool IsPaused => isPaused; // 外部公開用プロパティ
+
+    // UnityのInput System（新しい入力管理システム）のアクション定義クラス
     private PlayerInputActions playerInputActions;
 
     //経過時間
@@ -70,9 +82,15 @@ public class GameManager : MonoBehaviour
     public string currentUserId = "default_player";
     public string CurrentSaveFileName => $"user_{currentUserId}.sav";
 
-    // シーン遷移時のチラつき防止用オーバーレイ
+    // シーン遷移時のチラつき防止用オーバーレイ（黒い幕）
+    // シーンが切り替わる瞬間に画面を真っ黒にすることで、読み込み中の不自然な表示を隠します。
     private GameObject overlayCanvasObj;
     private Image overlayImage;
+
+    // スコアエクステンド関連
+    // 次にHPが回復するスコアの目標値
+    private int nextScoreExtend = 50000;
+    private const int scoreExtendInterval = 50000;
 
     void Awake()
     {
@@ -82,8 +100,12 @@ public class GameManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // シーンを切り替えてもこのオブジェクトを破壊しない
+
+            // DontDestroyOnLoad: 指定したオブジェクトを、シーン遷移時に破棄されないようにするUnityのメソッドです。
+            // 通常、シーンが切り替わると前のシーンのオブジェクトはすべて消えますが、
+            // GameManagerはゲーム全体を通して存在し続ける必要があるため、この設定を行います。
             // これにより、BGMの継続再生やスコアの保持が可能になります。
+            DontDestroyOnLoad(gameObject);
 
             // フレームレート設定
             // シューティングゲームとして滑らかな操作感を実現するため、60fpsに固定します。
@@ -102,7 +124,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // 遷移用オーバーレイの準備
+        // 遷移用オーバーレイ（黒い画面）をプログラムから生成して準備します
         SetupOverlayCanvas();
 
         //Pause時の入力システムの準備
@@ -123,11 +145,14 @@ public class GameManager : MonoBehaviour
     }
 
     // シーン遷移の隙間を埋めるための真っ黒なCanvasを生成する
+    // Unityエディタ上でPrefabを作らず、コードだけでUI（CanvasとImage）を生成しています。
     private void SetupOverlayCanvas()
     {
+        // 新しいゲームオブジェクトを作成
         overlayCanvasObj = new GameObject("TransitionOverlayCanvas");
-        DontDestroyOnLoad(overlayCanvasObj);
+        DontDestroyOnLoad(overlayCanvasObj); // これもシーン遷移で消えないようにする
 
+        // Canvasコンポーネントを追加（UIの描画に必要）
         Canvas canvas = overlayCanvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 32767; // 最前面に表示
@@ -136,6 +161,7 @@ public class GameManager : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
 
+        // 黒い画像を表示するための子オブジェクトを作成
         GameObject imageObj = new GameObject("BlackPanel");
         imageObj.transform.SetParent(overlayCanvasObj.transform, false);
 
@@ -150,6 +176,7 @@ public class GameManager : MonoBehaviour
         rect.offsetMin = Vector2.zero;
         rect.offsetMax = Vector2.zero;
 
+        // 最初は非表示にしておく
         overlayCanvasObj.SetActive(false);
     }
 
@@ -197,6 +224,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        // ポーズ中でなければ経過時間を加算
         if (Time.timeScale > 0f)
         {
             timeElapsed += Time.deltaTime;
@@ -259,6 +287,7 @@ public class GameManager : MonoBehaviour
 
     // ローディング演出付きでシーン遷移を行う
     // ReactUI側でローディング画面を表示している間に、裏で非同期読み込みを行います。
+    // StartCoroutine: コルーチン（時間をまたぐ処理）を開始するUnityのメソッドです。
     public void LoadSceneWithTransition(string sceneName)
     {
         StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
@@ -269,6 +298,7 @@ public class GameManager : MonoBehaviour
     // コルーチンとは、処理を途中で中断（yield）し、次のフレームや指定時間後に再開できる特別な関数です。
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
     {
+        // スコアや状態をリセット
         ResetScore();
 
         // React側の描画更新を待つために少し待機
@@ -277,7 +307,7 @@ public class GameManager : MonoBehaviour
         // 非同期読み込み開始
         // SceneManager.LoadSceneAsync: Unity標準のAPIです。
         // 現在のシーンを動かしたまま、裏側で次のシーンを読み込みます。
-        // 戻り値 AsyncOperation を使うことで、進捗状況の確認や遷移タイミングの制御ができます。
+        // 戻り値の AsyncOperation オブジェクトを通して、進捗状況の確認や遷移タイミングの制御ができます。
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
         // allowSceneActivation = false: 
@@ -286,7 +316,7 @@ public class GameManager : MonoBehaviour
         asyncLoad.allowSceneActivation = false;
 
         // 読み込み完了まで待機 (progressは0.9までしか進まない)
-        // allowSceneActivationがfalseの間は、progressは0.9で止まります。
+        // allowSceneActivationがfalseの間は、読み込みが完了してもprogressは0.9で止まります。
         while (asyncLoad.progress < 0.9f)
         {
             // yield return null:
@@ -296,7 +326,7 @@ public class GameManager : MonoBehaviour
         }
 
         // ロード完了後、Unity側のオーバーレイを使って滑らかにフェードアウト（暗転）させる
-        // これにより、React側の描画負荷に関わらず確実にLoading画面ごと暗転できる
+        // yield return StartCoroutine(...): 指定したコルーチンが完了するまで、この処理をここで一時停止します。
         yield return StartCoroutine(FadeOutOverlay());
 
         // シーン遷移を許可（ここで一瞬フリーズするが、ユーザーは既にロード画面を見ているので違和感が減る）
@@ -315,6 +345,7 @@ public class GameManager : MonoBehaviour
     // オーバーレイを使ってフェードアウトするコルーチン
     private IEnumerator FadeOutOverlay()
     {
+        // 黒い幕を有効化
         overlayCanvasObj.SetActive(true);
         overlayImage.color = new Color(0, 0, 0, 0); // 透明から開始
 
@@ -324,9 +355,12 @@ public class GameManager : MonoBehaviour
         float duration = 0.5f;
         float elapsed = 0f;
 
+        // 指定時間かけて透明度（alpha）を0から1に変化させるループ
         while (elapsed < duration)
         {
-            elapsed += Time.unscaledDeltaTime; // ポーズ状態でも動くようにunscaledDeltaTimeを使用
+            // Time.unscaledDeltaTime: ゲーム内時間が止まっていても（Time.timeScale=0）、
+            // 現実の時間経過を取得できるプロパティです。UIアニメーションなどで使用します。
+            elapsed += Time.unscaledDeltaTime;
             float alpha = Mathf.Clamp01(elapsed / duration);
             overlayImage.color = new Color(0, 0, 0, alpha);
             yield return null;
@@ -346,6 +380,7 @@ public class GameManager : MonoBehaviour
     public void IncrementEnemiesDefeated()
     {
         gameData.stats.totalEnemiesDefeated++;
+        AddSPCharge(50f); // 撃破ボーナス: 小型の敵1体分相当
     }
 
     // プレイヤーがダメージを受けた時に呼び出され、総被ダメージ量を加算します。
@@ -370,6 +405,7 @@ public class GameManager : MonoBehaviour
         MaxSP = SettingsManager.GetInitialSP();
         CurrentHP = MaxHP;
         CurrentSP = MaxSP;
+        CurrentSPCharge = 0f; // チャージもリセット
         // SkipTitleSequence = false; // ここではリセットしない
 
         IsGameOver = false;
@@ -379,6 +415,7 @@ public class GameManager : MonoBehaviour
         sceneUI?.UpdateScoreValueText(CurrentScore);
 
         timeElapsed = 0;
+        nextScoreExtend = scoreExtendInterval; // エクステンド目標もリセット
     }
 
     //スコアを加算
@@ -387,6 +424,14 @@ public class GameManager : MonoBehaviour
         CurrentScore += points;
         //UIの更新はSceneUIManagerに依頼
         sceneUI?.UpdateScoreValueText(CurrentScore);
+
+        // スコアエクステンド判定
+        if (CurrentScore >= nextScoreExtend)
+        {
+            HealPlayer(1);
+            nextScoreExtend += scoreExtendInterval;
+            PlaySubmitSound(); // エクステンド音（仮で決定音を使用）
+        }
     }
 
     //HP表示を更新
@@ -396,11 +441,40 @@ public class GameManager : MonoBehaviour
         sceneUI?.UpdateHPValueText(currentHP);
     }
 
+    // プレイヤーを回復するメソッド
+    public void HealPlayer(int amount)
+    {
+        CurrentHP += amount;
+        // 現在HPが最大HPを超えたら、最大HPを更新する（動的上限）
+        if (CurrentHP > MaxHP)
+        {
+            MaxHP = CurrentHP;
+        }
+        UpdateHPDisplay(CurrentHP);
+    }
+
     //SP表示を更新
     public void UpdateSPDisplay(int currentSP)
     {
         CurrentSP = currentSP; // 現在値を保持
         sceneUI?.UpdateSPValueText(currentSP);
+    }
+
+    // SPゲージを加算するメソッド（敵へのダメージや撃破時に呼ぶ）
+    public void AddSPCharge(float amount)
+    {
+        // チャージを加算
+        CurrentSPCharge += amount;
+
+        // ゲージが満タン（MaxSPCharge以上）になったらストックを増やす
+        // whileループにしているのは、一度に大量のポイントが入って2個以上溜まる場合に対応するためです。
+        while (CurrentSPCharge >= MaxSPCharge)
+        {
+            CurrentSPCharge -= MaxSPCharge; // 余剰分は持ち越し
+            // ストックを増やす（上限なし）
+            CurrentSP++;
+            sceneUI?.UpdateSPValueText(CurrentSP);
+        }
     }
 
     //

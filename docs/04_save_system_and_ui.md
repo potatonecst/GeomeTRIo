@@ -22,7 +22,7 @@ public class GameData
     public string playerName = "Player";
     
     // プレイヤー設定 (HP, SP, AutoFire)
-    public PlayerSettings settings = new PlayerSettings(3, 3);
+    public PlayerSettings settings = new PlayerSettings(3, 2);
     
     // プレイ統計
     public PlayerStats stats = new PlayerStats();

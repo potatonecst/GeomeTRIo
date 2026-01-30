@@ -2,6 +2,8 @@ import { useGameStatus } from '../hooks/useGameStatus';
 import { ProgressBar } from '../components/ProgressBar';
 
 export const HUD = () => {
+    // カスタムフック useGameStatus を使って、Unityから最新のゲーム状態（HP, SP, スコア等）を取得します。
+    // この status オブジェクトは、Unity側の値が変化するたびに自動的に更新され、再描画されます。
     const status = useGameStatus();
     // absolute配置に変更し、画面端に固定する
     // w-[325px] が効かない可能性があるため削除し、style属性で指定する
@@ -38,10 +40,10 @@ export const HUD = () => {
 
                 <view className="mb-8">
                     <view className="flex-row justify-between mb-1">
-                        <text className="text-cyan-600 text-2xl tracking-widest">SP</text>
-                        <text className="text-white text-2xl">{status.sp} / {status.maxSp}</text>
+                        <text className="text-cyan-600 text-2xl tracking-widest">SP CHARGE</text>
+                        <text className="text-white text-2xl">x {status.sp}</text>
                     </view>
-                    <ProgressBar value={status.sp} max={status.maxSp} color="#00ffff" />
+                    <ProgressBar value={status.spCharge} max={status.maxSpCharge} color="#00ffff" />
                 </view>
 
                 {/* SYSTEM LOG */}

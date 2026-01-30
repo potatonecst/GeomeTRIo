@@ -9,7 +9,7 @@
 - **技術スタック:** Unity uGUI (Canvas), TextMeshPro, Input System (UI Navigation)
 - **HUD表示:**
   - **HPゲージ:** 現在のHPを表示（ハートアイコンやバーなど）
-  - **SPゲージ:** 現在のSPを表示
+  - **SPゲージ:** 次のストックまでのチャージ率を表示（ストック数は数値で併記）
   - **スコア:** 現在の獲得スコア
   - **発射点インジケーター:** 現在どの頂点が発射口になっているかを可視化
 
@@ -38,7 +38,7 @@
     - `playerName` (string): プレイヤー名
     - `settings` (PlayerSettings): プレイヤー設定
       - `initialHp` (int): 初期HP (Default: 3)
-      - `initialSp` (int): 初期SP (Default: 3)
+      - `initialSp` (int): 初期SP (Default: 2)
       - `autoFireEnabled` (bool): オート連射設定 (Default: false)
     - `stats` (PlayerStats): プレイ統計
       - `totalPlayTime` (float): 総プレイ時間

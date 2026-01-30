@@ -23,7 +23,7 @@ type Screen = 'title' | 'stage_select' | 'ranking' | 'settings';
 // グリッド背景コンポーネント
 // 意味: 幾何学的な戦場となる仮想空間の座標グリッドを表現
 // 役割: 画面全体に広がるグリッド線を、斜めにスクロールさせて奥行きと動きを出す
-// 技術的ポイント: CSSアニメーションではなく、JSのrequestAnimationFrameを使って座標を毎フレーム計算しています。
+// 技術的ポイント: CSSアニメーションではなく、JSのrequestAnimationFrameを使って座標を毎フレーム計算し、スムーズな動きを実現しています。
 const GridBackground = () => {
     // offset: グリッドのスクロール位置を管理する状態変数 (0 ~ gridSize)
     // useState: Reactの「フック」と呼ばれる機能の一つ。コンポーネント内で変化する値を保持します。
@@ -33,7 +33,7 @@ const GridBackground = () => {
 
     // アニメーションループの設定
     // useEffect: コンポーネントの表示に合わせて「副作用（画面描画以外の処理）」を実行するフック。
-    // 第二引数に空の配列 [] を渡しているため、この処理は「コンポーネントが最初に画面に表示された時（マウント時）」に1回だけ実行されます。
+    // 第二引数（依存配列）に空の配列 [] を渡しているため、この処理は「コンポーネントが最初に画面に表示された時（マウント時）」に1回だけ実行されます。
     useEffect(() => {
         let handle: number;
         const startTime = Date.now();
@@ -48,7 +48,7 @@ const GridBackground = () => {
             // % gridSize を使うことで、一定距離進んだら0に戻り、無限に続いているように見せかける（無限スクロール）
             setOffset((elapsed * speed) % gridSize);
 
-            // requestAnimationFrame: ブラウザ（Unity）に対し、「次の画面更新のタイミングでこの関数を実行してほしい」と予約するメソッド。
+            // requestAnimationFrame: ブラウザ（ここではUnityのUIエンジン）に対し、「次の画面更新のタイミングでこの関数を実行してほしい」と予約するメソッド。
             // これを再帰的に呼び出すことで、パラパラ漫画のように連続して処理が走り、滑らかなアニメーションになります。
             handle = requestAnimationFrame(loop);
         };
@@ -343,6 +343,7 @@ const GlitchLogo = ({ isAlert }: { isAlert: boolean }) => {
 // アプリケーション全体を統括するメインコンポーネント
 // 役割: 画面遷移の状態管理、背景の描画、Unityからの入力イベントの受け口として機能します。
 const TitleApp = () => {
+    // useGlobals: ReactUnityが提供するフック。Unity側で登録したグローバルオブジェクトにアクセスできます。
     const globals = useGlobals() as any;
     // GameInteropをコンポーネントのトップレベルで取得し、各関数で使い回せるようにする
     const interop = globals.GameInterop;
@@ -369,6 +370,7 @@ const TitleApp = () => {
     const [shutdownOpacity, setShutdownOpacity] = useState(0);
 
     // 初期化済みかどうかを管理するRef
+    // useRef: 再描画されても値が保持される「箱」を作ります。useStateと違い、値を書き換えても再描画は発生しません。
     const initializedRef = useRef(false);
 
     // 初期化処理: ゲームから戻ってきた場合はタイトル演出をスキップする
@@ -396,7 +398,7 @@ const TitleApp = () => {
         // 1. Press Any Button の検知
         if (currentScreen === 'title' && connectionState === 'idle') {
             // windowオブジェクトにUnityから呼び出される関数を定義する
-            // (window as any): TypeScriptの型チェックを回避して、windowオブジェクトに独自のプロパティを追加するための書き方。
+            // (window as any): TypeScriptの型チェックを回避して、windowオブジェクトに独自のプロパティ（onAnyKeyPress）を追加するための書き方。
             (window as any).onAnyKeyPress = () => {
                 interop?.PlaySound('submit');
                 setConnectionState('connecting');
@@ -438,7 +440,7 @@ const TitleApp = () => {
     // 接続シーケンス完了時の処理
     // useCallback: 関数定義を「メモ化（キャッシュ）」するフックです。
     // 通常、Reactコンポーネントが再描画されるたびに、内部の関数はすべて新しく作り直されます。
-    // しかし、useCallbackを使うと、依存配列（第2引数）が変わらない限り、同じ関数インスタンスを再利用します。
+    // しかし、useCallbackを使うと、依存配列（第2引数）の中身が変わらない限り、同じ関数インスタンスを再利用します。
     // これにより、この関数を受け取る子コンポーネントが無駄に再描画されるのを防ぎます。
     const handleConnectionComplete = useCallback(() => {
         setConnectionState('connected'); // 状態を「接続済み（メニュー表示）」に変更

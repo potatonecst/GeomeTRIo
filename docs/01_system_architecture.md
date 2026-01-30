@@ -171,7 +171,7 @@ ReactUIによるリッチな演出と、Unityのシーンロードによるフ�
 2.  **ローディング表示:** React側で "LOADING" とスピナーを表示。
 3.  **非同期ロード開始:** `GameManager` が `SceneManager.LoadSceneAsync` を開始 (`allowSceneActivation = false`)。
 4.  **演出待機:** 最低0.5秒間待機し、ローディングアニメーションを見せる。
-5.  **暗転 (Blackout):** `GameManager` から `ReactInputBridge.FadeOutScreen()` を呼び出し、React側で黒いオーバーレイを表示。
+5.  **暗転 (Blackout):** ロード完了後、`GameManager` が uGUI の黒いオーバーレイをフェードインさせて画面を暗転させる。
 6.  **シーン切り替え:** 暗転完了後、`allowSceneActivation = true` にして実際にシーンを切り替える。
 
 ---
