@@ -4,7 +4,7 @@
  * このファイルはタイトル画面全体の構成、背景演出、画面遷移のロジックを管理しています。
  */
 import { render, useGlobals } from '@reactunity/renderer';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import '../index.css';
 import { Menu } from './Menu';
 import { StageSelect } from './StageSelect';
@@ -29,7 +29,7 @@ const GridBackground = () => {
     // useState: Reactの「フック」と呼ばれる機能の一つ。コンポーネント内で変化する値を保持します。
     // setOffset関数を呼ぶと、Reactはこのコンポーネントを再描画（リレンダリング）して画面を更新します。
     const [offset, setOffset] = useState(0);
-    const gridSize = 160; // グリッドの間隔
+    const gridSize = 320; // グリッドの間隔 (大きくする)
 
     // アニメーションループの設定
     // useEffect: コンポーネントの表示に合わせて「副作用（画面描画以外の処理）」を実行するフック。
@@ -221,7 +221,7 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
     useEffect(() => {
         // マウント直後にアニメーションを開始（ウィンドウを縦に展開）
         const animTimer = setTimeout(() => {
-            setWindowStyle({ height: 125, opacity: 1 });
+            setWindowStyle({ height: 320, opacity: 1 });
         }, 50);
 
         // 表示するログの内容とタイミング
@@ -268,7 +268,7 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
         <view
             className="flex-col items-start p-2 bg-black bg-opacity-80 border transition-all duration-300 ease-out"
             style={{
-                width: 300,
+                width: 1000,
                 height: windowStyle.height, // アニメーション
                 opacity: windowStyle.opacity, // アニメーション
                 justifyContent: 'flex-start',
@@ -282,7 +282,7 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
             {logs.map((log, i) => (
                 <text
                     key={i}
-                    className="text-xs font-mono"
+                    className="text-4xl font-mono"
                     style={{
                         color: log.isAlert ? '#ff3333' : '#00ffff',
                         fontFamily: 'monospace',
@@ -318,23 +318,23 @@ const GlitchLogo = ({ isAlert }: { isAlert: boolean }) => {
             {isGlitching && (
                 <>
                     <view className="flex-row items-baseline absolute" style={{ transform: `translate(${offset.x * 2}px, ${offset.y * 2}px)`, opacity: 0.7 }}>
-                        <text className="text-5xl" style={{ fontFamily: 'Melete-Light', color: '#ff0000' }}>GEOME</text>
-                        <text className="text-5xl mx-1" style={{ fontFamily: 'Melete-Bold', color: '#ff0000' }}>TRI</text>
-                        <text className="text-5xl" style={{ fontFamily: 'Melete-Light', color: '#ff0000' }}>O</text>
+                        <text className="text-9xl" style={{ fontFamily: 'Melete-Light', color: '#ff0000' }}>GEOME</text>
+                        <text className="text-9xl mx-1" style={{ fontFamily: 'Melete-Bold', color: '#ff0000' }}>TRI</text>
+                        <text className="text-9xl" style={{ fontFamily: 'Melete-Light', color: '#ff0000' }}>O</text>
                     </view>
                     <view className="flex-row items-baseline absolute" style={{ transform: `translate(${-offset.x}px, ${-offset.y}px)`, opacity: 0.7 }}>
-                        <text className="text-5xl" style={{ fontFamily: 'Melete-Light', color: '#00ffff' }}>GEOME</text>
-                        <text className="text-5xl mx-1" style={{ fontFamily: 'Melete-Bold', color: '#00ffff' }}>TRI</text>
-                        <text className="text-5xl" style={{ fontFamily: 'Melete-Light', color: '#00ffff' }}>O</text>
+                        <text className="text-9xl" style={{ fontFamily: 'Melete-Light', color: '#00ffff' }}>GEOME</text>
+                        <text className="text-9xl mx-1" style={{ fontFamily: 'Melete-Bold', color: '#00ffff' }}>TRI</text>
+                        <text className="text-9xl" style={{ fontFamily: 'Melete-Light', color: '#00ffff' }}>O</text>
                     </view>
                 </>
             )}
 
             {/* メインロゴ */}
             <view className="flex-row items-baseline" style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}>
-                <text className="text-5xl" style={{ fontFamily: 'Melete-Light', color: baseColor }}>GEOME</text>
-                <text className="text-5xl mx-1 animate-pulse transition-colors duration-300" style={{ fontFamily: 'Melete-Bold', color: triColor }}>TRI</text>
-                <text className="text-5xl" style={{ fontFamily: 'Melete-Light', color: baseColor }}>O</text>
+                <text className="text-9xl" style={{ fontFamily: 'Melete-Light', color: baseColor }}>GEOME</text>
+                <text className="text-9xl mx-1 animate-pulse transition-colors duration-300" style={{ fontFamily: 'Melete-Bold', color: triColor }}>TRI</text>
+                <text className="text-9xl" style={{ fontFamily: 'Melete-Light', color: baseColor }}>O</text>
             </view>
         </view>
     );
@@ -353,8 +353,8 @@ const TitleApp = () => {
     // メニューのカーソル位置を記憶するState (初期値: 0)
     const [lastMenuIndex, setLastMenuIndex] = useState(0);
 
-    // 接続状態: 'idle'(待機) -> 'connecting'(ログ表示) -> 'connected'(メニュー表示) -> 'disconnecting'(切断中) -> 'exiting'(アプリ終了中)
-    const [connectionState, setConnectionState] = useState<'idle' | 'connecting' | 'connected' | 'disconnecting' | 'exiting'>('idle');
+    // 接続状態: 'initializing'(初期化中) -> 'idle'(待機) -> 'connecting'(ログ表示) -> 'connected'(メニュー表示) -> ...
+    const [connectionState, setConnectionState] = useState<'initializing' | 'idle' | 'connecting' | 'connected' | 'disconnecting' | 'exiting'>('initializing');
 
     // ゲーム開始演出用
     const [isGameStarting, setIsGameStarting] = useState(false);
@@ -367,6 +367,28 @@ const TitleApp = () => {
 
     // 終了メッセージの表示制御用
     const [shutdownOpacity, setShutdownOpacity] = useState(0);
+
+    // 初期化済みかどうかを管理するRef
+    const initializedRef = useRef(false);
+
+    // 初期化処理: ゲームから戻ってきた場合はタイトル演出をスキップする
+    useEffect(() => {
+        // 既に初期化済みなら何もしない
+        if (initializedRef.current) return;
+
+        // interopが利用可能になるまで何もしない
+        if (!interop || typeof interop.ShouldSkipTitleSequence !== 'function') {
+            return;
+        }
+
+        initializedRef.current = true;
+
+        if (interop.ShouldSkipTitleSequence()) {
+            setConnectionState('connected'); // メニュー画面から開始
+        } else {
+            setConnectionState('idle'); // 通常通りPress Any Buttonから開始
+        }
+    }, [interop]);
 
     // Unityからの入力イベントを受け取るための設定
     // useEffect: コンポーネントのマウント時や状態変化時に実行される副作用フック
@@ -478,7 +500,7 @@ const TitleApp = () => {
 
             {/* タイトル画面 */}
             {currentScreen === 'title' && (
-                <view className="w-full h-full flex-col">
+                <view className="w-full h-full flex-col p-12">
                     {/* 上半分: タイトルロゴ */}
                     <view className="flex-1 w-full items-center justify-end pb-20">
                         {/* グリッチエフェクト付きロゴ */}
@@ -487,19 +509,22 @@ const TitleApp = () => {
 
                     {/* 下半分: メニュー/ボタン */}
                     <view className="flex-1 w-full items-center justify-start">
+                        {/* 初期化中は何も表示しない（一瞬のチラつき防止） */}
+                        {connectionState === 'initializing' && null}
+
                         {/* 待機状態: Press Any Button を表示 */}
                         {connectionState === 'idle' && (
                             <view className="transition-opacity duration-300 opacity-100">
                                 {/* Press Any Button: メニュー項目と同様に三角を追加 */}
-                                <view className="relative flex-row items-center justify-center px-10 py-3">
+                                <view className="relative flex-row items-center justify-center px-16 py-6">
                                     {/* 背景: 枠線と薄いシアンでサイバー感を出す */}
                                     <view className="absolute left-0 top-0 bottom-0 right-0 border border-[#00ffff] bg-[#00ffff] bg-opacity-10 animate-pulse" />
 
                                     {/* 三角（自機）: まだ侵入前なので白で表示 */}
-                                    <text className="text-xl text-white mr-2">▶</text>
+                                    <text className="text-5xl text-white mr-6">▶</text>
 
                                     {/* テキスト: シアンで発光感 */}
-                                    <text className="text-base text-[#00ffff] font-bold tracking-widest" style={{ textShadow: '0 0 8px #00ffff', fontFamily: 'SourceHanCodeJP' }}>
+                                    <text className="text-5xl text-[#00ffff] font-bold tracking-widest" style={{ textShadow: '0 0 8px #00ffff', fontFamily: 'SourceHanCodeJP' }}>
                                         PRESS ANY BUTTON
                                     </text>
                                 </view>
@@ -527,7 +552,7 @@ const TitleApp = () => {
                         {/* 終了メッセージ */}
                         {connectionState === 'exiting' && (
                             <view className="absolute transition-opacity duration-300" style={{ opacity: shutdownOpacity, top: '25%' }}>
-                                <GlitchText text="SHUTTING DOWN..." isAlert={true} className="text-xl text-red-500 whitespace-nowrap" />
+                                <GlitchText text="SHUTTING DOWN..." isAlert={true} className="text-6xl text-red-500 whitespace-nowrap" />
                             </view>
                         )}
                     </view>
@@ -549,15 +574,20 @@ const TitleApp = () => {
                 <Settings onBack={() => setCurrentScreen('title')} />
             )}
 
-            {/* ゲーム開始メッセージ */}
-            {isGameStarting && (
-                <view className="absolute bottom-10 right-10 flex-row items-center transition-opacity duration-300" style={{ opacity: 1 }}>
-                    <GlitchText text="LOADING" isAlert={false} className="text-xl text-cyan-400 whitespace-nowrap tracking-widest" />
-                    <view className="custom-spin w-6 h-6 border-4 border-cyan-900 border-t-cyan-400 rounded-full ml-4" />
-                </view>
-            )}
+            {/* ローディング画面: 暗転の下に配置 */}
+            <view
+                className="absolute inset-0 items-center justify-center bg-black pointer-events-none transition-opacity duration-500"
+                style={{ opacity: isGameStarting ? 1 : 0, zIndex: 9998 }}
+            >
+                {isGameStarting && (
+                    <view className="flex-row items-center">
+                        <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" />
+                        <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
+                    </view>
+                )}
+            </view>
 
-            {/* 暗転オーバーレイ: シーン遷移直前のフリーズを隠すために最前面に表示 */}
+            {/* 暗転オーバーレイ: 最前面 */}
             <view
                 className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
                 style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
@@ -581,7 +611,7 @@ const TitleApp = () => {
             {/* 操作ガイドはコントローラーのボタン配置差異の問題により廃止しました */}
             {currentScreen === 'title' && (
                 <view className="absolute bottom-4 w-full items-center justify-center pointer-events-none">
-                    <text className="text-gray-500 text-xs font-sans">© 2026 potatonecst</text>
+                    <text className="text-gray-500 text-2xl font-sans">© 2026 potatonecst</text>
                 </view>
             )}
         </view>

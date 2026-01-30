@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.UI; // uGUIを使用するために追加
 
 [RequireComponent(typeof(AudioSource))]
 public class GameManager : MonoBehaviour
@@ -30,9 +31,19 @@ public class GameManager : MonoBehaviour
     public int CurrentScore { get; private set; } = 0;
     public int CurrentHP { get; private set; }
     public int CurrentSP { get; private set; }
+    public int MaxHP { get; private set; }
+    public int MaxSP { get; private set; }
+
+    // ゲーム状態フラグ
+    public bool IsGameOver { get; private set; } = false;
+    public bool IsNewHighScore { get; private set; } = false;
+
+    // タイトル画面の演出（Press Any Button -> ログ）をスキップするかどうかのフラグ
+    public bool SkipTitleSequence { get; set; } = false;
 
     //ポーズ関連
     private bool isPaused = false;
+    public bool IsPaused => isPaused; // 外部公開用プロパティ
     private PlayerInputActions playerInputActions;
 
     //経過時間
@@ -59,6 +70,10 @@ public class GameManager : MonoBehaviour
     public string currentUserId = "default_player";
     public string CurrentSaveFileName => $"user_{currentUserId}.sav";
 
+    // シーン遷移時のチラつき防止用オーバーレイ
+    private GameObject overlayCanvasObj;
+    private Image overlayImage;
+
     void Awake()
     {
         // シーン内にGameManagerが一つしか存在しないようにするための一般的な設定（シングルトンパターン）
@@ -69,6 +84,11 @@ public class GameManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject); // シーンを切り替えてもこのオブジェクトを破壊しない
             // これにより、BGMの継続再生やスコアの保持が可能になります。
+
+            // フレームレート設定
+            // シューティングゲームとして滑らかな操作感を実現するため、60fpsに固定します。
+            QualitySettings.vSyncCount = 0; // VSyncを無効化（targetFrameRateを有効にするため）
+            Application.targetFrameRate = 60;
 
             //セーブデータをロード
             gameData = SaveSystem.Load(CurrentSaveFileName);
@@ -81,6 +101,9 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        // 遷移用オーバーレイの準備
+        SetupOverlayCanvas();
 
         //Pause時の入力システムの準備
         playerInputActions = new PlayerInputActions();
@@ -97,6 +120,37 @@ public class GameManager : MonoBehaviour
         bgmAudioSource = gameObject.AddComponent<AudioSource>();
         bgmAudioSource.loop = true;
         bgmAudioSource.playOnAwake = false;
+    }
+
+    // シーン遷移の隙間を埋めるための真っ黒なCanvasを生成する
+    private void SetupOverlayCanvas()
+    {
+        overlayCanvasObj = new GameObject("TransitionOverlayCanvas");
+        DontDestroyOnLoad(overlayCanvasObj);
+
+        Canvas canvas = overlayCanvasObj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 32767; // 最前面に表示
+
+        CanvasScaler scaler = overlayCanvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+
+        GameObject imageObj = new GameObject("BlackPanel");
+        imageObj.transform.SetParent(overlayCanvasObj.transform, false);
+
+        overlayImage = imageObj.AddComponent<Image>();
+        overlayImage.color = Color.black;
+        overlayImage.raycastTarget = false; // 入力は阻害しない
+
+        // 全画面に広げる
+        RectTransform rect = overlayImage.rectTransform;
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        overlayCanvasObj.SetActive(false);
     }
 
     private void OnEnable()
@@ -166,6 +220,16 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         PlayGameBGM(scene.name);
+
+        // ゲームプレイシーンならプレイ回数を加算して保存
+        if (scene.name == "Stage1" || scene.name == "ScoreAttack")
+        {
+            gameData.stats.totalGamesPlayed++;
+            SaveGameData();
+        }
+
+        // シーンロード完了後、少し待ってからオーバーレイを消す（Reactの初期化待ち）
+        StartCoroutine(HideOverlayCoroutine());
     }
 
     //SceneUIManagerの登録
@@ -207,6 +271,9 @@ public class GameManager : MonoBehaviour
     {
         ResetScore();
 
+        // React側の描画更新を待つために少し待機
+        yield return new WaitForSeconds(0.1f);
+
         // 非同期読み込み開始
         // SceneManager.LoadSceneAsync: Unity標準のAPIです。
         // 現在のシーンを動かしたまま、裏側で次のシーンを読み込みます。
@@ -228,21 +295,44 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // 演出のために少し待機 (0.5秒)。
-        // これにより、読み込みが一瞬で終わっても「LOADING」表示をユーザーに認識させることができます。
-        yield return new WaitForSeconds(0.5f);
-
-        // 画面を暗転させる（フリーズを隠すため）
-        // シーン切り替えの瞬間にメインスレッドが停止して描画が固まるのを、黒画面で隠します。
-        if (ReactInputBridge.Instance != null)
-        {
-            ReactInputBridge.Instance.FadeOutScreen();
-            // React側でフェードアウトアニメーションが始まるよう命令を送ります。
-        }
-        yield return new WaitForSeconds(0.5f); // フェードアウトのアニメーション時間待機
+        // ロード完了後、Unity側のオーバーレイを使って滑らかにフェードアウト（暗転）させる
+        // これにより、React側の描画負荷に関わらず確実にLoading画面ごと暗転できる
+        yield return StartCoroutine(FadeOutOverlay());
 
         // シーン遷移を許可（ここで一瞬フリーズするが、ユーザーは既にロード画面を見ているので違和感が減る）
         asyncLoad.allowSceneActivation = true;
+    }
+
+    // オーバーレイを非表示にするコルーチン
+    private IEnumerator HideOverlayCoroutine()
+    {
+        // ReactUnityの初期化とフェードイン開始を待つ（0.2秒程度）
+        // React側は isBlackout=true で開始されるため、この黒幕が消えても下は黒い状態になっている
+        yield return new WaitForSeconds(0.2f);
+        overlayCanvasObj.SetActive(false);
+    }
+
+    // オーバーレイを使ってフェードアウトするコルーチン
+    private IEnumerator FadeOutOverlay()
+    {
+        overlayCanvasObj.SetActive(true);
+        overlayImage.color = new Color(0, 0, 0, 0); // 透明から開始
+
+        // Canvasを表示した直後の描画更新を待つ（いきなり黒くならないようにする安全策）
+        yield return null;
+
+        float duration = 0.5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime; // ポーズ状態でも動くようにunscaledDeltaTimeを使用
+            float alpha = Mathf.Clamp01(elapsed / duration);
+            overlayImage.color = new Color(0, 0, 0, alpha);
+            yield return null;
+        }
+
+        overlayImage.color = Color.black; // 確実に真っ黒にする
     }
 
     //
@@ -274,6 +364,18 @@ public class GameManager : MonoBehaviour
     public void ResetScore()
     {
         CurrentScore = 0;
+        Time.timeScale = 1f; // 時間停止を確実に解除
+        // 表示用のキャッシュも初期値に戻しておく（プレイヤー生成までの繋ぎ）
+        MaxHP = SettingsManager.GetInitialHP();
+        MaxSP = SettingsManager.GetInitialSP();
+        CurrentHP = MaxHP;
+        CurrentSP = MaxSP;
+        // SkipTitleSequence = false; // ここではリセットしない
+
+        IsGameOver = false;
+        IsNewHighScore = false;
+
+        isPaused = false; // ポーズ状態もリセット
         sceneUI?.UpdateScoreValueText(CurrentScore);
 
         timeElapsed = 0;
@@ -328,7 +430,7 @@ public class GameManager : MonoBehaviour
         bgmAudioSource?.Pause(); //BGMを一時停止
 
         //SceneUIManagerにPausePanelの表示を依頼
-        sceneUI?.ShowPausePanel();
+        //sceneUI?.ShowPausePanel(); // React側で表示するため無効化
     }
 
     public void ResumeGame()
@@ -347,6 +449,8 @@ public class GameManager : MonoBehaviour
         //BGMを停止
         bgmAudioSource?.Stop();
 
+        IsGameOver = true;
+
         //現在のステージのシーン名を取得
         string currentSceneName = SceneManager.GetActiveScene().name;
 
@@ -355,7 +459,7 @@ public class GameManager : MonoBehaviour
         else if (currentSceneName == "ScoreAttack") currentScores = gameData.scoreAttackScores;
 
         //SceneManagerにGameOverPanelの表示を依頼
-        sceneUI?.ShowGameOverPanel();
+        //sceneUI?.ShowGameOverPanel(); // React側で表示するため無効化
 
         if (currentScores != null)
         {
@@ -378,14 +482,16 @@ public class GameManager : MonoBehaviour
                 // その設定でのハイスコア更新か
                 bool isHigherThanHighScore = filteredScores.Count == 0 || CurrentScore > filteredScores.First().score;
                 //SceneManegerにScoreEntryPanelの表示を依頼
-                sceneUI?.ShowScoreEntryPanel(CurrentScore, isHigherThanHighScore);
+                //sceneUI?.ShowScoreEntryPanel(CurrentScore, isHigherThanHighScore); // React側で表示するため無効化
+                IsNewHighScore = isHigherThanHighScore;
             }
         }
     }
 
     public void SaveScore()
     {
-        PlaySubmitSound(); //効果音再生
+        // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
+        // PlaySubmitSound(); 
 
         string currentSceneName = SceneManager.GetActiveScene().name;
 
@@ -446,7 +552,11 @@ public class GameManager : MonoBehaviour
     //リスタート
     public void RestartGame()
     {
-        PlaySubmitSound(); //効果音再生
+        // ランクインしていれば保存
+        SaveScore();
+
+        // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
+        // PlaySubmitSound(); 
 
         //スコアをリセット
         ResetScore();
@@ -460,17 +570,63 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToTitle()
     {
+        // ランクインしていれば保存
+        SaveScore();
+
         // 途中終了した場合も、そこまでのプレイ時間を加算して保存する
         gameData.stats.totalPlayTime += timeElapsed;
         SaveGameData();
 
-        PlayCancelSound(); //効果音再生
+        // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
+        // PlayCancelSound();
 
-        //止まっていた時間を戻す
-        Time.timeScale = 1f;
+        // 次回タイトル画面読み込み時に演出をスキップするようにフラグを立てる
+        SkipTitleSequence = true;
+
+        // ここでは時間を戻さず、コルーチン内で制御する
+        // Time.timeScale = 1f;
+        // isPaused = false;
 
         //タイトル画面を読み込む
-        SceneManager.LoadScene("TitleScene");
+        //SceneManager.LoadScene("TitleScene"); // 同期ロードを廃止
+        StartCoroutine(ReturnToTitleCoroutine());
+    }
+
+    private IEnumerator ReturnToTitleCoroutine()
+    {
+        // 1. React側にローディング表示を依頼
+        if (ReactInputBridge.Instance != null)
+        {
+            ReactInputBridge.Instance.ShowLoadingScreen();
+        }
+
+        // React側の描画更新を待つ
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        // 2. 非同期読み込み開始
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("TitleScene");
+        asyncLoad.allowSceneActivation = false;
+
+        // 3. 読み込み完了まで待機
+        while (asyncLoad.progress < 0.9f)
+        {
+            yield return null;
+        }
+
+        // 演出待機
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        // 4. 暗転
+        if (ReactInputBridge.Instance != null)
+        {
+            ReactInputBridge.Instance.FadeOutScreen();
+        }
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        // 5. 時間とポーズ状態をリセットしてシーン遷移
+        Time.timeScale = 1f;
+        isPaused = false;
+        asyncLoad.allowSceneActivation = true;
     }
 
     //カーソル移動効果音再生

@@ -8,7 +8,16 @@ export const useGameStatus = () => {
     const interop = globals.GameInterop;
 
     // 初期値
-    const [status, setStatus] = useState({ score: 0, hp: 3, sp: 3 });
+    const [status, setStatus] = useState({
+        score: 0,
+        hp: 3,
+        sp: 3,
+        maxHp: 3,
+        maxSp: 3,
+        isGameOver: false,
+        isNewHighScore: false,
+        isPaused: false
+    });
 
     useEffect(() => {
         let handle: number;

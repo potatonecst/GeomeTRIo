@@ -476,18 +476,18 @@ export const Settings = ({ onBack }: SettingsProps) => {
     }
 
     return (
-        <view className="flex-col w-full h-full p-8 text-white font-mono transition-opacity duration-300" style={{ opacity }}>
+        <view className="flex-col w-full h-full p-12 text-white font-mono transition-opacity duration-300" style={{ opacity }}>
             {/* Header */}
             <view className="flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full">
                 {/* whitespace-nowrapを追加して、折り返しを防止 */}
-                <GlitchText text="SETTINGS" className="text-4xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" />
-                <text className="text-sm text-cyan-600">SYSTEM CONFIGURATION</text>
+                <GlitchText text="SETTINGS" className="text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" />
+                <text className="text-3xl text-cyan-600">SYSTEM CONFIGURATION</text>
             </view>
 
             <view className="flex-row w-full flex-1">
                 {/* Left Column: Categories */}
                 <view className="w-1/4 border-r-2 border-cyan-900 pr-4 h-full">
-                    <text className="text-lg mb-2 text-cyan-400 font-bold tracking-widest">CATEGORY</text>
+                    <text className="text-4xl mb-6 text-cyan-400 font-bold tracking-widest">CATEGORY</text>
                     {CATEGORIES.map((cat, idx) => (
                         <MenuButton
                             key={cat}
@@ -496,7 +496,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                             // カテゴリ選択エリアにフォーカスがあり、かつ決定ボタンが押された瞬間に光らせる
                             isPressed={isCategoryPressed && idx === selectedCategoryIndex}
                             barClass="w-full"
-                            className="h-10 mb-2"
+                            className="h-24 mb-6"
                             style={{ opacity: focusArea === 'category' ? 1 : 0.4 }}
                         />
                     ))}
@@ -504,7 +504,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
 
                 {/* Right Column: Items */}
                 <view className="w-3/4 pl-8 flex-col h-full">
-                    <text className="text-lg mb-2 text-cyan-400 font-bold tracking-widest">
+                    <text className="text-5xl mb-6 text-cyan-400 font-bold tracking-widest">
                         {currentCategory === 'STATS' ? 'STATISTICS' : 'CONFIGURATION'}
                     </text>
 
@@ -555,7 +555,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                                             return (
                                                 <text
                                                     key={i}
-                                                    className={`font-mono w-4 text-center text-sm ${isCursor ? 'text-black bg-cyan-400' : (isPlaceholder ? 'text-gray-600' : 'text-yellow-400')}`}
+                                                    className={`font-mono w-12 text-center text-4xl ${isCursor ? 'text-black bg-cyan-400' : (isPlaceholder ? 'text-gray-600' : 'text-yellow-400')}`}
                                                     style={{ fontFamily: 'SourceHanCodeJP' }}
                                                 >
                                                     {char}
@@ -570,32 +570,32 @@ export const Settings = ({ onBack }: SettingsProps) => {
                                 <view
                                     key={item.id}
                                     // flex-shrink-0: 親の高さが足りなくても縮小させない（表示崩れ防止）
-                                    // py-1: 上下均等な余白（さらに詰める）
-                                    // mb-1: 下マージン（さらに詰める）
+                                    // py-4: 上下均等な余白（さらに広げる）
+                                    // mb-4: 下マージン（さらに広げる）
                                     // pl-5: 左側のボーダー装飾と文字の間隔を広めに確保
-                                    className={`flex-row justify-between items-center py-1 pl-5 pr-3 mb-1 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === 'item' ? 'bg-gray-800 border-cyan-400' : 'border-transparent'}`}
+                                    className={`flex-row justify-between items-center py-4 pl-5 pr-3 mb-4 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === 'item' ? 'bg-gray-800 border-cyan-400' : 'border-transparent'}`}
                                 >
-                                    <text className={`text-sm ${isSelected && focusArea === 'item' ? 'text-white' : 'text-gray-400'}`}>{item.label}</text>
+                                    <text className={`text-4xl ${isSelected && focusArea === 'item' ? 'text-white' : 'text-gray-400'}`}>{item.label}</text>
 
                                     <view className="flex-row items-center">
                                         {/* 左右の矢印（選択中のみ表示） */}
-                                        <text className={`mr-2 text-cyan-400 text-sm ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' ? 'opacity-100' : 'opacity-0'}`}>◀</text>
+                                        <text className={`mr-4 text-cyan-400 text-4xl ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' ? 'opacity-100' : 'opacity-0'}`}>◀</text>
 
                                         {/* 値の表示 */}
-                                        <view className={`flex-row items-center ${item.type === 'slider' ? 'w-48 justify-end' : (item.type === 'stat' ? 'w-32 justify-end' : 'w-32 justify-center')}`}>
+                                        <view className={`flex-row items-center ${item.type === 'slider' ? 'w-[36rem] justify-end' : (item.type === 'stat' ? 'w-80 justify-end' : 'w-80 justify-center')}`}>
                                             {item.type === 'text' ? renderNameInput() : (
                                                 <>
                                                     {displayBar && (
-                                                        <text className="text-yellow-400 text-sm" style={{ fontFamily: 'SourceHanCodeJP' }}>{displayBar}</text>
+                                                        <text className="text-yellow-400 text-4xl" style={{ fontFamily: 'SourceHanCodeJP' }}>{displayBar}</text>
                                                     )}
-                                                    <text className={`${item.type === 'button' || item.type === 'stat' ? 'w-auto' : 'w-12 text-right'} text-yellow-400 text-sm`} style={{ fontFamily: 'SourceHanCodeJP' }}>
+                                                    <text className={`${item.type === 'button' || item.type === 'stat' ? 'w-auto' : 'w-24 text-right'} text-yellow-400 text-4xl`} style={{ fontFamily: 'SourceHanCodeJP' }}>
                                                         {displayValue}
                                                     </text>
                                                 </>
                                             )}
                                         </view>
 
-                                        <text className={`ml-2 text-cyan-400 text-sm ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' ? 'opacity-100' : 'opacity-0'}`}>▶</text>
+                                        <text className={`ml-4 text-cyan-400 text-4xl ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' ? 'opacity-100' : 'opacity-0'}`}>▶</text>
                                     </view>
                                 </view>
                             );
@@ -604,27 +604,27 @@ export const Settings = ({ onBack }: SettingsProps) => {
 
                     {/* Description Terminal */}
                     {/* absolute配置をやめ、flexレイアウトの一部として下部に配置することで重なりを防ぐ */}
-                    <view className="mt-2 p-2 border border-cyan-900 bg-black bg-opacity-80">
-                        <text className="text-cyan-600 text-xs mb-1">&gt;&gt; INFO_PANEL</text>
+                    <view className="mt-8 p-4 border border-cyan-900 bg-black bg-opacity-80">
+                        <text className="text-cyan-600 text-3xl mb-2">&gt;&gt; INFO_PANEL</text>
                         {isEditingName ? (
                             <view className="flex-col">
-                                <view className="flex-row mb-1">
-                                    <text className="text-cyan-400 text-xs">[UP/DOWN]</text>
-                                    <text className="text-gray-300 text-xs mr-6">:CHANGE CHAR</text>
-                                    <text className="text-cyan-400 text-xs">[LEFT/RIGHT]</text>
-                                    <text className="text-gray-300 text-xs">:MOVE CURSOR</text>
+                                <view className="flex-row mb-2">
+                                    <text className="text-cyan-400 text-3xl">[UP/DOWN]</text>
+                                    <text className="text-gray-300 text-3xl mr-8">:CHANGE CHAR</text>
+                                    <text className="text-cyan-400 text-3xl">[LEFT/RIGHT]</text>
+                                    <text className="text-gray-300 text-3xl">:MOVE CURSOR</text>
                                 </view>
                                 <view className="flex-row">
-                                    <text className="text-cyan-400 text-xs">[SOUTH]</text>
-                                    <text className="text-gray-300 text-xs mr-6">:OK</text>
-                                    <text className="text-cyan-400 text-xs">[EAST]</text>
-                                    <text className="text-gray-300 text-xs mr-6">:CANCEL</text>
-                                    <text className="text-cyan-400 text-xs">[WEST]</text>
-                                    <text className="text-gray-300 text-xs">:DELETE</text>
+                                    <text className="text-cyan-400 text-3xl">[SOUTH]</text>
+                                    <text className="text-gray-300 text-3xl mr-8">:OK</text>
+                                    <text className="text-cyan-400 text-3xl">[EAST]</text>
+                                    <text className="text-gray-300 text-3xl mr-8">:CANCEL</text>
+                                    <text className="text-cyan-400 text-3xl">[WEST]</text>
+                                    <text className="text-gray-300 text-3xl">:DELETE</text>
                                 </view>
                             </view>
                         ) : (
-                            <text className="text-gray-300 text-xs">{currentDescription}</text>
+                            <text className="text-gray-300 text-3xl">{currentDescription}</text>
                         )}
                     </view>
                 </view>

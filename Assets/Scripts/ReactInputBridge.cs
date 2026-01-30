@@ -49,6 +49,11 @@ public class GameInterop
         public int score;
         public int hp;
         public int sp;
+        public int maxHp;
+        public int maxSp;
+        public bool isGameOver;
+        public bool isNewHighScore;
+        public bool isPaused;
     }
 
     // 現在の設定値をJSONで取得するメソッド
@@ -90,7 +95,12 @@ public class GameInterop
         {
             score = GameManager.instance.CurrentScore,
             hp = GameManager.instance.CurrentHP,
-            sp = GameManager.instance.CurrentSP
+            sp = GameManager.instance.CurrentSP,
+            maxHp = GameManager.instance.MaxHP,
+            maxSp = GameManager.instance.MaxSP,
+            isGameOver = GameManager.instance.IsGameOver,
+            isNewHighScore = GameManager.instance.IsNewHighScore,
+            isPaused = GameManager.instance.IsPaused
         };
         return JsonUtility.ToJson(status);
     }
@@ -126,6 +136,34 @@ public class GameInterop
         // 設定とセーブデータをディスクに書き込みます。
         SettingsManager.Save(); // PlayerPrefsの保存
         GameManager.instance?.SaveGameData(); // GameDataの保存
+    }
+
+
+    // タイトル画面の演出をスキップすべきかどうかを確認するメソッド
+    // React側でタイトル画面の初期化時に呼び出されます。
+    public bool ShouldSkipTitleSequence()
+    {
+        if (GameManager.instance != null && GameManager.instance.SkipTitleSequence)
+        {
+            GameManager.instance.SkipTitleSequence = false; // フラグを消費（リセット）する
+            return true;
+        }
+        return false;
+    }
+
+    public void ResumeGame()
+    {
+        GameManager.instance?.ResumeGame();
+    }
+
+    public void RestartGame()
+    {
+        GameManager.instance?.RestartGame();
+    }
+
+    public void ReturnToTitle()
+    {
+        GameManager.instance?.ReturnToTitle();
     }
 
     // 指定したステージ（シーン）を開始するメソッド
@@ -196,6 +234,9 @@ public class ReactInputBridge : MonoBehaviour
 {
     public static ReactInputBridge Instance { get; private set; }
 
+    [Tooltip("このブリッジをプライマリ（GameManagerからの命令を受け取る唯一のインスタンス）として設定します。")]
+    public bool isPrimaryBridge = false;
+
     private ReactRendererBase _reactRenderer;
     private InputAction _pressAnyKeyAction;
     private InputAction _navigateAction;
@@ -210,8 +251,14 @@ public class ReactInputBridge : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (isPrimaryBridge)
         {
+            if (Instance != null && Instance != this)
+            {
+                Debug.LogWarning("[ReactInputBridge] 複数のプライマリブリッジが検出されました。このインスタンスは破棄されます。", gameObject);
+                Destroy(this);
+                return;
+            }
             Instance = this;
         }
 
@@ -433,6 +480,15 @@ public class ReactInputBridge : MonoBehaviour
         {
             // React側の関数 'onFadeOutRequest' を呼び出す
             _reactRenderer.Context.Script.ExecuteScript("if (typeof onFadeOutRequest === 'function') onFadeOutRequest();");
+        }
+    }
+
+    // ローディング画面を表示する命令を送る
+    public void ShowLoadingScreen()
+    {
+        if (_reactRenderer != null && _reactRenderer.Context != null)
+        {
+            _reactRenderer.Context.Script.ExecuteScript("if (typeof onLoadingRequest === 'function') onLoadingRequest();");
         }
     }
 }

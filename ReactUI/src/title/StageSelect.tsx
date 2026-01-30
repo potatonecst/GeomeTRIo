@@ -42,15 +42,12 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
             // 300ms待ってから親コンポーネントの onBack を呼び出し、実際に画面を切り替える
             const timer = setTimeout(onBack, 300);
             return () => clearTimeout(timer);
-        } else if (isStarting) {
-            // ゲーム開始時はフェードアウトだけして、遷移はC#側で行われるため待つ
-            setOpacity(0);
         } else {
             // マウント（表示）直後は透明度0からスタートし、50ms後に1にすることでフェードインさせる
             const timer = setTimeout(() => setOpacity(1), 50);
             return () => clearTimeout(timer);
         }
-    }, [isExiting, isStarting, onBack]);
+    }, [isExiting, onBack]);
 
     // 入力ハンドリング
     // C# (ReactInputBridge) からの入力を受け取るイベントリスナーを設定します。
@@ -76,26 +73,22 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
                 // 遷移アニメーション(300ms)があるため、ボタンを押した瞬間のフィードバックとしてここで鳴らすのが適切。
                 interop?.PlaySound('submit');
 
-                // 親コンポーネントにゲーム開始を通知
+                // LOADING表示開始
                 onGameStart();
+                setIsStarting(true); // ボタンを押下状態にする
 
-                // ゲーム開始処理
-                setIsStarting(true);
-                // アニメーションやSEのために少し待ってから実行
+                // アニメーション開始の猶予を持たせるため、少し遅延させてからロードを開始する
+                // これにより「瞬時に真っ黒」になるのを防ぎ、フェードインの出だしを確実に描画させる
                 setTimeout(() => {
                     const stage = STAGES[selectedIndex];
-                    // C#側のStartGameメソッドを呼び出す
-                    // typeof チェックを行うことで、C#側の準備ができていない場合のエラーを防ぐ
                     if (interop && typeof interop.StartGame === 'function') {
                         interop.StartGame(stage.sceneName);
                     } else {
-                        // フォールバック（開発用など）
                         console.log(`Start Game: ${stage.sceneName}`);
-                        // GameInteropがない場合はインターフェースだけ戻す
                         setIsStarting(false);
                         setIsExiting(true);
                     }
-                }, 300);
+                }, 100);
             } else if (event === 'cancel') {
                 interop?.PlaySound('cancel');
                 // キャンセルキー: 戻る処理を開始（フェードアウトへ）
@@ -109,11 +102,11 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
     }, [selectedIndex, isExiting, isStarting, interop, onBack, onGameStart]);
 
     return (
-        <view className="flex-col w-full h-full p-8 text-white font-mono transition-opacity duration-300" style={{ opacity }}>
+        <view className="flex-col w-full h-full p-12 text-white font-mono transition-opacity duration-300" style={{ opacity }}>
             {/* Header: 画面上部の見出し */}
-            <view className="flex-row justify-between items-end mb-8 border-b-2 border-cyan-900 pb-2 w-full">
-                <GlitchText text="STAGE SELECT" className="text-4xl font-bold text-white tracking-tighter leading-none" />
-                <text className="text-sm text-cyan-600">MISSION: INFILTRATION</text>
+            <view className="flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full">
+                <GlitchText text="STAGE SELECT" className="text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" />
+                <text className="text-3xl text-cyan-600">MISSION: INFILTRATION</text>
             </view>
 
             {/* Stage List: ステージ選択ボタンのリスト */}
@@ -126,15 +119,15 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
                         // ゲーム開始処理中かつ、この項目が選択されている場合に「押下状態」にする
                         isPressed={isStarting && idx === selectedIndex}
                         barClass="w-full"
-                        className="h-12 mb-4"
+                        className="h-24 mb-6"
                     />
                 ))}
             </view>
 
             {/* Description Area (Optional): 選択中のステージの説明を表示 */}
-            <view className="absolute right-8 top-32 w-1/2 p-4 border border-cyan-900 bg-black bg-opacity-50">
-                <text className="text-cyan-400 mb-2">&gt;&gt; MISSION BRIEFING</text>
-                <text className="text-gray-300 text-sm">
+            <view className="absolute right-12 top-64 w-1/2 p-6 border border-cyan-900 bg-black bg-opacity-50">
+                <text className="text-cyan-400 mb-4 text-4xl">&gt;&gt; MISSION BRIEFING</text>
+                <text className="text-gray-300 text-4xl leading-normal">
                     {selectedIndex === 0
                         ? "Standard mission. Breach the defense grid and neutralize the core."
                         : "Endless survival mode. Test your limits against infinite waves."}

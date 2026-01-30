@@ -17,7 +17,7 @@ export const MenuButton = ({ label, isSelected, isPressed, onClick, style, class
     const barWidth = barClass || 'w-80';
     return (
         <view
-            className={`relative w-full transition-opacity duration-300 ${className || 'h-12 mb-2'}`}
+            className={`relative w-full transition-opacity duration-300 ${className || 'h-24 mb-4'}`}
             style={style || {}}
             onClick={onClick}
         >
@@ -32,14 +32,14 @@ export const MenuButton = ({ label, isSelected, isPressed, onClick, style, class
                 {/* 選択時のみ表示される矢印（▶） */}
                 {/* isPressed時は矢印も黒くして視認性を確保 */}
                 <text
-                    className={`text-sm mr-1 transition-colors duration-300 ${isPressed ? 'text-black' : 'text-white'} ${isSelected ? 'opacity-100' : 'opacity-0'}`}
+                    className={`text-3xl mr-4 transition-colors duration-300 ${isPressed ? 'text-black' : 'text-white'} ${isSelected ? 'opacity-100' : 'opacity-0'}`}
                     style={{ top: -1 }}
                 >
                     ▶
                 </text>
                 {/* ボタンのラベルテキスト。選択時は白く、非選択時は少し暗くする */}
                 <text
-                    className={`text-sm transition-colors duration-300 ${isPressed ? 'text-black font-bold' : (isSelected ? 'text-white' : 'text-[#e2e8f0]')}`}
+                    className={`text-3xl transition-colors duration-300 ${isPressed ? 'text-black font-bold' : (isSelected ? 'text-white' : 'text-[#e2e8f0]')}`}
                     style={{ opacity: isSelected ? 1 : 0.6 }}
                 >
                     {label}

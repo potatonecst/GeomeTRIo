@@ -13,7 +13,7 @@ export const ProgressBar = ({ value, max, color }: ProgressBarProps) => {
     const percentage = Math.max(0, Math.min(100, (value / max) * 100));
 
     return (
-        <view className="w-full h-4 bg-gray-900 border border-gray-700 relative overflow-hidden">
+        <view className="w-full h-6 bg-gray-900 border border-gray-700 relative overflow-hidden">
             {/* 背景のグリッド線（目盛り）: 10等分するように線を引く */}
             <view className="absolute inset-0 flex-row justify-between px-1 pointer-events-none">
                 {Array.from({ length: 9 }).map((_, i) => (

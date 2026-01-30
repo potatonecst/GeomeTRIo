@@ -105,7 +105,7 @@ export const Menu = ({ onNavigate, onPlay, onBack, onExit, isExiting, initialInd
 
     return (
         <view
-            className="flex-col items-start w-full mb-10 pl-24 font-sans"
+            className="flex-col items-start w-full mb-10 pl-32 font-sans"
         >
             {/* menuItems配列をループして、各項目のViewを生成する */}
             {/* mapメソッド: 配列の要素を一つずつ取り出し、JSX（タグ）に変換して新しい配列を作ります。 */}
@@ -119,6 +119,7 @@ export const Menu = ({ onNavigate, onPlay, onBack, onExit, isExiting, initialInd
                         isSelected={isSelected}
                         // 画面遷移中（決定後）かつ、この項目が選択されている場合に「押下状態」にする
                         isPressed={isNavigating && isSelected}
+                        barClass="w-[600px]"
                         // 各項目を少しずつ遅らせて表示する（カスケードアニメーション）
                         // index * 120: 0番目は0ms, 1番目は120ms, 2番目は240ms...と遅延時間をずらしています。
                         style={{ opacity, transitionDelay: `${(isExiting || isNavigating) ? 0 : index * 120}ms` }}

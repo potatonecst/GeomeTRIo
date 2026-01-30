@@ -1,20 +1,37 @@
 import { render } from '@reactunity/renderer';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../index.css';
+import { useGameStatus } from '../hooks/useGameStatus';
 
 const GameBackground = () => {
     const [offset, setOffset] = useState(0);
-    const gridSize = 160; // タイトル画面と同じサイズ感
+    const gridSize = 160; // タイトル画面の半分のサイズ感
+    const status = useGameStatus();
+
+    // アニメーションループ内で最新の状態を参照するためにRefを使用
+    const isGameOverRef = useRef(status.isGameOver);
+    const isPausedRef = useRef(status.isPaused);
+    useEffect(() => {
+        isGameOverRef.current = status.isGameOver;
+        isPausedRef.current = status.isPaused;
+    }, [status.isGameOver, status.isPaused]);
 
     useEffect(() => {
         let handle: number;
-        const startTime = Date.now();
+        let lastTime = Date.now();
         const speed = 100; // スクロール速度
+        let currentOffset = 0;
 
         const loop = () => {
-            const elapsed = (Date.now() - startTime) / 1000;
-            // 垂直方向（Y軸）のみスクロール
-            setOffset((elapsed * speed) % gridSize);
+            const now = Date.now();
+            const deltaTime = (now - lastTime) / 1000;
+            lastTime = now;
+
+            // ゲームオーバーでもポーズ中でもなければスクロールを進める
+            if (!isGameOverRef.current && !isPausedRef.current) {
+                currentOffset = (currentOffset + speed * deltaTime) % gridSize;
+                setOffset(currentOffset);
+            }
             handle = requestAnimationFrame(loop);
         };
         handle = requestAnimationFrame(loop);
