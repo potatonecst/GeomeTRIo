@@ -9938,7 +9938,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       maxHp: 3,
       maxSp: 3,
       spCharge: 0,
-      maxSpCharge: 1e3,
+      maxSpCharge: 2500,
       isGameOver: false,
       isNewHighScore: false,
       isPaused: false

@@ -20,7 +20,10 @@ public class GameManager : MonoBehaviour
     //セーブデータ
     // GameDataクラスのインスタンスを保持します。ここにはプレイヤー名や設定、ハイスコアなどが格納されます。
     private GameData gameData;
-    public GameData Data => gameData; // 外部から読み書きするためのプロパティ
+    // "=>" (アロー演算子) は「式形式のメンバー定義」です。
+    // これは `get { return gameData; }` の省略記法で、「Dataプロパティが参照されたら gameData 変数を返す」という意味です。
+    // これにより、外部からは `GameManager.instance.Data` でデータにアクセスできます。
+    public GameData Data => gameData;
 
     // 現在のシーンのUI管理役（自作スクリプト）を保存しておくための箱
     // SceneManager（Unity標準機能）とは別物です。こちらはスコア表示などの「見た目」を担当します。
@@ -31,8 +34,10 @@ public class GameManager : MonoBehaviour
 
     //スコア関連
     // React側から参照できるようにプロパティ化
-    // private set にすることで、外部からは読み取り専用（Read Only）にし、
-    // 値の変更はこのクラス内のメソッド（AddScoreなど）を通してのみ行えるように制限しています。
+    // "{ get; private set; }" の意味：
+    //   get;         -> 読み取りは public (外部から参照可能)
+    //   private set; -> 書き込みは private (このクラス内部からのみ変更可能)
+    // これにより、外部スクリプトが勝手に値を書き換えるのを防ぎ、AddScoreメソッド等を通してのみ変更を許可しています。
     public int CurrentScore { get; private set; } = 0;
     public int CurrentHP { get; private set; }
     public int CurrentSP { get; private set; }
@@ -41,7 +46,9 @@ public class GameManager : MonoBehaviour
 
     // SPゲージ（チャージ）関連
     public float CurrentSPCharge { get; private set; } = 0f; // 現在溜まっているチャージ量
-    public float MaxSPCharge => 1000f; // 1ストック溜まるのに必要なポイント（仮）
+
+    [SerializeField] private float maxSpChargeRequired = 2500f; // 1ストック溜まるのに必要なポイント（調整可能にする）
+    public float MaxSPCharge => maxSpChargeRequired;
 
     // ゲーム状態フラグ
     public bool IsGameOver { get; private set; } = false;
@@ -380,7 +387,7 @@ public class GameManager : MonoBehaviour
     public void IncrementEnemiesDefeated()
     {
         gameData.stats.totalEnemiesDefeated++;
-        AddSPCharge(50f); // 撃破ボーナス: 小型の敵1体分相当
+        AddSPCharge(30f); // 撃破ボーナス: 50 -> 30 に調整
     }
 
     // プレイヤーがダメージを受けた時に呼び出され、総被ダメージ量を加算します。

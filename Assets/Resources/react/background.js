@@ -9935,7 +9935,7 @@ var __spreadValues = (a, b) => {
       maxHp: 3,
       maxSp: 3,
       spCharge: 0,
-      maxSpCharge: 1e3,
+      maxSpCharge: 2500,
       isGameOver: false,
       isNewHighScore: false,
       isPaused: false

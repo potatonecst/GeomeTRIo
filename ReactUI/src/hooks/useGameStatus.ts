@@ -15,7 +15,7 @@ export const useGameStatus = () => {
         maxHp: 3,
         maxSp: 3,
         spCharge: 0,
-        maxSpCharge: 1000,
+        maxSpCharge: 2500,
         isGameOver: false,
         isNewHighScore: false,
         isPaused: false
