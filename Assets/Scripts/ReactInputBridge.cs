@@ -61,6 +61,13 @@ public class GameInterop
         public bool isPaused;
     }
 
+    // アプリケーションのバージョンを取得するメソッド
+    public string GetAppVersion()
+    {
+        return Application.version;
+    }
+
+
     // 現在の設定値をJSONで取得するメソッド
     public string GetSettings()
     {

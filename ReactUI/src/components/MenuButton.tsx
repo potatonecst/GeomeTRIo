@@ -7,19 +7,20 @@ interface MenuButtonProps {
     style?: any;
     className?: string;
     barClass?: string;
+    disabled?: boolean; // 無効化フラグを追加
 }
 
 // メニュー画面などで使う、選択時に背景が伸びるボタン
 // 役割: 選択状態（isSelected）に応じて見た目を変化させ、ユーザーに現在のフォーカス位置を伝える
 // 技術的ポイント: CSSの transition プロパティを使用して、幅や色の変化を滑らかにアニメーションさせています。
-export const MenuButton = ({ label, isSelected, isPressed, onClick, style, className, barClass }: MenuButtonProps) => {
+export const MenuButton = ({ label, isSelected, isPressed, onClick, style, className, barClass, disabled }: MenuButtonProps) => {
     // 背景バーの幅を指定するクラス。指定がなければデフォルト幅(w-80)を使用。
     const barWidth = barClass || 'w-80';
     return (
         <view
-            className={`relative w-full transition-opacity duration-300 ${className || 'h-24 mb-4'}`}
+            className={`relative w-full transition-opacity duration-300 ${className || 'h-24 mb-4'} ${disabled ? 'opacity-30' : ''}`}
             style={style || {}}
-            onClick={onClick}
+            onClick={disabled ? undefined : onClick}
         >
             {/* 背景（長方形）: 選択されると幅が伸びるアニメーション */}
             {/* transition-all duration-300 により、幅の変化が滑らかになります */}

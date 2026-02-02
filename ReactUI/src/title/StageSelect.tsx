@@ -9,7 +9,7 @@ interface StageSelectProps {
 }
 
 const STAGES = [
-    { label: "Stage 1", sceneName: "Stage1" },
+    { label: "Stage 1", sceneName: "Stage1", disabled: true }, // まだシーンがないため無効化
     { label: "Score Attack", sceneName: "ScoreAttack" }
 ];
 
@@ -69,6 +69,12 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
                 setSelectedIndex(prev => (prev + 1) % STAGES.length);
             } else if (event === 'submit') {
                 // StartGame内でPlaySubmitSoundを呼んでいるため、ここでは鳴らさない、
+                // 無効なステージの場合は開始しない
+                if (STAGES[selectedIndex].disabled) {
+                    interop?.PlaySound('cancel');
+                    return;
+                }
+
                 // という設計だったが、ラグ解消のためC#側の再生を削除し、React側で即座に鳴らす方針に変更。
                 // 遷移アニメーション(300ms)があるため、ボタンを押した瞬間のフィードバックとしてここで鳴らすのが適切。
                 interop?.PlaySound('submit');
@@ -120,6 +126,7 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
                         isPressed={isStarting && idx === selectedIndex}
                         barClass="w-full"
                         className="h-24 mb-6"
+                        disabled={stage.disabled}
                     />
                 ))}
             </view>

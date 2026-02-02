@@ -125,16 +125,16 @@ const GeometricDebris = () => {
 
     useEffect(() => {
         // 初期化: ランダムな位置・サイズ・速度・形状を持つデブリを生成
-        const count = 20;
+        const count = 15;
         // Math.random(): 0以上1未満のランダムな小数を返すメソッド。これを使って位置やサイズをばらつかせます。
         // Array.fromで指定した数(20個)の配列を作り、mapで中身をランダム生成して埋める
         const initialParticles = Array.from({ length: count }).map((_, i) => {
-            const isEnemy = Math.random() < 0.4;
+            const isEnemy = Math.random() < 0.5; // 50%の確率で敵の形状にする
             return {
                 id: i,
                 x: Math.random() * 100, // %
                 y: Math.random() * 100, // %
-                size: Math.random() * 20 + 10, // 10px ~ 30px
+                size: Math.random() * 60 + 40, // 40px ~ 100px
                 speed: Math.random() * 0.02 + 0.01,
                 rotation: Math.random() * 360,
                 rotationSpeed: (Math.random() - 0.5) * 0.5,
@@ -195,12 +195,21 @@ const GeometricDebris = () => {
                         />
                     ) : (
                         // 三角形（自機のモチーフ）
-                        <text
-                            style={{
-                                fontSize: p.size,
-                                color: p.color,
-                            }}
-                        >△</text>
+                        // SVGで描画に変更。回転時のちらつきを抑え、太さを調整可能にする
+                        // @ts-ignore
+                        <svg
+                            viewBox="0 0 100 100"
+                            style={{ width: '100%', height: '100%' }}
+                        >
+                            // @ts-ignore
+                            <polygon
+                                points="50,20 85,80 15,80"
+                                fill="none"
+                                stroke={p.color}
+                                strokeWidth="2" // ここで太さを調整（正方形は1px相当なので、より太く強調）
+                                strokeLinejoin="round" // 角を丸くして回転時のノイズを軽減
+                            />
+                        </svg>
                     )}
                 </view>
             ))}
@@ -369,12 +378,21 @@ const TitleApp = () => {
     // 終了メッセージの表示制御用
     const [shutdownOpacity, setShutdownOpacity] = useState(0);
 
+    // バージョン情報 (デフォルト値はフォールバック用)
+    const [appVersion, setAppVersion] = useState("ver. 0.3.0");
+
     // 初期化済みかどうかを管理するRef
     // useRef: 再描画されても値が保持される「箱」を作ります。useStateと違い、値を書き換えても再描画は発生しません。
     const initializedRef = useRef(false);
 
     // 初期化処理: ゲームから戻ってきた場合はタイトル演出をスキップする
     useEffect(() => {
+        // Unity側からバージョンを取得 (GameInteropにGetAppVersionメソッドが必要)
+        // C#側で実装されるまではデフォルト値が使われます
+        if (interop && typeof interop.GetAppVersion === 'function') {
+            setAppVersion(`ver. ${interop.GetAppVersion()}`);
+        }
+
         // 既に初期化済みなら何もしない
         if (initializedRef.current) return;
 
@@ -612,9 +630,14 @@ const TitleApp = () => {
             {/* フッター: Copyright */}
             {/* 操作ガイドはコントローラーのボタン配置差異の問題により廃止しました */}
             {currentScreen === 'title' && (
-                <view className="absolute bottom-4 w-full items-center justify-center pointer-events-none">
-                    <text className="text-gray-500 text-2xl font-sans">© 2026 potatonecst</text>
-                </view>
+                <>
+                    <view className="absolute bottom-4 w-full items-center justify-center pointer-events-none">
+                        <text className="text-gray-500 text-2xl font-sans">© 2026 potatonecst</text>
+                    </view>
+                    <view className="absolute bottom-4 right-4 pointer-events-none">
+                        <text className="text-gray-500 text-2xl font-mono">{appVersion}</text>
+                    </view>
+                </>
             )}
         </view>
     );
