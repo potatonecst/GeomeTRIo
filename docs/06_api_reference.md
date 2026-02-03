@@ -15,14 +15,31 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
     const data = JSON.parse(json);
     ```
 
+#### `string GetSettings()`
+*   **説明:** 現在の設定値（音量、キー設定、統計情報など）を JSON 文字列として返します。
+*   **戻り値:** `SettingsData` 構造体をシリアライズした JSON 文字列。
+
+#### `string GetInGameStatus()`
+*   **説明:** ゲームプレイ中の動的なステータス（スコア、HP、SP、フラグなど）を JSON 文字列として返します。
+*   **戻り値:** `InGameStatus` 構造体をシリアライズした JSON 文字列。
+*   **用途:** React側で毎フレーム呼び出し、HUDを更新するために使用します。
+
+#### `void UpdateSetting(string key, string value)`
+*   **説明:** 指定した設定項目の値を更新します（メモリ上のみ）。
+*   **引数:**
+    *   `key`: 設定項目のID（例: "bgm_vol", "hp"）。
+    *   `value`: 設定値の文字列表現。
+
+#### `void SaveSettings()`
+*   **説明:** 現在の設定値をファイル（PlayerPrefsおよびGameData）に保存して永続化します。
+
 #### `void StartGame(string stageName)`
 *   **説明:** 指定されたステージ（シーン）を読み込み、ゲームを開始します。
 *   **引数:**
     *   `stageName`: 読み込む Unity シーンの名前（例: "Stage1", "ScoreAttack"）。
 *   **動作:**
-    1.  決定音（Submit Sound）を再生。
-    2.  現在のスコアをリセット。
-    3.  `SceneManager.LoadScene` でシーン遷移。
+    1.  現在のスコアをリセット。
+    2.  `GameManager.LoadSceneWithTransition` を呼び出し、ローディング演出と暗転を伴う非同期遷移を開始。
 
 ---
 

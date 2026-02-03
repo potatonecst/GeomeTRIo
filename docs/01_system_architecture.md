@@ -9,7 +9,7 @@
 *   **Game Scene (Unity):**
     *   `Stage1`, `ScoreAttack` などのゲームプレイシーン。
     *   物理演算、衝突判定、パーティクルエフェクトなどは Unity の機能をフル活用。
-    *   HUD (Head-Up Display) は現状 uGUI で実装。
+    *   HUD (Head-Up Display) も ReactUnity で実装し、C#側の状態をポーリングして描画します。
 *   **Title Scene (ReactUnity):**
     *   `TitleScene`。タイトル、メニュー、ランキング、設定画面。
     *   HTML/CSS (Tailwind CSS like) + React でUIを構築。
@@ -47,8 +47,9 @@ Unity側のゲームロジックは、各オブジェクト（自機、敵、UI�
 - **GameManager:** ゲーム全体の状態（プレイ中、ゲームオーバー、スコア計算）、セーブデータ(GameData)の保持・保存、BGM管理を行うシングルトンクラス。
 - **PlayerController:** 自機の操作を担当。
 - **EnemySpawner:** 敵の出現タイミングと生成を担当。
-- **UIManager (SceneUIManager):** スコア表示やHPゲージの更新を担当。
 - **SettingsManager:** ゲーム設定（音量、振動など）の管理と永続化（PlayerPrefs）を担当する静的クラス。
+- **VibrationManager:** ゲームパッドの振動制御を担当。優先度付きの振動リクエストを管理するシングルトンクラス。
+- **ReactInputBridge:** Unityの入力イベントをReactに伝達し、ReactからのAPI呼び出し(GameInterop)を処理するブリッジクラス。
 
 ### 3.2 シングルトンパターン (Singleton Pattern)
 `GameManager` は、ゲーム中に常に1つだけ存在し、どこからでもアクセス可能にするために **シングルトンパターン** を採用しています。
@@ -146,7 +147,7 @@ private void Update()
 設定データは、その性質に応じて保存先を分けています。
 
 *   **セーブデータ (`GameData.json`):** ユーザーの進行状況やプレイスタイルに関わる設定（HP, SP, AutoFire, PlayerName）。`GameManager` が管理。
-*   **グローバル設定 (`PlayerPrefs`):** アプリケーション全体で共有される環境設定（BGM/SE音量, 振動, CRTフィルタ）。`SettingsManager` が管理。
+*   **グローバル設定 (`PlayerPrefs`):** アプリケーション全体で共有される環境設定（BGM/SE音量, 振動）。`SettingsManager` が管理。
 
 ReactUIの `Settings` 画面での変更は即座にメモリ上に反映されますが、ファイルへの書き込み（永続化）は画面を閉じるタイミングで一括して行われます。
 

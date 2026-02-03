@@ -53,7 +53,8 @@ const GameBackground = () => {
                     style={{
                         position: 'absolute',
                         // 画面中央に配置されるように調整
-                        left: -1000,
+                        left: '50%',
+                        marginLeft: -width / 2,
                         top: -1000 + offset,
                         width: width,
                         height: height,

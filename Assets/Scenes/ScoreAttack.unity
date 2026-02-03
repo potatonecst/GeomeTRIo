@@ -2283,63 +2283,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReactInputBridge
   isPrimaryBridge: 1
---- !u!1 &598643574
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 598643576}
-  - component: {fileID: 598643575}
-  m_Layer: 0
-  m_Name: SceneUIManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &598643575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 598643574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 939515664b251463681b0e7e69d9aed9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneUIManager
-  scoreValueText: {fileID: 1365388818}
-  hpValueText: {fileID: 1469225686}
-  spValueText: {fileID: 2033523988}
-  gameOverPanel: {fileID: 1335040902}
-  restartButton: {fileID: 718958448}
-  returnToTitleButton: {fileID: 1769232590}
-  scoreEntryPanel: {fileID: 708340877}
-  scoreEntryPanelTitleText: {fileID: 460301718}
-  finalScoreText: {fileID: 1968893923}
-  playerNameInputField: {fileID: 426288411}
-  asDefaultToggle: {fileID: 1119738336}
-  pausePanel: {fileID: 1432418408}
-  firstSelectedButtonPause: {fileID: 932195286}
---- !u!4 &598643576
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 598643574}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 226.37671, y: 63.52953, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &609642390
 GameObject:
   m_ObjectHideFlags: 0
@@ -2759,7 +2702,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 598643575}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SceneUIManager, Assembly-CSharp
         m_MethodName: OnRestartButtonPressed
         m_Mode: 1
@@ -3087,7 +3030,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 598643575}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SceneUIManager, Assembly-CSharp
         m_MethodName: OnResumeButtonPressed
         m_Mode: 1
@@ -3233,7 +3176,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 598643575}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SceneUIManager, Assembly-CSharp
         m_MethodName: HideScoreEntryPanel
         m_Mode: 1
@@ -4291,7 +4234,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 598643575}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SceneUIManager, Assembly-CSharp
         m_MethodName: OnReturnToTitleButtonPressed
         m_Mode: 1
@@ -4463,7 +4406,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
-  initialHP: 0
   invincibilityDuration: 1.5
   bulletPrefab: {fileID: 178537861505374164, guid: 1e7ee0d1d16074fc78db1ba58b666ce0, type: 3}
   firePoints:
@@ -4472,7 +4414,6 @@ MonoBehaviour:
   - {fileID: 914489828}
   firePointMarker: {fileID: 1387875541}
   fireRate: 0.15
-  initialSpinAttacks: 0
   spinAttackDuration: 2
   spinAttackFireRate: 0.1
   spinSpeed: 720
@@ -5493,7 +5434,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 598643575}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SceneUIManager, Assembly-CSharp
         m_MethodName: OnReturnToTitleButtonPressed
         m_Mode: 1
@@ -6638,6 +6579,5 @@ SceneRoots:
   - {fileID: 2018429576}
   - {fileID: 1028940045}
   - {fileID: 1917037500}
-  - {fileID: 598643576}
   - {fileID: 331210616}
   - {fileID: 590878245}

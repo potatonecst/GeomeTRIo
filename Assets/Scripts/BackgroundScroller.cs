@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// ゲーム画面の背景（グリッド線）を生成し、スクロールさせるクラス。
+/// テクスチャのUVオフセットを操作することで、無限スクロールを表現します。
+/// </summary>
 public class BackgroundScroller : MonoBehaviour
 {
     [Header("Scroll Settings")]
@@ -19,6 +23,10 @@ public class BackgroundScroller : MonoBehaviour
     private Renderer _renderer;
     private Vector2 _savedOffset;
 
+    /// <summary>
+    /// 初期化処理。
+    /// グリッド模様のテクスチャを動的に生成し、マテリアルに適用します。
+    /// </summary>
     void Start()
     {
         _renderer = GetComponent<Renderer>();
@@ -38,6 +46,9 @@ public class BackgroundScroller : MonoBehaviour
         _savedOffset = _renderer.material.mainTextureOffset;
     }
 
+    /// <summary>
+    /// 毎フレーム呼び出され、テクスチャのオフセットを更新してスクロールアニメーションを行います。
+    /// </summary>
     void Update()
     {
         // 時間経過に合わせてY方向のオフセットをずらすことでスクロールを表現
@@ -51,6 +62,9 @@ public class BackgroundScroller : MonoBehaviour
 #endif
     }
 
+    /// <summary>
+    /// オブジェクトのスケールに合わせて、テクスチャのタイリング（繰り返し回数）を調整します。
+    /// </summary>
     void UpdateTiling()
     {
         if (_renderer == null || _renderer.material == null) return;
@@ -65,7 +79,9 @@ public class BackgroundScroller : MonoBehaviour
         _renderer.material.mainTextureScale = tiling;
     }
 
-    // 1マス分のグリッド模様のテクスチャを生成する関数
+    /// <summary>
+    /// 1マス分のグリッド模様のテクスチャを動的に生成します。
+    /// </summary>
     Texture2D GenerateSingleGridTexture()
     {
         Texture2D tex = new Texture2D(textureResolution, textureResolution);
@@ -97,7 +113,9 @@ public class BackgroundScroller : MonoBehaviour
         return tex;
     }
 
-    // 外部から速度を変更するためのメソッド
+    /// <summary>
+    /// 外部からスクロール速度を変更するためのメソッド。
+    /// </summary>
     public void SetSpeed(float newSpeed)
     {
         scrollSpeed = newSpeed;

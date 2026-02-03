@@ -6,12 +6,10 @@
 - **ネームエントリー:** ハイスコア更新時、プレイヤーネームと共に保存・表示する
 
 ## 2. UI (User Interface)
-- **技術スタック:** Unity uGUI (Canvas), TextMeshPro, Input System (UI Navigation)
+- **技術スタック:** ReactUnity (HTML/CSS/React), Input System (UI Navigation)
 - **HUD表示:**
-  - **HPゲージ:** 現在のHPを表示（ハートアイコンやバーなど）
-  - **SPゲージ:** 次のストックまでのチャージ率を表示（ストック数は数値で併記）
-  - **スコア:** 現在の獲得スコア
-  - **発射点インジケーター:** 現在どの頂点が発射口になっているかを可視化
+  - **HP / SP / スコア:** ReactUnity側で `GameManager` の状態をポーリングして描画。
+  - **発射点インジケーター:** 自機周辺に表示（World Space UI または Sprite）。
 
 - **ReactUnity連携:**
   - **UI描画:** タイトル画面、ランキング、設定画面などのメニュー周りは ReactUnity (HTML/CSS/React) で描画。

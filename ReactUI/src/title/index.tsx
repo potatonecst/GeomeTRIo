@@ -129,7 +129,8 @@ const GeometricDebris = () => {
         // Math.random(): 0以上1未満のランダムな小数を返すメソッド。これを使って位置やサイズをばらつかせます。
         // Array.fromで指定した数(20個)の配列を作り、mapで中身をランダム生成して埋める
         const initialParticles = Array.from({ length: count }).map((_, i) => {
-            const isEnemy = Math.random() < 0.5; // 50%の確率で敵の形状にする
+            // ランダムだと偏りが出るため、インデックスの偶奇で確実に50%ずつ生成する
+            const isEnemy = i % 2 === 0;
             return {
                 id: i,
                 x: Math.random() * 100, // %
@@ -591,7 +592,9 @@ const TitleApp = () => {
 
             {/* 設定画面 */}
             {currentScreen === 'settings' && (
-                <Settings onBack={() => setCurrentScreen('title')} />
+                <Settings
+                    onBack={() => setCurrentScreen('title')}
+                />
             )}
 
             {/* ローディング画面: 暗転の下に配置 */}

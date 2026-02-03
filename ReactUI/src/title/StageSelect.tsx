@@ -136,8 +136,8 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
                 <text className="text-cyan-400 mb-4 text-4xl">&gt;&gt; MISSION BRIEFING</text>
                 <text className="text-gray-300 text-4xl leading-normal">
                     {selectedIndex === 0
-                        ? "Standard mission. Breach the defense grid and neutralize the core."
-                        : "Endless survival mode. Test your limits against infinite waves."}
+                        ? ">> AREA LOCKED. This mission is currently under development."
+                        : ">> ENDLESS SURVIVAL MODE. Test your limits against infinite waves."}
                 </text>
             </view>
         </view>

@@ -5,6 +5,7 @@ import { GlitchText } from '../components/GlitchText';
 
 interface SettingsProps {
     onBack: () => void;
+    onSettingChange?: (key: string, value: any) => void;
 }
 
 // 設定カテゴリの定義
@@ -38,7 +39,6 @@ const SETTINGS_MAP: Record<string, SettingItemDef[]> = {
         // Player Name: 決定キーで編集モードに入り、上下で文字変更、左右でカーソル移動
         { id: 'player_name', label: 'PLAYER NAME', type: 'text', description: 'Set your pilot name.' },
         { id: 'vibration', label: 'VIBRATION', type: 'toggle', description: 'Enable or disable controller vibration feedback.' },
-        { id: 'crt_filter', label: 'CRT FILTER', type: 'toggle', description: 'Toggle the retro CRT monitor visual effect.' },
     ],
     'STATS': [
         { id: 'total_games_played', label: 'GAMES PLAYED', type: 'stat', description: 'Total number of games played.' },
@@ -53,7 +53,7 @@ const SETTINGS_MAP: Record<string, SettingItemDef[]> = {
 };
 
 // 設定画面コンポーネント
-export const Settings = ({ onBack }: SettingsProps) => {
+export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
     // useGlobals: ReactUnityが提供するフック。Unity側で登録したグローバルオブジェクトにアクセスできます。
     const globals = useGlobals() as any;
     const interop = globals.GameInterop;
@@ -90,7 +90,6 @@ export const Settings = ({ onBack }: SettingsProps) => {
         'se_vol': 100,
         'player_name': 'PLAYER',
         'vibration': true,
-        'crt_filter': true,
         'total_games_played': 0,
         'total_play_time': 0,
         'total_enemies_defeated': 0,
@@ -115,14 +114,14 @@ export const Settings = ({ onBack }: SettingsProps) => {
                 // フォールバック
                 setValues({
                     'hp': 3, 'sp': 3, 'auto_fire': false, 'player_name': 'PLAYER',
-                    'bgm_vol': 80, 'se_vol': 100, 'vibration': true, 'crt_filter': true,
+                    'bgm_vol': 80, 'se_vol': 100, 'vibration': true,
                     'total_games_played': 0, 'total_play_time': 0, 'total_enemies_defeated': 0, 'total_shots_fired': 0, 'total_damage_taken': 0
                 });
             }
         } else {
             setValues({
                 'hp': 3, 'sp': 3, 'auto_fire': false, 'player_name': 'PLAYER',
-                'bgm_vol': 80, 'se_vol': 100, 'vibration': true, 'crt_filter': true
+                'bgm_vol': 80, 'se_vol': 100, 'vibration': true
             });
         }
     }, [interop]);
@@ -161,8 +160,10 @@ export const Settings = ({ onBack }: SettingsProps) => {
             // interop.UpdateSetting: C#側のメソッドを呼び出し、設定値を即時反映（プレビュー）させます。
             // 引数: key (設定項目ID文字列), val (設定値の文字列表現)
             interop.UpdateSetting(key, val.toString());
+            // 親コンポーネントに変更を通知（CRTフィルタの即時反映用）
+            onSettingChange?.(key, val);
         }
-    }, [interop]);
+    }, [interop, onSettingChange]);
 
     // 設定をリセットする関数
     // useCallbackでメモ化し、不要な再生成を防ぎます。
@@ -175,7 +176,6 @@ export const Settings = ({ onBack }: SettingsProps) => {
             'se_vol': 100,
             'player_name': 'PLAYER',
             'vibration': true,
-            'crt_filter': true,
             // 統計情報はリセット対象外とする
         };
         // 既存の値を維持しつつ、デフォルト値で上書きする（統計情報を消さないため）
@@ -624,7 +624,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                                 </view>
                             </view>
                         ) : (
-                            <text className="text-gray-300 text-3xl">{currentDescription}</text>
+                            <text className="text-gray-300 text-3xl">&gt;&gt; {currentDescription}</text>
                         )}
                     </view>
                 </view>

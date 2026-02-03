@@ -1,5 +1,4 @@
 using UnityEngine;
-using TMPro; //TextMesh Pro
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -8,6 +7,10 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI; // uGUIを使用するために追加
 
+/// <summary>
+/// ゲーム全体の状態（スコア、HP、シーン遷移、セーブデータ）を管理するシングルトンクラス。
+/// シーンを跨いで存在し続け（DontDestroyOnLoad）、ゲームの進行を制御します。
+/// </summary>
 [RequireComponent(typeof(AudioSource))]
 public class GameManager : MonoBehaviour
 {
@@ -24,10 +27,6 @@ public class GameManager : MonoBehaviour
     // これは `get { return gameData; }` の省略記法で、「Dataプロパティが参照されたら gameData 変数を返す」という意味です。
     // これにより、外部からは `GameManager.instance.Data` でデータにアクセスできます。
     public GameData Data => gameData;
-
-    // 現在のシーンのUI管理役（自作スクリプト）を保存しておくための箱
-    // SceneManager（Unity標準機能）とは別物です。こちらはスコア表示などの「見た目」を担当します。
-    private SceneUIManager sceneUI;
 
     //ランキング関連
     public int rankingLimit = 5; // ランキングに保存する最大順位
@@ -99,6 +98,10 @@ public class GameManager : MonoBehaviour
     private int nextScoreExtend = 50000;
     private const int scoreExtendInterval = 50000;
 
+    /// <summary>
+    /// インスタンスの初期化とシングルトンの設定を行います。
+    /// セーブデータのロードや、シーン遷移用オーバーレイの準備もここで実行されます。
+    /// </summary>
     void Awake()
     {
         // シーン内にGameManagerが一つしか存在しないようにするための一般的な設定（シングルトンパターン）
@@ -151,8 +154,10 @@ public class GameManager : MonoBehaviour
         bgmAudioSource.playOnAwake = false;
     }
 
-    // シーン遷移の隙間を埋めるための真っ黒なCanvasを生成する
-    // Unityエディタ上でPrefabを作らず、コードだけでUI（CanvasとImage）を生成しています。
+    /// <summary>
+    /// シーン遷移時のチラつきを隠すための、真っ黒なオーバーレイCanvasを動的に生成します。
+    /// Prefabを使用せず、コードのみでUIを構築しています。
+    /// </summary>
     private void SetupOverlayCanvas()
     {
         // 新しいゲームオブジェクトを作成
@@ -208,11 +213,12 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// <summary>
+    /// 最初のフレーム更新の前に呼び出されます。
+    /// 音量の適用や、シーンごとの初期化処理（BGM再生、プレイ回数カウント）を行います。
+    /// </summary>
     void Start()
     {
-        //ゲーム開始時にスコア表示を初期化
-        sceneUI?.UpdateScoreValueText(CurrentScore);
 
         // 音量設定を適用
         ApplyAudioSettings();
@@ -229,6 +235,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 毎フレーム呼び出されます。
+    /// ゲームの経過時間を計測します（ポーズ中を除く）。
+    /// </summary>
     void Update()
     {
         // ポーズ中でなければ経過時間を加算
@@ -248,8 +258,11 @@ public class GameManager : MonoBehaviour
         if (bgmAudioSource != null) bgmAudioSource.volume = bgmVol;
     }
 
-    // シーン読み込み完了時に呼ばれるイベントハンドラ
-    // 引数 scene: 読み込まれたシーンの情報, mode: 読み込みモード（Single/Additive）
+    /// <summary>
+    /// シーン読み込み完了時に自動的に呼び出されるイベントハンドラ。
+    /// </summary>
+    /// <param name="scene">読み込まれたシーンの情報</param>
+    /// <param name="mode">読み込みモード（Single/Additive）</param>
     // これらの引数は、Unity側がイベントを発火させる際に自動的にセットして渡してくれます。
     // プログラマーが自分で呼び出す必要はありません。
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -267,13 +280,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(HideOverlayCoroutine());
     }
 
-    //SceneUIManagerの登録
-    public void RegisterSceneUI(SceneUIManager uiManager)
-    {
-        sceneUI = uiManager;
-    }
-
-    // シーン名に応じたBGMを再生する
+    /// <summary>
+    /// 指定されたシーン名に対応するBGMを再生します。
+    /// </summary>
     public void PlayGameBGM(string sceneName)
     {
         if (sceneName == "TitleScene") PlayBGM(titleBgm);
@@ -281,7 +290,10 @@ public class GameManager : MonoBehaviour
         else if (sceneName == "ScoreAttack") PlayBGM(scoreAttackBgm);
     }
 
-    // 指定したクリップをBGMとして再生（既に流れている場合は何もしない）
+    /// <summary>
+    /// 指定したAudioClipをBGMとして再生します。
+    /// 既に同じ曲が流れている場合は再開しません。
+    /// </summary>
     public void PlayBGM(AudioClip clip)
     {
         if (clip == null) return;
@@ -292,7 +304,10 @@ public class GameManager : MonoBehaviour
         bgmAudioSource.Play();
     }
 
-    // ローディング演出付きでシーン遷移を行う
+    /// <summary>
+    /// ローディング演出（React側の表示待ち＋暗転）を伴うシーン遷移を開始します。
+    /// </summary>
+    /// <param name="sceneName">遷移先のシーン名</param>
     // ReactUI側でローディング画面を表示している間に、裏で非同期読み込みを行います。
     // StartCoroutine: コルーチン（時間をまたぐ処理）を開始するUnityのメソッドです。
     public void LoadSceneWithTransition(string sceneName)
@@ -300,11 +315,16 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
     }
 
-    // 非同期読み込みを行うコルーチン (Coroutine)
+    /// <summary>
+    /// 非同期でシーンを読み込み、完了後にフェードアウトして画面を切り替えるコルーチン。
+    /// </summary>
     // IEnumerator: コルーチンとして動作させるための戻り値の型です。
     // コルーチンとは、処理を途中で中断（yield）し、次のフレームや指定時間後に再開できる特別な関数です。
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
     {
+        // 遷移開始時に振動を停止
+        VibrationManager.instance?.StopAllVibrations();
+
         // スコアや状態をリセット
         ResetScore();
 
@@ -340,7 +360,9 @@ public class GameManager : MonoBehaviour
         asyncLoad.allowSceneActivation = true;
     }
 
-    // オーバーレイを非表示にするコルーチン
+    /// <summary>
+    /// シーン遷移完了後、オーバーレイ（黒幕）を非表示にするコルーチン。
+    /// </summary>
     private IEnumerator HideOverlayCoroutine()
     {
         // ReactUnityの初期化とフェードイン開始を待つ（0.2秒程度）
@@ -349,7 +371,9 @@ public class GameManager : MonoBehaviour
         overlayCanvasObj.SetActive(false);
     }
 
-    // オーバーレイを使ってフェードアウトするコルーチン
+    /// <summary>
+    /// オーバーレイ（黒幕）の透明度を上げてフェードアウト（暗転）させるコルーチン。
+    /// </summary>
     private IEnumerator FadeOutOverlay()
     {
         // 黒い幕を有効化
@@ -376,33 +400,43 @@ public class GameManager : MonoBehaviour
         overlayImage.color = Color.black; // 確実に真っ黒にする
     }
 
-    //
+    /// <summary>
+    /// ゲームデータを初期化（リセット）します。
+    /// </summary>
     public void InitializeGameData()
     {
         gameData = new GameData(); //空の新しいGameDataで上書き
     }
 
-    // 統計データの更新用メソッド
-    // 敵を倒した時に呼び出され、総撃破数を加算します。
+    /// <summary>
+    /// 敵を倒した時に呼び出され、総撃破数を加算し、SPチャージを増加させます。
+    /// </summary>
     public void IncrementEnemiesDefeated()
     {
         gameData.stats.totalEnemiesDefeated++;
         AddSPCharge(30f); // 撃破ボーナス: 50 -> 30 に調整
     }
 
-    // プレイヤーがダメージを受けた時に呼び出され、総被ダメージ量を加算します。
+    /// <summary>
+    /// プレイヤーがダメージを受けた時に呼び出され、総被ダメージ量を加算します。
+    /// </summary>
     public void IncrementDamageTaken(int damage)
     {
         gameData.stats.totalDamageTaken += damage;
     }
 
-    // 弾を発射した時に呼び出され、総発射数を加算します。
+    /// <summary>
+    /// 弾を発射した時に呼び出され、総発射数を加算します。
+    /// </summary>
     public void IncrementShotsFired()
     {
         gameData.stats.totalShotsFired++;
     }
 
-    //スコアと経過時間をリセット
+    /// <summary>
+    /// スコア、経過時間、HP、SPなどのゲーム状態をリセットします。
+    /// ゲーム開始時やリスタート時に呼び出されます。
+    /// </summary>
     public void ResetScore()
     {
         CurrentScore = 0;
@@ -419,18 +453,18 @@ public class GameManager : MonoBehaviour
         IsNewHighScore = false;
 
         isPaused = false; // ポーズ状態もリセット
-        sceneUI?.UpdateScoreValueText(CurrentScore);
 
         timeElapsed = 0;
         nextScoreExtend = scoreExtendInterval; // エクステンド目標もリセット
     }
 
-    //スコアを加算
+    /// <summary>
+    /// スコアを加算し、UIを更新します。
+    /// また、一定スコアごとのエクステンド（HP回復）判定も行います。
+    /// </summary>
     public void AddScore(int points)
     {
         CurrentScore += points;
-        //UIの更新はSceneUIManagerに依頼
-        sceneUI?.UpdateScoreValueText(CurrentScore);
 
         // スコアエクステンド判定
         if (CurrentScore >= nextScoreExtend)
@@ -441,14 +475,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //HP表示を更新
-    public void UpdateHPDisplay(int currentHP)
+    /// <summary>
+    /// プレイヤーにダメージを与え、死亡判定を行います。
+    /// </summary>
+    /// <param name="damage">ダメージ量</param>
+    /// <returns>死亡した場合はtrue</returns>
+    public bool ApplyDamage(int damage)
     {
-        CurrentHP = currentHP; // 現在値を保持
-        sceneUI?.UpdateHPValueText(currentHP);
+        CurrentHP -= damage;
+        IncrementDamageTaken(damage);
+
+        if (CurrentHP <= 0)
+        {
+            ShowGameOverScreen();
+            return true;
+        }
+        return false;
     }
 
-    // プレイヤーを回復するメソッド
+    /// <summary>
+    /// プレイヤーのHPを回復します。
+    /// 最大HPを超えた場合は、最大HP自体を拡張します（動的上限）。
+    /// </summary>
+    /// <param name="amount">回復量</param>
     public void HealPlayer(int amount)
     {
         CurrentHP += amount;
@@ -457,17 +506,27 @@ public class GameManager : MonoBehaviour
         {
             MaxHP = CurrentHP;
         }
-        UpdateHPDisplay(CurrentHP);
     }
 
-    //SP表示を更新
-    public void UpdateSPDisplay(int currentSP)
+    /// <summary>
+    /// SP（ボム）の使用を試みます。
+    /// </summary>
+    /// <returns>使用に成功したらtrue、SP不足ならfalse</returns>
+    public bool TryUseSP()
     {
-        CurrentSP = currentSP; // 現在値を保持
-        sceneUI?.UpdateSPValueText(currentSP);
+        if (CurrentSP > 0)
+        {
+            CurrentSP--;
+            return true;
+        }
+        return false;
     }
 
-    // SPゲージを加算するメソッド（敵へのダメージや撃破時に呼ぶ）
+    /// <summary>
+    /// SPチャージゲージを加算します。
+    /// ゲージが満タンになると、SP（ボム）のストックが1つ増えます。
+    /// </summary>
+    /// <param name="amount">チャージ増加量</param>
     public void AddSPCharge(float amount)
     {
         // チャージを加算
@@ -480,12 +539,13 @@ public class GameManager : MonoBehaviour
             CurrentSPCharge -= MaxSPCharge; // 余剰分は持ち越し
             // ストックを増やす（上限なし）
             CurrentSP++;
-            sceneUI?.UpdateSPValueText(CurrentSP);
         }
     }
 
-    //
-    // InputAction.CallbackContext: Input Systemから渡される入力情報（押されたボタン、値など）
+    /// <summary>
+    /// ポーズボタンが押された時の処理。ポーズ状態をトグル（切り替え）します。
+    /// </summary>
+    /// <param name="context">Input Systemのコールバック情報</param>
     private void TogglePause(InputAction.CallbackContext context)
     {
         // タイトル画面ではポーズ機能（BGM停止など）を無効化する
@@ -504,24 +564,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ゲームを一時停止します（Time.timeScale = 0）。
+    /// </summary>
     void PauseGame()
     {
         // Time.timeScale: ゲーム内の時間の流れの速さ。0にすると停止、1で通常速度、0.5でスローモーションになります。
         Time.timeScale = 0f; //時間を停止
         bgmAudioSource?.Pause(); //BGMを一時停止
 
-        //SceneUIManagerにPausePanelの表示を依頼
-        //sceneUI?.ShowPausePanel(); // React側で表示するため無効化
+        // InputSystemの機能を使って、全デバイスの振動を一時停止する
+        InputSystem.PauseHaptics();
     }
 
+
+    /// <summary>
+    /// ゲームを再開します（Time.timeScale = 1）。
+    /// </summary>
     public void ResumeGame()
     {
         Time.timeScale = 1f;
         bgmAudioSource?.UnPause(); //BGMを再開
+
+        // 振動を再開する
+        InputSystem.ResumeHaptics();
+
         isPaused = false;
     }
 
-    //ゲームオーバー画面を表示
+    /// <summary>
+    /// ゲームオーバー時の処理。時間を止め、ハイスコア判定を行います。
+    /// </summary>
     public void ShowGameOverScreen()
     {
         //ゲームの時間を止める
@@ -538,9 +611,6 @@ public class GameManager : MonoBehaviour
         List<ScoreRecord> currentScores = null;
         if (currentSceneName == "Stage1") currentScores = gameData.stage1Scores;
         else if (currentSceneName == "ScoreAttack") currentScores = gameData.scoreAttackScores;
-
-        //SceneManagerにGameOverPanelの表示を依頼
-        //sceneUI?.ShowGameOverPanel(); // React側で表示するため無効化
 
         if (currentScores != null)
         {
@@ -562,13 +632,15 @@ public class GameManager : MonoBehaviour
             {
                 // その設定でのハイスコア更新か
                 bool isHigherThanHighScore = filteredScores.Count == 0 || CurrentScore > filteredScores.First().score;
-                //SceneManegerにScoreEntryPanelの表示を依頼
-                //sceneUI?.ShowScoreEntryPanel(CurrentScore, isHigherThanHighScore); // React側で表示するため無効化
                 IsNewHighScore = isHigherThanHighScore;
             }
         }
     }
 
+    /// <summary>
+    /// 現在のスコアをランキングデータとして保存します。
+    /// 同じ設定条件（HP, SP, AutoFire）のランキングに追加され、上位5件のみが保持されます。
+    /// </summary>
     public void SaveScore()
     {
         // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
@@ -630,9 +702,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //リスタート
+    /// <summary>
+    /// 現在のシーンをリロードしてゲームを再開します。
+    /// </summary>
     public void RestartGame()
     {
+        // 遷移開始時に振動を停止
+        VibrationManager.instance?.StopAllVibrations();
+
         // ランクインしていれば保存
         SaveScore();
 
@@ -649,6 +726,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    /// <summary>
+    /// タイトル画面に戻ります。
+    /// </summary>
     public void ReturnToTitle()
     {
         // ランクインしていれば保存
@@ -673,8 +753,14 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ReturnToTitleCoroutine());
     }
 
+    /// <summary>
+    /// タイトル画面への遷移を制御するコルーチン。
+    /// </summary>
     private IEnumerator ReturnToTitleCoroutine()
     {
+        // 遷移開始時に振動を停止
+        VibrationManager.instance?.StopAllVibrations();
+
         // 1. React側にローディング表示を依頼
         if (ReactInputBridge.Instance != null)
         {
@@ -710,7 +796,9 @@ public class GameManager : MonoBehaviour
         asyncLoad.allowSceneActivation = true;
     }
 
-    //カーソル移動効果音再生
+    /// <summary>
+    /// カーソル移動時の効果音を再生します。
+    /// </summary>
     public void PlayCursorMoveSound()
     {
         if (cursorMoveSound != null)
@@ -718,9 +806,14 @@ public class GameManager : MonoBehaviour
             float seVol = SettingsManager.GetSEVolume() / 100f;
             audioSource.PlayOneShot(cursorMoveSound, seVol);
         }
+
+        // カーソル移動時の振動: ごく微弱に、一瞬だけ (優先度: 低)
+        VibrationManager.instance?.Vibrate(0.0f, 0.1f, 0.03f, 0.5f);
     }
 
-    //決定等押下効果音再生
+    /// <summary>
+    /// 決定時の効果音を再生します。
+    /// </summary>
     public void PlaySubmitSound()
     {
         if (submitSound != null)
@@ -728,9 +821,14 @@ public class GameManager : MonoBehaviour
             float seVol = SettingsManager.GetSEVolume() / 100f;
             audioSource.PlayOneShot(submitSound, seVol);
         }
+
+        // 決定時の振動: 軽く、鋭く「カチッ」 (高周波のみ、優先度: 通常)
+        VibrationManager.instance?.Vibrate(0.0f, 0.3f, 0.05f, 1.0f);
     }
 
-    //キャンセル等押下効果音再生
+    /// <summary>
+    /// キャンセル時の効果音を再生します。
+    /// </summary>
     public void PlayCancelSound()
     {
         if (cancelSound != null)
@@ -738,9 +836,14 @@ public class GameManager : MonoBehaviour
             float seVol = SettingsManager.GetSEVolume() / 100f;
             audioSource.PlayOneShot(cancelSound, seVol);
         }
+
+        // キャンセル時の振動: 軽く、鈍く「コツッ」 (低周波のみ、優先度: 通常)
+        VibrationManager.instance?.Vibrate(0.3f, 0.0f, 0.05f, 1.0f);
     }
 
-    //プレイヤー射撃音再生
+    /// <summary>
+    /// プレイヤーの射撃音を再生します。
+    /// </summary>
     public void PlayPlayerShootSound()
     {
         if (playerShootSound != null)
@@ -750,7 +853,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //敵射撃音再生
+    /// <summary>
+    /// 敵の射撃音を再生します。
+    /// </summary>
     public void PlayEnemyShootSound()
     {
         if (enemyShootSound != null)
@@ -767,13 +872,17 @@ public class GameManager : MonoBehaviour
     //     bgmAudioSource = source;
     // }
 
-    // データをファイルに保存する
+    /// <summary>
+    /// 現在のゲームデータをファイルに保存します。
+    /// </summary>
     public void SaveGameData()
     {
         SaveSystem.Save(CurrentSaveFileName, gameData);
     }
 
-    // ゲームを終了する
+    /// <summary>
+    /// アプリケーションを終了します。エディタ上では再生モードを停止します。
+    /// </summary>
     public void QuitGame()
     {
 #if UNITY_EDITOR

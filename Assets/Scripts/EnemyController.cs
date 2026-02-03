@@ -1,6 +1,10 @@
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+/// <summary>
+/// 通常の敵キャラクター（直進タイプ）を制御するクラス。
+/// 画面上部から出現し、下方向へ移動しながら、一定間隔で弾を発射します。
+/// </summary>
+public class EnemyController : MonoBehaviour, IDamageable
 {
     //プレイヤー
     private GameObject playerObject;
@@ -19,6 +23,10 @@ public class EnemyController : MonoBehaviour
     public int baseHP = 1;
     private int currentHP;
 
+    /// <summary>
+    /// 初期化処理。
+    /// ゲームの経過時間に応じてHPを強化し、プレイヤーオブジェクトの参照を取得します。
+    /// </summary>
     void Start()
     {
         //ゲーム開始時にHPを最大にする
@@ -29,7 +37,10 @@ public class EnemyController : MonoBehaviour
         playerObject = GameObject.FindGameObjectWithTag("Player");
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// 毎フレーム呼び出される更新処理。
+    /// 敵の移動と、射撃タイミングの管理を行います。
+    /// </summary>
     void Update()
     {
         //敵を下に移動させる
@@ -52,7 +63,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    //射撃関数
+    /// <summary>
+    /// 弾を発射する処理。
+    /// </summary>
     public void Shoot()
     {
         //プレイヤーの位置(自機狙いのため)
@@ -91,7 +104,10 @@ public class EnemyController : MonoBehaviour
         GameManager.instance?.PlayEnemyShootSound(); //効果音再生
     }
 
-    //敵がダメージを受けるための関数
+    /// <summary>
+    /// ダメージを受けた際の処理（IDamageableインターフェースの実装）。
+    /// HPを減らし、0以下になったら撃破処理を行います。
+    /// </summary>
     public void TakeDamage(int damage)
     {
         currentHP -= damage;
@@ -104,29 +120,36 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    //プレイヤーに当たった場合の関数
+    /// <summary>
+    /// 他のオブジェクトと接触し続けている間に呼ばれる処理。
+    /// </summary>
     private void OnTriggerStay2D(Collider2D other)
     {
         //当たった相手のタグがPlayerだった場合
-        if (other.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             //相手からPlayerControllerのスクリプトを取得
-            PlayerController player = other.GetComponent<PlayerController>();
-            //プレイヤーにダメージを1与える
-            player?.TakeDamage(1);
+            if (other.TryGetComponent<IDamageable>(out var player))
+            {
+                player.TakeDamage(1);
+            }
         }
     }
 
-    //他の敵に当たった場合
+    /// <summary>
+    /// 他のオブジェクトと接触した瞬間に呼ばれる処理。
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy"))
         {
             CreateRevengeBulletsAndDestroy();
         }
     }
 
-    //弾を全方位に発射して消える
+    /// <summary>
+    /// 誘爆（敵同士の衝突）時の処理。全方位に弾をばら撒いて自滅します。
+    /// </summary>
     private void CreateRevengeBulletsAndDestroy()
     {
         for (int i = 0; i < 8; ++i)

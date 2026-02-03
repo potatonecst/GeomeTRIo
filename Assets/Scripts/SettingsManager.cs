@@ -4,19 +4,27 @@ public static class SettingsManager
 {
     // PlayerPrefsで使用するキー定数
     // PlayerPrefs Keys
+    /// <summary>BGM音量の保存キー</summary>
     private const string KEY_BGM_VOLUME = "BGM_VOLUME";
-    private const string KEY_SE_VOLUME = "SE_VOLUME";
-    private const string KEY_VIBRATION = "VIBRATION";
-    private const string KEY_CRT_FILTER = "CRT_FILTER";
 
-    //初期HP取得
+    /// <summary>SE音量の保存キー</summary>
+    private const string KEY_SE_VOLUME = "SE_VOLUME";
+
+    /// <summary>振動設定の保存キー</summary>
+    private const string KEY_VIBRATION = "VIBRATION";
+
+    /// <summary>
+    /// 初期HPを取得します。GameManagerが存在しない場合はデフォルト値(3)を返します。
+    /// </summary>
     public static int GetInitialHP()
     {
         if (GameManager.instance == null) return 3;
         return GameManager.instance.Data.settings.initialHp;
     }
 
-    //初期HP割り当て
+    /// <summary>
+    /// 初期HPを設定します。
+    /// </summary>
     public static void SetInitialHP(int hp)
     {
         if (GameManager.instance != null)
@@ -25,14 +33,18 @@ public static class SettingsManager
         }
     }
 
-    //初期ボム数取得
+    /// <summary>
+    /// 初期SP（ボム数）を取得します。GameManagerが存在しない場合はデフォルト値(2)を返します。
+    /// </summary>
     public static int GetInitialSP()
     {
-        if (GameManager.instance == null) return 3;
+        if (GameManager.instance == null) return 2;
         return GameManager.instance.Data.settings.initialSp;
     }
 
-    //初期ボム数割り当て
+    /// <summary>
+    /// 初期SP（ボム数）を設定します。
+    /// </summary>
     public static void SetInitialSP(int sp)
     {
         if (GameManager.instance != null)
@@ -41,14 +53,18 @@ public static class SettingsManager
         }
     }
 
-    //オート連射設定状況取得
+    /// <summary>
+    /// オート連射が有効かどうかを取得します。
+    /// </summary>
     public static bool IsAutofireEnabled()
     {
         if (GameManager.instance == null) return false;
         return GameManager.instance.Data.settings.autoFireEnabled;
     }
 
-    //オート連射設定状況割り当て
+    /// <summary>
+    /// オート連射の有効/無効を設定します。
+    /// </summary>
     public static void SetAutofire(bool isEnabled)
     {
         if (GameManager.instance != null)
@@ -57,14 +73,18 @@ public static class SettingsManager
         }
     }
 
-    //プレイヤーネーム取得
+    /// <summary>
+    /// プレイヤー名を取得します。
+    /// </summary>
     public static string GetPlayerName()
     {
         if (GameManager.instance == null) return "PLAYER";
         return GameManager.instance.Data.playerName ?? "PLAYER";
     }
 
-    //プレイヤーネーム割り当て
+    /// <summary>
+    /// プレイヤー名を設定します。
+    /// </summary>
     public static void SetPlayerName(string name)
     {
         if (GameManager.instance != null)
@@ -75,7 +95,9 @@ public static class SettingsManager
 
     // --- グローバル設定 (PlayerPrefs) ---
 
-    // BGM音量 (0-100)
+    /// <summary>
+    /// BGM音量を取得します (0-100)。デフォルトは80です。
+    /// </summary>
     public static int GetBGMVolume()
     {
         // PlayerPrefs.GetInt(key, defaultValue):
@@ -84,6 +106,9 @@ public static class SettingsManager
         return PlayerPrefs.GetInt(KEY_BGM_VOLUME, 80); // デフォルト80
     }
 
+    /// <summary>
+    /// BGM音量を設定します (0-100)。
+    /// </summary>
     public static void SetBGMVolume(int volume)
     {
         // Mathf.Clamp(value, min, max): 値を指定した最小値と最大値の間に制限します。
@@ -92,40 +117,41 @@ public static class SettingsManager
         // 即時保存せず、メモリ上の値のみ更新
     }
 
-    // SE音量 (0-100)
+    /// <summary>
+    /// SE音量を取得します (0-100)。デフォルトは100です。
+    /// </summary>
     public static int GetSEVolume()
     {
         return PlayerPrefs.GetInt(KEY_SE_VOLUME, 100); // デフォルト100
     }
 
+    /// <summary>
+    /// SE音量を設定します (0-100)。
+    /// </summary>
     public static void SetSEVolume(int volume)
     {
         PlayerPrefs.SetInt(KEY_SE_VOLUME, Mathf.Clamp(volume, 0, 100));
     }
 
-    // 振動 (bool)
+    /// <summary>
+    /// 振動機能が有効かどうかを取得します。デフォルトは有効(true)です。
+    /// </summary>
     public static bool IsVibrationEnabled()
     {
         return PlayerPrefs.GetInt(KEY_VIBRATION, 1) == 1; // デフォルトON
     }
 
+    /// <summary>
+    /// 振動機能の有効/無効を設定します。
+    /// </summary>
     public static void SetVibration(bool isEnabled)
     {
         PlayerPrefs.SetInt(KEY_VIBRATION, isEnabled ? 1 : 0);
     }
 
-    // CRTフィルタ (bool)
-    public static bool IsCRTFilterEnabled()
-    {
-        return PlayerPrefs.GetInt(KEY_CRT_FILTER, 1) == 1; // デフォルトON
-    }
-
-    public static void SetCRTFilter(bool isEnabled)
-    {
-        PlayerPrefs.SetInt(KEY_CRT_FILTER, isEnabled ? 1 : 0);
-    }
-
-    // 設定をディスクに保存する
+    /// <summary>
+    /// PlayerPrefsの設定をディスクに保存（永続化）します。
+    /// </summary>
     public static void Save()
     {
         // PlayerPrefs.Save(): メモリ上の変更内容をディスク（ファイル）に書き込んで永続化します。

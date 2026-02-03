@@ -3,13 +3,18 @@ using ReactUnity;
 using UnityEngine.InputSystem;
 using TMPro;
 
-// React側へ公開するメソッドを持つクラス（独立させる）
-// このクラスのインスタンスがReact側のGlobalsに登録され、JavaScriptから呼び出せるようになります。
-// React側での呼び出し例: useGlobals().GameInterop.GetGameData()
+/// <summary>
+/// React側へ公開するメソッドを持つクラス。
+/// このクラスのインスタンスがReact側のGlobalsに登録され、JavaScriptから呼び出せるようになります。
+/// React側での呼び出し例: useGlobals().GameInterop.GetGameData()
+/// </summary>
 public class GameInterop
 {
-    // ゲームデータをJSON形式で取得するメソッド
-    // ReactはC#のオブジェクトを直接扱えないため、JSON文字列に変換して渡します。
+    /// <summary>
+    /// ゲームデータをJSON形式で取得します。
+    /// ReactはC#のオブジェクトを直接扱えないため、JSON文字列に変換して渡します。
+    /// </summary>
+    /// <returns>GameDataのJSON文字列</returns>
     public string GetGameData()
     {
         if (GameManager.instance != null)
@@ -21,10 +26,12 @@ public class GameInterop
         return "{}";
     }
 
-    // JsonUtility用にシリアライズ可能なクラスを定義
-    // React側に渡したい設定データの構造を定義しています。
-    // [System.Serializable]: この属性をクラスや構造体につけることで、
-    // Unityのシリアライザ（Inspector表示やJsonUtilityなど）がそのデータを保存・読み込みできるようになります。
+    /// <summary>
+    /// React側に渡す設定データの構造定義。
+    /// JsonUtilityでシリアライズするために使用します。
+    /// [System.Serializable]: この属性をクラスや構造体につけることで、
+    /// Unityのシリアライザ（Inspector表示やJsonUtilityなど）がそのデータを保存・読み込みできるようになります。
+    /// </summary>
     [System.Serializable]
     private class SettingsData
     {
@@ -35,7 +42,6 @@ public class GameInterop
         public int bgm_vol;
         public int se_vol;
         public bool vibration;
-        public bool crt_filter;
         // 統計情報
         public float total_play_time;
         public int total_enemies_defeated;
@@ -44,8 +50,10 @@ public class GameInterop
         public int total_shots_fired;
     }
 
-    // ゲームプレイ中のステータスデータ
-    // HUD（ヘッドアップディスプレイ）の更新に必要な情報をまとめます。
+    /// <summary>
+    /// ゲームプレイ中のステータスデータ構造定義。
+    /// HUD（ヘッドアップディスプレイ）の更新に必要な情報をまとめます。
+    /// </summary>
     [System.Serializable]
     private class InGameStatus
     {
@@ -61,14 +69,19 @@ public class GameInterop
         public bool isPaused;
     }
 
-    // アプリケーションのバージョンを取得するメソッド
+    /// <summary>
+    /// アプリケーションのバージョンを取得します。
+    /// </summary>
     public string GetAppVersion()
     {
         return Application.version;
     }
 
 
-    // 現在の設定値をJSONで取得するメソッド
+    /// <summary>
+    /// 現在の設定値（音量、プレイヤー名、統計情報など）をJSON形式で取得します。
+    /// </summary>
+    /// <returns>SettingsDataのJSON文字列</returns>
     public string GetSettings()
     {
         // 統計情報はセーブデータ（GameData）に含まれているため、GameManagerから取得します。
@@ -84,7 +97,6 @@ public class GameInterop
             bgm_vol = SettingsManager.GetBGMVolume(),
             se_vol = SettingsManager.GetSEVolume(),
             vibration = SettingsManager.IsVibrationEnabled(),
-            crt_filter = SettingsManager.IsCRTFilterEnabled(),
 
             // 統計情報 (GameData from GameManager)
             total_play_time = stats.totalPlayTime,
@@ -97,8 +109,11 @@ public class GameInterop
         return JsonUtility.ToJson(settings);
     }
 
-    // ゲーム中のステータス（スコア、HP、SP）をJSONで取得するメソッド
-    // React側で毎フレーム呼び出して表示を更新するために使用します。
+    /// <summary>
+    /// ゲーム中のステータス（スコア、HP、SP）をJSON形式で取得します。
+    /// React側で毎フレーム呼び出して表示を更新するために使用します。
+    /// </summary>
+    /// <returns>InGameStatusのJSON文字列</returns>
     public string GetInGameStatus()
     {
         if (GameManager.instance == null) return "{}";
@@ -119,8 +134,12 @@ public class GameInterop
         return JsonUtility.ToJson(status);
     }
 
-    // 設定値を更新するメソッド
-    // Reactの設定画面で値が変更された時に呼び出されます。
+    /// <summary>
+    /// 指定されたキーの設定値を更新します。
+    /// Reactの設定画面で値が変更された時に呼び出されます。
+    /// </summary>
+    /// <param name="key">設定項目のID</param>
+    /// <param name="value">設定値（文字列）</param>
     public void UpdateSetting(string key, string value)
     {
         switch (key)
@@ -140,13 +159,14 @@ public class GameInterop
                 // SEは鳴らす瞬間に音量を取得するのでApply不要
                 break;
             case "vibration": SettingsManager.SetVibration(bool.Parse(value)); break;
-            case "crt_filter": SettingsManager.SetCRTFilter(bool.Parse(value)); break;
         }
 
         // ここでは保存を行わず、メモリ上の値とゲーム挙動への反映のみを行う
     }
 
-    // 設定をファイルに保存するメソッド
+    /// <summary>
+    /// 現在の設定をファイルに保存（永続化）します。
+    /// </summary>
     public void SaveSettings()
     {
         // 設定とセーブデータをディスクに書き込みます。
@@ -155,8 +175,11 @@ public class GameInterop
     }
 
 
-    // タイトル画面の演出をスキップすべきかどうかを確認するメソッド
-    // React側でタイトル画面の初期化時に呼び出されます。
+    /// <summary>
+    /// タイトル画面の演出（Press Any Button等）をスキップすべきかどうかを確認します。
+    /// ゲームプレイから戻ってきた場合にtrueを返し、フラグを消費します。
+    /// </summary>
+    /// <returns>スキップすべきならtrue</returns>
     public bool ShouldSkipTitleSequence()
     {
         if (GameManager.instance != null && GameManager.instance.SkipTitleSequence)
@@ -167,23 +190,35 @@ public class GameInterop
         return false;
     }
 
+    /// <summary>
+    /// ゲームを再開（ポーズ解除）します。
+    /// </summary>
     public void ResumeGame()
     {
         GameManager.instance?.ResumeGame();
     }
 
+    /// <summary>
+    /// ゲームをリスタート（現在のシーンを再読み込み）します。
+    /// </summary>
     public void RestartGame()
     {
         GameManager.instance?.RestartGame();
     }
 
+    /// <summary>
+    /// タイトル画面に戻ります。
+    /// </summary>
     public void ReturnToTitle()
     {
         GameManager.instance?.ReturnToTitle();
     }
 
-    // 指定したステージ（シーン）を開始するメソッド
-    // Reactのステージ選択画面から呼び出されます。
+    /// <summary>
+    /// 指定したステージ（シーン）を開始します。
+    /// Reactのステージ選択画面から呼び出されます。
+    /// </summary>
+    /// <param name="stageName">読み込むシーン名</param>
     public void StartGame(string stageName)
     {
         if (GameManager.instance != null)
@@ -202,8 +237,11 @@ public class GameInterop
         }
     }
 
-    // 効果音を再生するメソッド
-    // React側からは window.GameInterop.PlaySound('move') のように呼び出されます。
+    /// <summary>
+    /// 指定したタイプの効果音を再生します。
+    /// React側からは window.GameInterop.PlaySound('move') のように呼び出されます。
+    /// </summary>
+    /// <param name="type">音の種類 ('move', 'submit', 'cancel')</param>
     public void PlaySound(string type)
     {
         if (GameManager.instance == null) return;
@@ -223,7 +261,9 @@ public class GameInterop
         }
     }
 
-    // ゲームを終了するメソッド
+    /// <summary>
+    /// ゲームを終了します。
+    /// </summary>
     public void QuitGame()
     {
         if (GameManager.instance != null)
@@ -243,16 +283,22 @@ public class GameInterop
     }
 }
 
-// DefaultExecutionOrder(-100): このスクリプトを他のスクリプト（特にReactUnity）より先に実行させるための属性。
-// これにより、ReactUnityが初期化される前にGlobalsへの登録準備を整えることができます。
+/// <summary>
+/// UnityのInput Systemからの入力を検知し、React側のJavaScript関数を呼び出すブリッジクラス。
+/// MonoBehaviourを継承しており、Unityのシーン上のオブジェクトにアタッチして使用します。
+/// DefaultExecutionOrder(-100): ReactUnityが初期化される前にGlobalsへの登録準備を整えるために、実行順を早めています。
+/// </summary>
 [DefaultExecutionOrder(-100)]
-// ReactInputBridge: UnityのInput Systemからの入力を検知し、React側のJavaScript関数を呼び出すクラス
-// MonoBehaviourを継承しており、Unityのシーン上のオブジェクトにアタッチして使用します。
+[RequireComponent(typeof(ReactRendererBase))]
 public class ReactInputBridge : MonoBehaviour
 {
     public static ReactInputBridge Instance { get; private set; }
 
-    // プライマリブリッジ: シーン遷移などで複数のブリッジが存在する場合に、メインとなるものを識別するためのフラグ
+    /// <summary>
+    /// プライマリブリッジフラグ。
+    /// シーン遷移などで複数のブリッジが存在する場合に、メインとなるものを識別するために使用します。
+    /// trueの場合、既存のインスタンスを破棄して自分がInstanceになります（シングルトン的挙動）。
+    /// </summary>
     [Tooltip("このブリッジをプライマリ（GameManagerからの命令を受け取る唯一のインスタンス）として設定します。")]
     public bool isPrimaryBridge = false;
 
@@ -263,9 +309,11 @@ public class ReactInputBridge : MonoBehaviour
     private InputAction _cancelAction;
     private InputAction _backspaceAction;
 
-    // ナビゲーション入力のクールタイム（連続入力防止）管理用変数
+    /// <summary>次に入力を受け付ける時刻（Time.unscaledTime基準）。メニュー操作の連続入力防止用。</summary>
     // メニュー操作時にカーソルが高速に移動しすぎてしまうのを防ぐため、一度入力したら一定時間入力を無視します。
     private float _nextNavigateTime = 0f; // 次に入力を受け付ける時刻（Time.unscaledTime基準）
+
+    /// <summary>入力間隔の最小値（秒）。この時間内は次の入力を無視します。</summary>
     private const float NavigateDelay = 0.15f; // 入力間隔の最小値（秒）。この時間内は次の入力を無視します。
 
     private void Awake()
@@ -344,10 +392,11 @@ public class ReactInputBridge : MonoBehaviour
 
     private void Update()
     {
-        // Contextが有効で、かつGameInteropが未登録の場合に登録する
         // ReactUnityのContextは非同期に生成されたり、リロードで再生成されたりするため、
         // Update内で監視して、未登録の状態であれば登録を行う「ポーリング」方式を採用しています。
         // これにより、初期化タイミングのズレやリロード時にも確実にオブジェクトを渡せます。
+
+        // Contextが有効で、かつGameInteropが未登録の場合に登録する
         if (_reactRenderer != null && _reactRenderer.Context != null)
         {
             if (!_reactRenderer.Context.Globals.ContainsKey("GameInterop"))
@@ -359,7 +408,9 @@ public class ReactInputBridge : MonoBehaviour
         }
     }
 
-    // オブジェクトが有効になったら入力を監視開始
+    /// <summary>
+    /// オブジェクトが有効になったら入力を監視開始します。
+    /// </summary>
     private void OnEnable()
     {
         _pressAnyKeyAction.Enable();
@@ -375,7 +426,9 @@ public class ReactInputBridge : MonoBehaviour
         }
     }
 
-    // オブジェクトが無効になったら監視停止
+    /// <summary>
+    /// オブジェクトが無効になったら監視を停止します。
+    /// </summary>
     private void OnDisable()
     {
         _pressAnyKeyAction.Disable();
@@ -413,11 +466,14 @@ public class ReactInputBridge : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[ReactInputBridge] React Context is not ready.");
+            Debug.LogWarning($"[ReactInputBridge] React Context is not ready. (Renderer: {_reactRenderer != null}, Context: {_reactRenderer?.Context != null})");
         }
     }
 
-    // キーボードからのテキスト入力を処理
+    /// <summary>
+    /// キーボードからのテキスト入力を処理し、React側に送信します。
+    /// </summary>
+    /// <param name="c">入力された文字</param>
     private void OnTextInput(char c)
     {
         // char.IsControl(char): 指定した文字が制御文字（バックスペース、タブ、エンターなど）かどうかを判定します。
@@ -433,9 +489,11 @@ public class ReactInputBridge : MonoBehaviour
         }
     }
 
-    // ナビゲーション操作（矢印キー、スティック、WASD）が行われた時に呼ばれる関数
-    // Input System の "Navigate" アクションに紐づけられています。
-    // 引数 value: 入力された方向ベクトル (x, y)。範囲は -1.0 ～ 1.0。
+    /// <summary>
+    /// ナビゲーション操作（矢印キー、スティック、WASD）が行われた時に呼ばれる関数。
+    /// Input System の "Navigate" アクションに紐づけられています。
+    /// </summary>
+    /// <param name="value">入力された方向ベクトル (x, y)。範囲は -1.0 ～ 1.0。</param>
     private void OnNavigate(Vector2 value)
     {
         // 1. クールタイムのチェック
@@ -483,7 +541,10 @@ public class ReactInputBridge : MonoBehaviour
         }
     }
 
-    // React側にイベントを送信する汎用メソッド
+    /// <summary>
+    /// React側にイベントを送信する汎用メソッド。
+    /// </summary>
+    /// <param name="eventName">イベント名（up, down, submit, cancelなど）</param>
     private void SendEvent(string eventName)
     {
         if (_reactRenderer != null && _reactRenderer.Context != null)
@@ -496,7 +557,9 @@ public class ReactInputBridge : MonoBehaviour
         }
     }
 
-    // 画面をフェードアウト（暗転）させる命令を送る
+    /// <summary>
+    /// React側に画面をフェードアウト（暗転）させる命令を送ります。
+    /// </summary>
     public void FadeOutScreen()
     {
         if (_reactRenderer != null && _reactRenderer.Context != null)
@@ -506,7 +569,9 @@ public class ReactInputBridge : MonoBehaviour
         }
     }
 
-    // ローディング画面を表示する命令を送る
+    /// <summary>
+    /// React側にローディング画面を表示する命令を送ります。
+    /// </summary>
     public void ShowLoadingScreen()
     {
         if (_reactRenderer != null && _reactRenderer.Context != null)

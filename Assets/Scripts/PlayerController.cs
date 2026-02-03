@@ -3,7 +3,11 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerController : MonoBehaviour
+/// <summary>
+/// プレイヤー（自機）の操作、移動、攻撃、ダメージ処理を管理するクラス。
+/// UnityのInput Systemを使用して入力を受け取ります。
+/// </summary>
+public class PlayerController : MonoBehaviour, IDamageable
 {
     //自動生成されたPlayerInputActionsクラスの変数
     private PlayerInputActions playerInputActions;
@@ -18,8 +22,6 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 20f; //publicにするとUnityエディタのInspectorから調整できる
 
     //HPとダメージに関する変数
-    public int initialHP;
-    private int currentHP;
     public float invincibilityDuration = 1.5f; //無敵時間
     private Coroutine activeInvincibilityCoroutine; //コルーチン格納変数
     private bool isInvincible = false; //無敵状態判定
@@ -29,26 +31,30 @@ public class PlayerController : MonoBehaviour
     public List<Transform> firePoints; //3つの発射点を格納するリスト
     private int currentFirePointIndex = 1; //現在選択中の発射点の番号（0=左、1=中、2=右）
     public RectTransform firePointMarker; //発射点のUIマーカーのRectTransformを格納する変数
-    private bool autofireEnabled = false; //オート連射が有効か
     public float fireRate = 0.1f; //連射間隔
     private float nextFireTime = 0; //次に弾を発射できる時間
     private bool fireButtonHeld = false; //発射ボタンが押され続けているか
 
     //スピンアタックに関する変数
-    public int initialSpinAttacks; //最大回数(初期値)
-    private int currentSpinAttacks; //残り回数
     public float spinAttackDuration = 2f; //持続時間
     public float spinAttackFireRate = 0.1f; //連射間隔
     public float spinSpeed = 720f; //回転速度
     private bool isSpinning = false; //スピンアタック判定
 
+    /// <summary>
+    /// スクリプトのインスタンスがロードされた時に呼び出されます。
+    /// コンポーネントの取得など、初期化処理を行います。
+    /// </summary>
     private void Awake()
     {
         //自身のRigidbody2Dを取得
         rb = GetComponent<Rigidbody2D>();
     }
 
-    //このオブジェクトが有効になったときに呼ばれる
+    /// <summary>
+    /// このオブジェクトが有効になったときに呼ばれます。
+    /// Input Systemのイベント登録を行います。
+    /// </summary>
     private void OnEnable()
     {
         // InputActionsの初期化とイベント登録はここで行う
@@ -69,7 +75,10 @@ public class PlayerController : MonoBehaviour
         playerInputActions.Player.Enable();
     }
 
-    //このオブジェクトが無効になったときに呼ばれる
+    /// <summary>
+    /// このオブジェクトが無効になったときに呼ばれます。
+    /// Input Systemのイベント解除を行い、メモリリークを防ぎます。
+    /// </summary>
     private void OnDisable()
     {
         // 有効化したものは、必ずここで無効化し、イベント登録も解除する
@@ -87,23 +96,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 最初のフレーム更新の前に呼び出されます。
+    /// ゲーム設定（HP, SP, AutoFire）の読み込みとUIの初期化を行います。
+    /// </summary>
     void Start()
     {
-        initialHP = SettingsManager.GetInitialHP(); //設定したHPを取得
-        currentHP = initialHP;
-        GameManager.instance.UpdateHPDisplay(currentHP); //開始時のHPを画面に表示するため
-
-        initialSpinAttacks = SettingsManager.GetInitialSP(); //設定したSPを取得
-        currentSpinAttacks = initialSpinAttacks;
-        GameManager.instance.UpdateSPDisplay(currentSpinAttacks);
-
-        autofireEnabled = SettingsManager.IsAutofireEnabled();
-
         //SpriteRendererコンポーネントを取得しておく
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    //ゲームが実行中、毎フレーム呼ばれ続ける
+    /// <summary>
+    /// 毎フレーム呼び出されます。
+    /// 発射点マーカーの更新や、オート連射の制御を行います。
+    /// </summary>
     void Update()
     {
         if (firePointMarker != null)
@@ -113,7 +119,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //オート連射が有効かつボタンが押され続けている場合
-        if (autofireEnabled && fireButtonHeld)
+        if (SettingsManager.IsAutofireEnabled() && fireButtonHeld)
         {
             if (Time.time > nextFireTime)
             {
@@ -123,6 +129,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 固定フレームレートで呼び出されます。
+    /// 物理演算（Rigidbody）を使用した移動処理はここで行います。
+    /// </summary>
     void FixedUpdate()
     {
         //入力の読み取り
@@ -140,36 +150,51 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    //Fireボタンが押された瞬間に呼ばれる
+    /// <summary>
+    /// Fireボタンが押された瞬間に呼び出されるコールバック関数。
+    /// </summary>
+    /// <param name="context">入力イベントの情報</param>
     private void OnFireButtonPressed(InputAction.CallbackContext context)
     {
         fireButtonHeld = true;
         ShootBullet();
 
         //オート射撃が有効な場合、次回の射撃時間を設定
-        if (autofireEnabled)
+        if (SettingsManager.IsAutofireEnabled())
         {
             nextFireTime = Time.time + fireRate;
         }
     }
 
-    //Fireボタンが離された瞬間に呼ばれる
+    /// <summary>
+    /// Fireボタンが離された瞬間に呼び出されるコールバック関数。
+    /// </summary>
+    /// <param name="context">入力イベントの情報</param>
     private void OnFireButtonReleased(InputAction.CallbackContext context)
     {
         fireButtonHeld = false;
     }
 
-    //弾の発射
+    /// <summary>
+    /// 弾を発射する処理。
+    /// 効果音の再生、発射数のカウント、コントローラーの微弱な振動、弾の生成を行います。
+    /// </summary>
     private void ShootBullet()
     {
         GameManager.instance?.PlayPlayerShootSound(); //効果音再生
         GameManager.instance?.IncrementShotsFired(); //発射数カウント
 
+        // 発射時の振動: 非常に弱く、短く (優先度: 低)
+        VibrationManager.instance?.Vibrate(0.0f, 0.1f, 0.05f, 0.5f);
+
         //現在選択中の発射点の位置・角度で弾のプレハブを生成
         Instantiate(bulletPrefab, firePoints[currentFirePointIndex].position, firePoints[currentFirePointIndex].rotation);
     }
 
-    //SwitchWeaponアクションが実行されたときに呼ばれる関数
+    /// <summary>
+    /// SwitchWeaponアクション（武器切り替え）が実行されたときに呼ばれる関数。
+    /// 発射点のインデックスを変更し、三角形の頂点を切り替えます。
+    /// </summary>
     private void SwitchWeapon(InputAction.CallbackContext context)
     {
         //入力値を読み込む（-1 or +1)
@@ -195,7 +220,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //無敵化開始のための受付関数
+    /// <summary>
+    /// 無敵状態を開始するためのヘルパー関数。
+    /// 既存の無敵コルーチンがあれば停止し、新しいコルーチンを開始します。
+    /// </summary>
     private void ActivateInvincibility(float duration)
     {
         if (activeInvincibilityCoroutine != null)
@@ -206,7 +234,10 @@ public class PlayerController : MonoBehaviour
         activeInvincibilityCoroutine = StartCoroutine(InvincibilityAndBlinkingCoroutine(duration));
     }
 
-    //無敵と点滅を管理するコルーチン
+    /// <summary>
+    /// 無敵時間中の処理と、スプライトの点滅（被弾演出）を管理するコルーチン。
+    /// </summary>
+    /// <param name="duration">無敵時間の長さ（秒）</param>
     private IEnumerator InvincibilityAndBlinkingCoroutine(float duration)
     {
         isInvincible = true; //無敵状態開始
@@ -225,22 +256,30 @@ public class PlayerController : MonoBehaviour
         activeInvincibilityCoroutine = null; //変数を空に
     }
 
-    //SpinAttackアクションが実行された時に呼ばれる関数
+    /// <summary>
+    /// SpinAttackアクション（必殺技）が実行された時に呼ばれる関数。
+    /// </summary>
     private void PerformSpinAttack(InputAction.CallbackContext context)
     {
         //スピンアタック中でなければ発動
-        if (currentSpinAttacks > 0 && !isSpinning)
+        if (!isSpinning && GameManager.instance.TryUseSP())
         {
-            currentSpinAttacks--;
-            GameManager.instance.UpdateSPDisplay(currentSpinAttacks);
             StartCoroutine(SpinAttackCoroutine());
         }
     }
 
+    /// <summary>
+    /// スピンアタックの挙動（回転、全方位射撃、無敵）を制御するコルーチン。
+    /// </summary>
     private IEnumerator SpinAttackCoroutine()
     {
         ActivateInvincibility(spinAttackDuration); //無敵コルーチン開始
         isSpinning = true; //スピン状態
+
+        // スピンアタック発動時の振動: やや強く、長めに (優先度: 中〜高)
+        // 必殺技の「重み」と「回転」を表現するため、低周波と高周波をミックスします
+        // 振動時間を攻撃の持続時間(spinAttackDuration)に合わせることで、回転中ずっと振動させます
+        VibrationManager.instance?.Vibrate(0.4f, 0.6f, spinAttackDuration, 1.5f);
 
         float endTime = Time.time + spinAttackDuration;
         float nextFireTime = 0f;
@@ -268,7 +307,10 @@ public class PlayerController : MonoBehaviour
         isSpinning = false;
     }
 
-    //ダメージを受けるための関数
+    /// <summary>
+    /// プレイヤーがダメージを受ける処理。
+    /// HPの減少、無敵時間の開始、ゲームオーバー判定、強い振動の発生を行います。
+    /// </summary>
     public void TakeDamage(int damage)
     {
         if (isInvincible)
@@ -276,14 +318,15 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        currentHP -= damage;
-        GameManager.instance.UpdateHPDisplay(currentHP);
-        GameManager.instance?.IncrementDamageTaken(damage); //被ダメージカウント
+        // GameManagerにダメージ処理を委譲
+        bool died = GameManager.instance.ApplyDamage(damage);
 
-        if (currentHP <= 0)
+        // 被弾時の振動: 強く、重く (優先度: 高)
+        // 左モーター(低周波)を強めに回すと「ドーン」という重い衝撃になります
+        VibrationManager.instance?.Vibrate(0.8f, 0.5f, 0.4f, 2.0f);
+
+        if (died)
         {
-            GameManager.instance.ShowGameOverScreen();
-
             //プレイヤーを非表示
             gameObject.SetActive(false);
             firePointMarker.gameObject.SetActive(false);

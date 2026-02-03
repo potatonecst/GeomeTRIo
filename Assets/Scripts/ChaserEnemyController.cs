@@ -1,9 +1,14 @@
 using UnityEngine;
 
-public class CheserEnemyController : MonoBehaviour
+/// <summary>
+/// 追尾型の敵キャラクターを制御するクラス。
+/// プレイヤーの位置に向かって移動し、自機狙い弾を発射します。
+/// </summary>
+public class ChaserEnemyController : MonoBehaviour, IDamageable
 {
     public float speed = 1f;
-    private Transform player;
+    // メンバ変数: Transformであることを明確にするため playerTransform とする
+    private Transform playerTransform;
 
     //HP関連
     public int baseHP = 1;
@@ -16,25 +21,32 @@ public class CheserEnemyController : MonoBehaviour
     private float nextFireTime = 0f; //次回の発射時間
     private bool canShoot = false; //射撃可能かどうか
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// <summary>
+    /// 初期化処理。
+    /// 難易度に応じたHP設定と、ターゲット（プレイヤー）の取得を行います。
+    /// </summary>
     void Start()
     {
         int additionalHP = Mathf.FloorToInt(GameManager.instance.timeElapsed / 90f); //HPが90秒ごとに1増加
         currentHP = baseHP + additionalHP;
 
         GameObject playerGameObject = GameObject.FindGameObjectWithTag("Player");
-        player = playerGameObject?.transform;
+        playerTransform = playerGameObject?.transform;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// 毎フレーム呼び出される更新処理。
+    /// プレイヤーへの追尾移動と、射撃制御を行います。
+    /// </summary>
     void Update()
     {
-        if (player == null)
+        if (playerTransform == null)
         {
             return;
         }
 
-        Vector3 direction = player.position - transform.position;
+        // プレイヤーの方向ベクトルを計算し、その方向へ移動する
+        Vector3 direction = playerTransform.position - transform.position;
         direction.Normalize();
         transform.Translate(direction * speed * Time.deltaTime);
 
@@ -51,16 +63,18 @@ public class CheserEnemyController : MonoBehaviour
         }
     }
 
-    //射撃関数
+    /// <summary>
+    /// 弾を発射する処理。
+    /// </summary>
     public void Shoot()
     {
         //弾の向きの変数
         Quaternion rotation;
 
         //指定時間を経過していたら、弾の向きをプレイヤーの方向に指定
-        if (player != null && GameManager.instance.timeElapsed >= aimingStartTime)
+        if (playerTransform != null && GameManager.instance.timeElapsed >= aimingStartTime)
         {
-            Vector2 directionToPlayer = player.position - transform.position;
+            Vector2 directionToPlayer = playerTransform.position - transform.position;
             float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg - 90f;
             rotation = Quaternion.Euler(0, 0, angle);
         }
@@ -83,7 +97,9 @@ public class CheserEnemyController : MonoBehaviour
         GameManager.instance?.PlayEnemyShootSound(); //効果音再生
     }
 
-    //敵がダメージを受ける関数
+    /// <summary>
+    /// ダメージを受けた際の処理（IDamageableインターフェースの実装）。
+    /// </summary>
     public void TakeDamage(int damage)
     {
         currentHP -= damage;
@@ -96,26 +112,35 @@ public class CheserEnemyController : MonoBehaviour
         }
     }
 
-    //プレイヤーに衝突した場合
+    /// <summary>
+    /// プレイヤーと接触し続けている間の処理。
+    /// </summary>
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            PlayerController playerScript = other.GetComponent<PlayerController>();
-            playerScript?.TakeDamage(1);
+            // ローカル変数: ここで 'player' を使うのが最も自然です (player.TakeDamage)
+            if (other.TryGetComponent<IDamageable>(out var player))
+            {
+                player.TakeDamage(1);
+            }
         }
     }
 
-    //他の敵に当たった場合
+    /// <summary>
+    /// 他のオブジェクトと接触した瞬間の処理。
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy"))
         {
             CreateRevengeBulletsAndDestroy();
         }
     }
 
-    //弾を全方位に発射して消える
+    /// <summary>
+    /// 誘爆時の処理。全方位弾を発射して自滅します。
+    /// </summary>
     private void CreateRevengeBulletsAndDestroy()
     {
         for (int i = 0; i < 8; ++i)
