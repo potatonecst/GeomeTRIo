@@ -14,6 +14,7 @@
 - **ReactUnity連携:**
   - **UI描画:** タイトル画面、ランキング、設定画面などのメニュー周りは ReactUnity (HTML/CSS/React) で描画。
   - **入力ブリッジ:** Unityの `Input System` で検知した入力を `ReactInputBridge` 経由で React 側のグローバル関数 (`onMenuInput`, `onAnyKeyPress`) にイベントとして送信。
+    - ナビゲーション操作はポーリング方式で監視し、OS標準のようなスムーズな連続入力（キーリピート）を実現。
   - **データ連携:**
     - C#側の `GameInterop` クラスを ReactUnity の `Globals` に登録。
     - React側は `useGlobals` フックを使用して `GameInterop` オブジェクトを取得し、メソッド (`GetGameData`, `StartGame`) を呼び出す。

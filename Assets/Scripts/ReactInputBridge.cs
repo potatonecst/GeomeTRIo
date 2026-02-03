@@ -309,12 +309,20 @@ public class ReactInputBridge : MonoBehaviour
     private InputAction _cancelAction;
     private InputAction _backspaceAction;
 
-    /// <summary>次に入力を受け付ける時刻（Time.unscaledTime基準）。メニュー操作の連続入力防止用。</summary>
-    // メニュー操作時にカーソルが高速に移動しすぎてしまうのを防ぐため、一度入力したら一定時間入力を無視します。
+    /// <summary>
+    /// 次に入力を受け付ける時刻（Time.unscaledTime基準）。
+    /// メニュー操作時にカーソルが高速に移動しすぎてしまうのを防ぐため、一度入力したら一定時間入力を無視します（クールタイム）。
+    /// </summary>
     private float _nextNavigateTime = 0f; // 次に入力を受け付ける時刻（Time.unscaledTime基準）
 
-    /// <summary>入力間隔の最小値（秒）。この時間内は次の入力を無視します。</summary>
-    private const float NavigateDelay = 0.15f; // 入力間隔の最小値（秒）。この時間内は次の入力を無視します。
+    /// <summary>
+    /// 現在ナビゲーション操作中（ボタンを押しっぱなしにしている状態）かどうか。
+    /// 初回入力と連続入力で待機時間を切り替えるために使用します。
+    /// </summary>
+    private bool _isNavigating = false;
+
+    private const float InitialNavigateDelay = 0.5f; // 初回入力後の待機時間（長め）
+    private const float RepeatNavigateDelay = 0.1f;  // 連続入力時の間隔（短め）
 
     private void Awake()
     {
@@ -365,9 +373,9 @@ public class ReactInputBridge : MonoBehaviour
             .With("Left", "<Gamepad>/leftStick/left")
             .With("Right", "<Gamepad>/leftStick/right");
 
-        // ctx.ReadValue<Vector2>(): 現在の入力値を Vector2 型として読み取ります。
-        // 上下左右の入力状態に応じて、(0, 1) や (-1, 0) などの値が返ってきます。
-        _navigateAction.performed += ctx => OnNavigate(ctx.ReadValue<Vector2>());
+        // 以前は _navigateAction.performed += ... としてイベント駆動で実装していましたが、
+        // 連続入力（押しっぱなし）の挙動をOS標準のようにスムーズにするため（初回は長く、以降は短く待機）、
+        // Updateメソッド内で HandleNavigation() を毎フレーム呼び出す「ポーリング方式」に変更しました。
 
         // --- 決定操作 (Enter, Space, 南ボタン) ---
         _submitAction = new InputAction("Submit");
@@ -406,6 +414,9 @@ public class ReactInputBridge : MonoBehaviour
                 _reactRenderer.Context.Globals["GameInterop"] = new GameInterop();
             }
         }
+
+        // ナビゲーション入力の監視（ポーリング）を実行
+        HandleNavigation();
     }
 
     /// <summary>
@@ -490,54 +501,59 @@ public class ReactInputBridge : MonoBehaviour
     }
 
     /// <summary>
-    /// ナビゲーション操作（矢印キー、スティック、WASD）が行われた時に呼ばれる関数。
-    /// Input System の "Navigate" アクションに紐づけられています。
+    /// ナビゲーション操作（矢印キー、スティック、WASD）を毎フレーム監視して処理する関数。
+    /// 押しっぱなしによる連続入力をスムーズに行うため、Update内で呼び出します。
     /// </summary>
-    /// <param name="value">入力された方向ベクトル (x, y)。範囲は -1.0 ～ 1.0。</param>
-    private void OnNavigate(Vector2 value)
+    private void HandleNavigation()
     {
-        // 1. クールタイムのチェック
-        // 前回の入力から一定時間（NavigateDelay）経過していない場合は、処理を中断して入力を無視します。
-        // Time.unscaledTime: ゲーム内の時間（Time.time）ではなく、現実の経過時間を使用します。
-        // これにより、ポーズ中（Time.timeScale = 0）でゲームの時間が止まっていても、メニュー操作が可能になります。
+        if (_navigateAction == null || !_navigateAction.enabled) return;
+
+        // 現在の入力値を読み取る
+        // ReadValue<Vector2>(): 現在の入力デバイス（スティックやキー）の状態を (x, y) のベクトルとして取得します。
+        Vector2 input = _navigateAction.ReadValue<Vector2>();
+
+        // 入力がない（デッドゾーン以下）場合
+        // sqrMagnitude: ベクトルの長さの2乗を返します。
+        // 通常の magnitude（長さ）を求めると平方根（sqrt）の計算が必要で負荷がかかりますが、
+        // 単に「ある長さより大きいか」を比較するだけなら、閾値も2乗して比較すれば高速に判定できます。
+        // ここでは閾値 0.5 の2乗である 0.25 と比較しています。
+        if (input.sqrMagnitude < 0.25f)
+        {
+            _isNavigating = false;
+            _nextNavigateTime = 0f; // 次回は即座に反応できるようにリセット
+            return;
+        }
+
+        // 入力はあるが、待機時間中の場合は無視
+        // Time.unscaledTime: ゲームのポーズ中(Time.timeScale=0)でもメニュー操作ができるように、実際の経過時間を使用します。
         if (Time.unscaledTime < _nextNavigateTime) return;
 
-        bool inputDetected = false;
+        // 方向判定とイベント送信
+        string eventName = null;
+        if (input.y > 0.5f) eventName = "up";
+        else if (input.y < -0.5f) eventName = "down";
+        else if (input.x > 0.5f) eventName = "right";
+        else if (input.x < -0.5f) eventName = "left";
 
-        // 2. 入力値の判定とイベント送信
-        // 入力値（value）は -1.0 ～ 1.0 の範囲です。
-        // 誤作動防止のため、閾値（0.5f）を超えた場合のみ入力とみなします（デッドゾーン処理）。
+        if (eventName != null)
+        {
+            SendEvent(eventName);
 
-        // 上下方向の判定
-        if (value.y > 0.5f)
-        {
-            SendEvent("up"); // React側に 'up' イベントを送信
-            inputDetected = true;
-        }
-        else if (value.y < -0.5f)
-        {
-            SendEvent("down"); // React側に 'down' イベントを送信
-            inputDetected = true;
-        }
-
-        // 左右方向の判定
-        if (value.x > 0.5f)
-        {
-            SendEvent("right"); // React側に 'right' イベントを送信
-            inputDetected = true;
-        }
-        else if (value.x < -0.5f)
-        {
-            SendEvent("left"); // React側に 'left' イベントを送信
-            inputDetected = true;
-        }
-
-        // 3. 次回の入力許可時刻の更新
-        // いずれかの方向に入力があった場合、次回の入力許可時刻を設定します。
-        // 現在時刻 + 待機時間 = 次に入力を受け付ける時刻
-        if (inputDetected)
-        {
-            _nextNavigateTime = Time.unscaledTime + NavigateDelay;
+            // 次回の入力許可時間を設定
+            if (!_isNavigating)
+            {
+                // 初回入力: 長めの待機時間 (Initial Delay) を設ける
+                // これにより「1つだけ動かしたいのに、指が離れる前に2つ動いてしまった」という事故を防ぎます。
+                // OSのキーリピート機能と同じ挙動です。
+                _isNavigating = true;
+                _nextNavigateTime = Time.unscaledTime + InitialNavigateDelay;
+            }
+            else
+            {
+                // 押しっぱなし中: 短い間隔 (Repeat Rate) で連続移動
+                // これにより、リストのスクロールなどが高速かつスムーズになります。
+                _nextNavigateTime = Time.unscaledTime + RepeatNavigateDelay;
+            }
         }
     }
 

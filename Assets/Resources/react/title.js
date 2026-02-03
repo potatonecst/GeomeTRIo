@@ -10549,10 +10549,12 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         } else if (itemDef.type === "stat") {
           return prev;
         }
+        if (nextVal === currentVal) return prev;
+        interop == null ? void 0 : interop.PlaySound("move");
         updateUnity(itemId, nextVal);
         return __spreadProps(__spreadValues({}, prev), { [itemId]: nextVal });
       });
-    }, [currentItems, updateUnity]);
+    }, [currentItems, updateUnity, interop]);
     reactExports.useEffect(() => {
       window.onTextInput = (char) => {
         if (!isEditingName) return;
@@ -10670,14 +10672,12 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           if (event === "left") {
             const item = currentItems[selectedItemIndex];
             if (item.type !== "text" && item.type !== "stat" && item.type !== "button") {
-              interop == null ? void 0 : interop.PlaySound("move");
               changeValue(item.id, -1);
             }
           }
           if (event === "right") {
             const item = currentItems[selectedItemIndex];
             if (item.type !== "text" && item.type !== "stat" && item.type !== "button") {
-              interop == null ? void 0 : interop.PlaySound("move");
               changeValue(item.id, 1);
             }
           }

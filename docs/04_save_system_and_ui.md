@@ -71,7 +71,9 @@ ReactUnityのUI操作は、UnityのInput Systemからの入力を `ReactInputBri
 
 1.  **入力検知 (Unity):**
     *   `ReactInputBridge` が `Navigate` (方向キー), `Submit` (決定), `Cancel` (キャンセル) などのActionを監視します。
-    *   メニュー操作の快適性を保つため、`Navigate` アクションにはクールタイム（連続入力の制限）が設けられています。
+    *   **ナビゲーション:** `Update` ループ内で毎フレーム入力をポーリングし、長押しによる連続移動（キーリピート）を実装しています。
+        *   **Initial Delay:** 初回入力後の待機時間（例: 0.5秒）。
+        *   **Repeat Rate:** 連続入力時の間隔（例: 0.1秒）。
 2.  **イベント送信 (C# -> React):**
     *   入力が発生すると、`ReactRenderer.Context.Script.ExecuteScript` を介して、React側のグローバル関数 `window.onMenuInput(eventName)` を呼び出します。
     *   イベント名: `'up'`, `'down'`, `'left'`, `'right'`, `'submit'`, `'cancel'`, `'backspace'`

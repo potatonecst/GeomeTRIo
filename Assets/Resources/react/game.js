@@ -10122,11 +10122,15 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       if (!status.isGameOver) return;
       window.onMenuInput = (event) => {
         if (event === "left") {
-          interop == null ? void 0 : interop.PlaySound("move");
-          setSelectedIndex(0);
+          if (selectedIndex !== 0) {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedIndex(0);
+          }
         } else if (event === "right") {
-          interop == null ? void 0 : interop.PlaySound("move");
-          setSelectedIndex(1);
+          if (selectedIndex !== 1) {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedIndex(1);
+          }
         } else if (event === "submit") {
           interop == null ? void 0 : interop.PlaySound("submit");
           setIsPressed(true);
@@ -10193,11 +10197,15 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       if (!status.isPaused) return;
       window.onMenuInput = (event) => {
         if (event === "left") {
-          interop == null ? void 0 : interop.PlaySound("move");
-          setSelectedIndex(0);
+          if (selectedIndex !== 0) {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedIndex(0);
+          }
         } else if (event === "right") {
-          interop == null ? void 0 : interop.PlaySound("move");
-          setSelectedIndex(1);
+          if (selectedIndex !== 1) {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedIndex(1);
+          }
         } else if (event === "submit") {
           interop == null ? void 0 : interop.PlaySound("submit");
           setIsPressed(true);

@@ -6,10 +6,14 @@ import { GlitchText } from '../components/GlitchText';
 import { useGameStatus } from '../hooks/useGameStatus';
 import { MenuButton } from '../components/MenuButton';
 
-// ゲームオーバーパネル
+// ゲームオーバーパネルコンポーネント
+// 役割: ゲームオーバー時に表示され、リトライかタイトルへ戻るかを選択させる
 const GameOverPanel = () => {
+    // useGlobals: C#側のGameInteropにアクセスするためのフック
     const globals = useGlobals() as any;
     const interop = globals.GameInterop;
+
+    // useGameStatus: 現在のゲーム状態（スコア、HP、ゲームオーバーフラグ等）を取得するカスタムフック
     const status = useGameStatus();
 
     // ボタン選択状態の管理 (0: Restart, 1: Title)
@@ -20,16 +24,27 @@ const GameOverPanel = () => {
     useEffect(() => {
         if (!status.isGameOver) return;
 
+        // window.onMenuInput: C# (ReactInputBridge) から呼び出される入力イベントハンドラ
         (window as any).onMenuInput = (event: string) => {
             if (event === 'left') {
-                interop?.PlaySound('move');
-                setSelectedIndex(0);
+                // 現在の選択が0でない場合のみ移動処理を行う
+                // これにより、左端でさらに左を押した時に無駄なSEが鳴るのを防ぐ
+                if (selectedIndex !== 0) {
+                    interop?.PlaySound('move');
+                    setSelectedIndex(0);
+                }
             } else if (event === 'right') {
-                interop?.PlaySound('move');
-                setSelectedIndex(1);
+                // 右端での連打防止
+                if (selectedIndex !== 1) {
+                    interop?.PlaySound('move');
+                    setSelectedIndex(1);
+                }
             } else if (event === 'submit') {
                 interop?.PlaySound('submit');
+                // ボタンの押下アニメーションを開始
                 setIsPressed(true);
+
+                // アニメーションの完了を待ってからアクションを実行
                 setTimeout(() => {
                     if (selectedIndex === 0) {
                         interop?.RestartGame();
@@ -41,6 +56,7 @@ const GameOverPanel = () => {
             }
         };
 
+        // クリーンアップ: コンポーネントが非表示になる際、ハンドラを無効化する
         return () => { (window as any).onMenuInput = () => { }; };
     }, [status.isGameOver, selectedIndex, interop]);
 
@@ -88,7 +104,8 @@ const GameOverPanel = () => {
     );
 };
 
-// ポーズパネル
+// ポーズパネルコンポーネント
+// 役割: ゲーム一時停止時に表示され、再開かタイトルへ戻るかを選択させる
 const PausePanel = () => {
     const globals = useGlobals() as any;
     const interop = globals.GameInterop;
@@ -97,18 +114,26 @@ const PausePanel = () => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [isPressed, setIsPressed] = useState(false);
 
+    // ポーズ中のみ入力を監視
     useEffect(() => {
         if (!status.isPaused) return;
 
         (window as any).onMenuInput = (event: string) => {
             if (event === 'left') {
-                interop?.PlaySound('move');
-                setSelectedIndex(0);
+                // 移動可能な場合のみ処理（SE連打防止）
+                if (selectedIndex !== 0) {
+                    interop?.PlaySound('move');
+                    setSelectedIndex(0);
+                }
             } else if (event === 'right') {
-                interop?.PlaySound('move');
-                setSelectedIndex(1);
+                // 移動可能な場合のみ処理（SE連打防止）
+                if (selectedIndex !== 1) {
+                    interop?.PlaySound('move');
+                    setSelectedIndex(1);
+                }
             } else if (event === 'submit') {
                 interop?.PlaySound('submit');
+                // 押下アニメーション
                 setIsPressed(true);
                 setTimeout(() => {
                     if (selectedIndex === 0) {
@@ -124,6 +149,7 @@ const PausePanel = () => {
             }
         };
 
+        // クリーンアップ
         return () => { (window as any).onMenuInput = () => { }; };
     }, [status.isPaused, selectedIndex, interop]);
 
@@ -163,15 +189,20 @@ const PausePanel = () => {
     );
 };
 
+// ゲームシーン全体のルートコンポーネント
+// 役割: HUD、ポーズ、ゲームオーバー画面の統括と、シーン遷移時の演出（ローディング、暗転）を管理
 const GameApp = () => {
+    // ローディング表示フラグ（タイトルへ戻る時などに使用）
     const [isLoading, setIsLoading] = useState(false);
     // シーン遷移直後は真っ暗な状態から始める（フェードインのため true で初期化）
     const [isBlackout, setIsBlackout] = useState(true);
 
     useEffect(() => {
-        // マウント後にフェードイン（暗転解除）
+        // マウント後、少し待ってからフェードイン（暗転解除）を開始
         const timer = setTimeout(() => setIsBlackout(false), 100);
 
+        // C#からの演出リクエストを受け取るハンドラを登録
+        // onLoadingRequest: ローディング画面を表示せよ
         (window as any).onLoadingRequest = () => setIsLoading(true);
         (window as any).onFadeOutRequest = () => setIsBlackout(true);
         return () => {

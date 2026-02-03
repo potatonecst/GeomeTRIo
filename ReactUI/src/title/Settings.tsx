@@ -231,12 +231,18 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
                 return prev;
             }
 
+            // 値が変わっていない場合は何もしない（音も鳴らさない）
+            if (nextVal === currentVal) return prev;
+
+            // 値が変わった場合のみ音を鳴らす
+            interop?.PlaySound('move');
+
             // 変更をUnity側に通知（プレビュー用）
             updateUnity(itemId, nextVal);
             // スプレッド構文 (...prev): 現在の状態をコピーし、変更点だけ上書きした新しいオブジェクトを返します。
             return { ...prev, [itemId]: nextVal };
         });
-    }, [currentItems, updateUnity]); // interopの代わりにupdateUnityを依存に追加
+    }, [currentItems, updateUnity, interop]); // interopを依存に追加
 
     // 入力ハンドリング
     // Unityからの入力イベントを受け取るための設定
@@ -404,7 +410,6 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
                     // 値を減らす / トグル切り替え
                     const item = currentItems[selectedItemIndex];
                     if (item.type !== 'text' && item.type !== 'stat' && item.type !== 'button') {
-                        interop?.PlaySound('move');
                         changeValue(item.id, -1);
                     }
                 }
@@ -412,7 +417,6 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
                     // 値を増やす / トグル切り替え
                     const item = currentItems[selectedItemIndex];
                     if (item.type !== 'text' && item.type !== 'stat' && item.type !== 'button') {
-                        interop?.PlaySound('move');
                         changeValue(item.id, 1);
                     }
                 }
