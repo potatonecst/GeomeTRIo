@@ -30,12 +30,12 @@ export const HUD = () => {
                 </view>
 
                 {/* STATUS AREA */}
-                <view className="mb-6">
+                <view className={`mb-6 ${status.hp <= 1 ? "animate-pulse" : ""}`}>
                     <view className="flex-row justify-between mb-1">
-                        <text className="text-cyan-600 text-2xl tracking-widest">HP</text>
-                        <text className="text-white text-2xl">{status.hp} / {status.maxHp}</text>
+                        <text className={`${status.hp <= 1 ? "text-red-500" : "text-cyan-600"} text-2xl tracking-widest`}>HP</text>
+                        <text className={`${status.hp <= 1 ? "text-red-500" : "text-white"} text-2xl`}>{status.hp} / {status.maxHp}</text>
                     </view>
-                    <ProgressBar value={status.hp} max={status.maxHp} color="#ff3333" />
+                    <ProgressBar value={status.hp} max={status.maxHp} color={status.hp <= 1 ? "#ff3333" : "#00ff00"} />
                 </view>
 
                 <view className="mb-8">

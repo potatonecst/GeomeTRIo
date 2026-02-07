@@ -10,6 +10,7 @@
 - **HUD表示:**
   - **HP / SP / スコア:** ReactUnity側で `GameManager` の状態をポーリングして描画。
   - **発射点インジケーター:** 自機周辺に表示（World Space UI または Sprite）。
+  - **敵HPバー:** HPが2以上の敵の頭上に表示（Spriteによる簡易表示）。左端固定で減少するアニメーションを行う。
 
 - **ReactUnity連携:**
   - **UI描画:** タイトル画面、ランキング、設定画面などのメニュー周りは ReactUnity (HTML/CSS/React) で描画。

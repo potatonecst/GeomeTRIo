@@ -13,6 +13,7 @@ public class EnemyBulletController : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        // 物理挙動を制御する Rigidbody2D コンポーネントを取得します。
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -21,7 +22,15 @@ public class EnemyBulletController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        // 弾の速度を設定します。
+        // transform.up: このオブジェクトの「上」方向（回転を考慮した進行方向）
+        // linearVelocity: Unity 6以降の新しい速度プロパティ（旧 velocity）
         rb.linearVelocity = transform.up * speed;
+
+        // 進行方向が決まった後に、見た目だけを45度回転させます。
+        // これにより、軌道を変えずに「正方形」を「ひし形（角が前）」に見せることができます。
+        // Rotate(x, y, z): 現在の回転に対して追加で回転させます。
+        transform.Rotate(0, 0, 45);
     }
 
     /// <summary>

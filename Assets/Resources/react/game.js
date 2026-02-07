@@ -9992,16 +9992,16 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-3xl tracking-widest mb-1 whitespace-nowrap", children: "SCORE" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-white text-7xl tracking-widest whitespace-nowrap", style: { fontFamily: "SourceHanCodeJP" }, children: status.score.toString().padStart(8, "0") })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mb-6", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: `mb-6 ${status.hp <= 1 ? "animate-pulse" : ""}`, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between mb-1", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-2xl tracking-widest", children: "HP" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: "text-white text-2xl", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `${status.hp <= 1 ? "text-red-500" : "text-cyan-600"} text-2xl tracking-widest`, children: "HP" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: `${status.hp <= 1 ? "text-red-500" : "text-white"} text-2xl`, children: [
               status.hp,
               " / ",
               status.maxHp
             ] })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(ProgressBar, { value: status.hp, max: status.maxHp, color: "#ff3333" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ProgressBar, { value: status.hp, max: status.maxHp, color: status.hp <= 1 ? "#ff3333" : "#00ff00" })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mb-8", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between mb-1", children: [

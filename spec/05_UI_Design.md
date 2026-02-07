@@ -30,7 +30,8 @@ graph TD
 *   **Geometric Cyberpunk**: 無機質な幾何学図形（三角形、四角形、グリッド）と、サイバーパンク的な発光表現を融合。
 *   **Colors**:
     *   **Base**: Deep Navy / Black (`#0f172a`, `#000000`) - 深淵な電脳空間。
-    *   **Accent (Ally/System)**: Cyan (`#00ffff`) - 正常なデータ、リンク、自機。
+    *   **Accent (System)**: Cyan (`#00ffff`) - 電脳空間のグリッド、正常なデータ、リンク。
+    *   **Accent (Player/Intruder)**: White (`#ffffff`) - プレイヤー、侵入者。メニューカーソルと同期させる。
     *   **Accent (Enemy/Alert)**: Red (`#ff3333`) - エラー、警告、敵性データ。
 *   **Glitch & Noise**: 完璧な秩序に対する「異物」としての侵入感を出すため、ロゴやUIに時折グリッチ（ノイズ、色ズレ）を発生させる。
 

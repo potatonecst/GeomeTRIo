@@ -76,6 +76,10 @@ public class GameData { ... }
     *   **メリット:** 他のスクリプトから勝手に書き換えられるのを防ぎつつ（カプセル化）、エディタ上で調整が可能になります。
 *   **`[System.Serializable]`**:
     *   自作のクラスや構造体につけることで、そのクラスをUnityが保存可能な形式（JSONなど）に変換できるようにします。これがないと、Inspectorに表示されず、セーブデータとしても保存できません。
+*   **`[RequireComponent(typeof(T))]`**:
+    *   スクリプトが動作するために必須となるコンポーネント（例: `ParticleSystem`）を指定します。
+    *   この属性がついたスクリプトをGameObjectに追加すると、指定したコンポーネントも自動的に追加されます。また、誤って削除できなくなります。
+    *   **メリット:** `GetComponent` で取得する際に「コンポーネントがない！」というエラー（NullReferenceException）を未然に防げます。
 
 ---
 
@@ -543,3 +547,28 @@ var player = new Player();      // Player と推論される
 var list = new List<string>();  // List<string> と推論される（長い型名を書かなくて済む）
 ```
 **注意:** 型が何かわかりにくい場合（例: `var result = GetData();`）は、可読性のために明示的に型を書くことが推奨されます。
+
+## 20. TryGetComponent と out 変数
+
+コンポーネントを取得する際、存在するかどうかを確認してから取得する安全で高速なパターンです。
+
+### 構文
+```csharp
+// 従来の書き方
+var damageable = other.GetComponent<IDamageable>();
+if (damageable != null)
+{
+    damageable.TakeDamage(1);
+}
+
+// TryGetComponentを使った書き方（推奨）
+if (other.TryGetComponent<IDamageable>(out var damageable))
+{
+    damageable.TakeDamage(1);
+}
+```
+
+### 解説
+* **TryGetComponent**: コンポーネントがあれば true を返し、中身を out 引数に入れます。なければ false を返します。
+* **out var 変数名**: メソッドの結果を受け取るための変数を、その場で宣言する機能です。
+* **メリット**: GetComponent して null チェックするよりも処理が少し速く、コードもスッキリします。また、メモリ割り当て（GC Alloc）も抑えられます。

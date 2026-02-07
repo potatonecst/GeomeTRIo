@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// 追尾型の敵キャラクターを制御するクラス。
@@ -13,6 +14,7 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
     //HP関連
     public int baseHP = 1;
     private int currentHP;
+    private int maxHP;
 
     //敵の射撃に関する変数
     public float shootingStartTime = 12f; //弾を打ち始める時間
@@ -20,6 +22,18 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
     public float fireRate = 5f; //弾の発射間隔
     private float nextFireTime = 0f; //次回の発射時間
     private bool canShoot = false; //射撃可能かどうか
+
+    // ヒット演出用
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+
+    [Header("Effects")]
+    public GameObject deathEffectPrefab;
+
+    [Header("UI")]
+    public Transform hpBarTransform;
+    private Vector3 hpBarOriginalLocalPosition;
+    private float hpBarOriginalScaleX;
 
     /// <summary>
     /// 初期化処理。
@@ -29,9 +43,31 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
     {
         int additionalHP = Mathf.FloorToInt(GameManager.instance.timeElapsed / 90f); //HPが90秒ごとに1増加
         currentHP = baseHP + additionalHP;
+        maxHP = currentHP;
 
+        // プレイヤーオブジェクトを探して、その Transform（位置情報）を保持します。
         GameObject playerGameObject = GameObject.FindGameObjectWithTag("Player");
         playerTransform = playerGameObject?.transform;
+
+        // SpriteRendererを取得し、元の色を保持しておく
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
+
+        // HPバーの初期位置とスケールを保存
+        if (hpBarTransform != null)
+        {
+            hpBarOriginalLocalPosition = hpBarTransform.localPosition;
+            hpBarOriginalScaleX = hpBarTransform.localScale.x;
+        }
+
+        // HPが1以下の場合はHPバーを隠す
+        if (maxHP <= 1 && hpBarTransform != null)
+        {
+            hpBarTransform.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -40,13 +76,17 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
     /// </summary>
     void Update()
     {
+        // プレイヤーがいなければ何もしない（ゲームオーバー後など）
         if (playerTransform == null)
         {
             return;
         }
 
-        // プレイヤーの方向ベクトルを計算し、その方向へ移動する
+        // プレイヤーへの方向ベクトルを計算（目標位置 - 現在位置）
         Vector3 direction = playerTransform.position - transform.position;
+
+        // Normalize: ベクトルの長さを1に正規化します。
+        // これをしないと、遠くにいるプレイヤーほど速く移動してしまいます。
         direction.Normalize();
         transform.Translate(direction * speed * Time.deltaTime);
 
@@ -68,18 +108,21 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
     /// </summary>
     public void Shoot()
     {
-        //弾の向きの変数
+        // 弾の向き
         Quaternion rotation;
 
-        //指定時間を経過していたら、弾の向きをプレイヤーの方向に指定
+        // 自機狙い開始時間を過ぎていれば、プレイヤーの方を向く
         if (playerTransform != null && GameManager.instance.timeElapsed >= aimingStartTime)
         {
+            // プレイヤーへの方向を計算
             Vector2 directionToPlayer = playerTransform.position - transform.position;
+            // 角度を計算 (-90f はスプライトの向き補正)
             float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg - 90f;
             rotation = Quaternion.Euler(0, 0, angle);
         }
         else
         {
+            // まだ狙わない場合は、回転なし（0度）
             rotation = Quaternion.Euler(0, 0, 0);
         }
 
@@ -104,11 +147,51 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
     {
         currentHP -= damage;
 
+        // HPが残っている場合はヒットフラッシュ演出を入れる
+        if (currentHP > 0)
+        {
+            StartCoroutine(FlashWhite());
+        }
+
+        // HPバーの更新
+        if (hpBarTransform != null && maxHP > 1)
+        {
+            float hpRatio = (float)currentHP / (float)maxHP;
+
+            Vector3 newScale = hpBarTransform.localScale;
+            newScale.x = hpBarOriginalScaleX * hpRatio;
+            hpBarTransform.localScale = newScale;
+
+            float widthDiff = hpBarOriginalScaleX - newScale.x;
+            Vector3 newPos = hpBarOriginalLocalPosition;
+            newPos.x -= widthDiff * 0.5f;
+            hpBarTransform.localPosition = newPos;
+        }
+
         if (currentHP <= 0)
         {
             GameManager.instance.AddScore(20);
             GameManager.instance.IncrementEnemiesDefeated(); //撃破数カウント
+
+            // 死亡エフェクト生成
+            if (deathEffectPrefab != null)
+            {
+                Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+            }
             Destroy(gameObject);
+        }
+    }
+
+    /// <summary>
+    /// ダメージを受けた瞬間に白く光らせるコルーチン。
+    /// </summary>
+    private IEnumerator FlashWhite()
+    {
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.white; // 白くする
+            yield return new WaitForSeconds(0.05f); // 一瞬待つ
+            spriteRenderer.color = originalColor; // 元の色に戻す
         }
     }
 
@@ -154,6 +237,12 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
         GameManager.instance?.PlayEnemyShootSound(); //効果音再生
 
         GameManager.instance.AddScore(5); //相殺ボーナススコア
+
+        // 死亡エフェクト生成
+        if (deathEffectPrefab != null)
+        {
+            Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+        }
         Destroy(gameObject);
     }
 }
