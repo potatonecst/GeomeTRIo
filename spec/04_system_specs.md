@@ -11,6 +11,12 @@
   - **HP / SP / スコア:** ReactUnity側で `GameManager` の状態をポーリングして描画。
   - **発射点インジケーター:** 自機周辺に表示（World Space UI または Sprite）。
   - **敵HPバー:** HPが2以上の敵の頭上に表示（Spriteによる簡易表示）。左端固定で減少するアニメーションを行う。
+  - **Status Monitor:** 機体の状態を常時表示するモニターエリア。
+    - **SYSTEM:** 機体耐久度（NORMAL / CRITICAL）。
+    - **ENGINE:** 動力・移動システム（ACTIVE / STANDBY / OFFLINE）。将来的に移動系デバフを表示。
+    - **WEAPON:** 火器管制システム（ONLINE [詳細]）。現在のレベルや武装タイプ（BURST, 3-WAY等）を表示。
+    - **メッセージ:** レベルアップ時などに一時的な通知を強調表示する。
+  - **左サイドバー:** 現在のステージ名（OPERATION）と経過時間（TIME）を表示。
 
 - **ReactUnity連携:**
   - **UI描画:** タイトル画面、ランキング、設定画面などのメニュー周りは ReactUnity (HTML/CSS/React) で描画。

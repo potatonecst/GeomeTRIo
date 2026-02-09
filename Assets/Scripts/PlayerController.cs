@@ -9,6 +9,9 @@ using System.Collections.Generic;
 /// </summary>
 public class PlayerController : MonoBehaviour, IDamageable
 {
+    // シングルトンインスタンス (UIからの参照用)
+    public static PlayerController instance;
+
     //自動生成されたPlayerInputActionsクラスの変数
     private PlayerInputActions playerInputActions;
 
@@ -41,12 +44,21 @@ public class PlayerController : MonoBehaviour, IDamageable
     public float spinSpeed = 720f; //回転速度
     private bool isSpinning = false; //スピンアタック判定
 
+    // パワーアップ関連
+    public int weaponLevel = 1; // 現在の武器レベル (1~4)
+    private int currentExp = 0; // 現在の経験値
+    // レベルアップに必要な経験値テーブル (Lv1->2: 5個, ... Lv9->10: 150個)
+    private int[] nextLevelExp = new int[] { 5, 10, 20, 35, 50, 70, 90, 120, 150, 9999 };
+    private const int MAX_LEVEL = 10;
+    private int burstCount = 1; // バースト数（一度の発射で撃つ弾数）
+
     /// <summary>
     /// スクリプトのインスタンスがロードされた時に呼び出されます。
     /// コンポーネントの取得など、初期化処理を行います。
     /// </summary>
     private void Awake()
     {
+        if (instance == null) instance = this;
         //自身のRigidbody2Dを取得
         rb = GetComponent<Rigidbody2D>();
     }
@@ -94,6 +106,11 @@ public class PlayerController : MonoBehaviour, IDamageable
             playerInputActions.Player.SwitchWeapon.performed -= SwitchWeapon;
             playerInputActions.Player.SpinAttack.performed -= PerformSpinAttack;
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this) instance = null;
     }
 
     /// <summary>
@@ -181,6 +198,40 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// </summary>
     private void ShootBullet()
     {
+        // 設定によって射撃モードを切り替えます。
+        // オート連射が有効な場合は、連射速度重視（シングルショット）
+        if (SettingsManager.IsAutofireEnabled())
+        {
+            FireSingleShot();
+        }
+        else
+        {
+            // 手動連射の場合は、バースト射撃（一度の入力で複数発発射）
+            // コルーチンを使って、少し時間を空けながら弾を撃ちます。
+            // 手動連射の場合は、バースト射撃（一度の入力で複数発発射）
+            StartCoroutine(BurstFireCoroutine());
+        }
+    }
+
+    /// <summary>
+    /// バースト射撃を行うコルーチン。
+    /// burstCountの回数だけ、短い間隔で弾を発射します。
+    /// </summary>
+    private IEnumerator BurstFireCoroutine()
+    {
+        // 現在のレベルに応じたバースト数（2連射、3連射...）を取得
+        int count = burstCount;
+        for (int i = 0; i < count; i++)
+        {
+            FireSingleShot();
+            // 次の弾を撃つまで少し待ちます（0.06秒）。
+            // これにより「ダダッ」というリズムが生まれます。
+            if (i < count - 1) yield return new WaitForSeconds(0.06f); // バースト内の弾間隔
+        }
+    }
+
+    private void FireSingleShot()
+    {
         GameManager.instance?.PlayPlayerShootSound(); //効果音再生
         GameManager.instance?.IncrementShotsFired(); //発射数カウント
 
@@ -188,7 +239,90 @@ public class PlayerController : MonoBehaviour, IDamageable
         VibrationManager.instance?.Vibrate(0.0f, 0.1f, 0.05f, 0.5f);
 
         //現在選択中の発射点の位置・角度で弾のプレハブを生成
-        Instantiate(bulletPrefab, firePoints[currentFirePointIndex].position, firePoints[currentFirePointIndex].rotation);
+
+        // 中央の弾 (常に発射)
+        // Lv1-2: 1, Lv3-5: 2, Lv6-8: 3, Lv9+: 4
+        int centerDamage = 1;
+        if (weaponLevel >= 9) centerDamage = 4;
+        else if (weaponLevel >= 6) centerDamage = 3;
+        else if (weaponLevel >= 3) centerDamage = 2;
+
+        // 中央の弾を発射
+        CreateBullet(firePoints[currentFirePointIndex].position, firePoints[currentFirePointIndex].rotation, centerDamage, 1.0f);
+
+        int wayCount = 0;
+        if (weaponLevel >= 10) wayCount = 3; // 7-Way (左右3つずつ追加)
+        else if (weaponLevel >= 7) wayCount = 2; // 5-Way (左右2つずつ追加)
+        else if (weaponLevel >= 4) wayCount = 1; // 3-Way (左右1つずつ追加)
+
+        // サイドの弾（Way弾）を発射するループ
+        if (wayCount > 0)
+        {
+            for (int i = 1; i <= wayCount; i++)
+            {
+                int sideDamage = 1;
+                float alpha = 1.0f;
+
+                if (i == 1) // 1st Side (Lv4+)
+                {
+                    // Lv4-5: 1, Lv6-8: 2, Lv9+: 3
+                    if (weaponLevel >= 9) sideDamage = 3;
+                    else if (weaponLevel >= 6) sideDamage = 2;
+                    alpha = 0.8f; // 少し薄く
+                }
+                else if (i == 2) // 2nd Side (Lv7+)
+                {
+                    // Lv7-8: 1, Lv9+: 2
+                    if (weaponLevel >= 9) sideDamage = 2;
+                    alpha = 0.6f; // さらに薄く
+                }
+                else if (i == 3) // 3rd Side (Lv10+)
+                {
+                    // Lv10+: 1
+                    sideDamage = 1;
+                    alpha = 0.4f; // かなり薄く
+                }
+
+                float angle = i * 5f; // 5度刻み
+
+                // 右側 (-angle)
+                // Quaternion.Euler: 角度（度数法）から回転情報を作成します。
+                Quaternion rotR = firePoints[currentFirePointIndex].rotation * Quaternion.Euler(0, 0, -angle);
+                CreateBullet(firePoints[currentFirePointIndex].position, rotR, sideDamage, alpha);
+
+                // 左側 (+angle)
+                Quaternion rotL = firePoints[currentFirePointIndex].rotation * Quaternion.Euler(0, 0, angle);
+                CreateBullet(firePoints[currentFirePointIndex].position, rotL, sideDamage, alpha);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 弾を生成し、パラメータを設定するヘルパー関数
+    /// </summary>
+    private void CreateBullet(Vector3 position, Quaternion rotation, int damage, float alpha = 1.0f)
+    {
+        // Instantiate: プレハブ（設計図）からゲームオブジェクトの実体を生成します。
+        GameObject bullet = Instantiate(bulletPrefab, position, rotation);
+        BulletController bc = bullet.GetComponent<BulletController>();
+        if (bc != null)
+        {
+            bc.damage = damage;
+            // Lv3以上なら弾を少し大きくする演出
+            if (damage > 1) bullet.transform.localScale *= 1.2f;
+        }
+
+        // 透明度を設定（サイドの弾を薄くする）
+        if (alpha < 1.0f)
+        {
+            SpriteRenderer sr = bullet.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                Color color = sr.color;
+                color.a = alpha;
+                sr.color = color;
+            }
+        }
     }
 
     /// <summary>
@@ -336,5 +470,145 @@ public class PlayerController : MonoBehaviour, IDamageable
             //まだHPが残っている場合、無敵化のコルーチンを開始
             ActivateInvincibility(invincibilityDuration);
         }
+    }
+
+    /// <summary>
+    /// パワーアップアイテム取得時の処理
+    /// </summary>
+    public void AddExp(int amount)
+    {
+        if (weaponLevel >= MAX_LEVEL) return;
+
+        currentExp += amount;
+
+        // レベルアップ判定 (配列のインデックスは level-1)
+        int requiredExp = nextLevelExp[weaponLevel - 1];
+
+        if (currentExp >= requiredExp)
+        {
+            LevelUp();
+        }
+    }
+
+    private void LevelUp()
+    {
+        // レベルを上げ、経験値をリセットします。
+        weaponLevel++;
+        currentExp = 0; // 経験値をリセット（または持ち越し）
+
+        // レベルアップ演出（音やエフェクト）
+        GameManager.instance?.PlaySubmitSound(); // 仮で決定音を使用
+
+        // パラメータ反映
+        // 連射速度アップ (Lv2, Lv5, Lv8)
+        if (weaponLevel >= 8) fireRate = 0.05f;
+        else if (weaponLevel >= 5) fireRate = 0.06f;
+        else if (weaponLevel >= 2) fireRate = 0.08f;
+
+        // バースト数アップ (Lv2, Lv5, Lv8)
+        // 変数は常に更新しておく（プレイ中に設定が切り替わる可能性があるため）
+        if (weaponLevel >= 8) burstCount = 4;
+        else if (weaponLevel >= 5) burstCount = 3;
+        else if (weaponLevel >= 2) burstCount = 2;
+
+        // メッセージ表示（現在のモードに合わせて内容を変える）
+        string effectText = "";
+        // switch文: 変数の値に応じて処理を分岐させます。if-elseを繰り返すより見やすくなります。
+        // ここではレベルごとに、強化された内容のテキストを設定しています。
+        switch (weaponLevel)
+        {
+            case 2:
+                effectText = SettingsManager.IsAutofireEnabled() ? "RAPID FIRE UP" : "BURST FIRE x2";
+                break;
+            case 3:
+                effectText = "POWER UP";
+                break;
+            case 4:
+                effectText = "3-WAY SHOT";
+                break;
+            case 5:
+                effectText = SettingsManager.IsAutofireEnabled() ? "RAPID FIRE UP" : "BURST FIRE x3";
+                break;
+            case 6:
+                effectText = "POWER UP";
+                break;
+            case 7:
+                effectText = "5-WAY SHOT";
+                break;
+            case 8:
+                effectText = SettingsManager.IsAutofireEnabled() ? "RAPID FIRE UP" : "BURST FIRE x4";
+                break;
+            case 9:
+                effectText = "POWER UP";
+                break;
+            case 10:
+                effectText = "7-WAY SHOT";
+                break;
+        }
+
+        // Status Monitorに表示するメッセージを作成し、GameManagerに渡します。
+        string message = string.IsNullOrEmpty(effectText) ? "LEVEL UP!" : $"LEVEL UP! {effectText}";
+        GameManager.instance?.SetSystemMessage(message, 3.0f);
+
+        // Lv3, Lv4はShootBullet内で判定
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // パワーアップアイテムに触れた時の処理
+        // TryGetComponent: 相手が PowerUpItem コンポーネントを持っているか確認し、持っていれば取得します。
+        if (other.CompareTag("PowerUp") && other.TryGetComponent<PowerUpItem>(out var item))
+        {
+            // 既に取得済みのアイテムは無視する
+            if (item.IsCollected) return;
+
+            // 取得済みフラグを立てる
+            // これにより、同時に複数の当たり判定が発生しても、経験値が二重に入らないようにします。
+            item.Collect();
+
+            // アイテムの設定値分だけ経験値を加算
+            AddExp(item.expValue);
+            Destroy(other.gameObject);
+        }
+    }
+
+    // UI表示用のゲッター
+    public int GetCurrentExp()
+    {
+        return currentExp;
+    }
+
+    public int GetNextLevelExp()
+    {
+        return nextLevelExp[Mathf.Clamp(weaponLevel - 1, 0, nextLevelExp.Length - 1)];
+    }
+
+    // 武器の詳細ステータス文字列を生成する
+    public string GetWeaponStatusDescription()
+    {
+        List<string> features = new List<string>();
+
+        if (SettingsManager.IsAutofireEnabled())
+        {
+            // オート連射時はRAPID表記
+            if (fireRate < 0.1f) features.Add("RAPID");
+        }
+        else
+        {
+            // 手動時はバースト表記
+            if (burstCount > 1) features.Add($"BURST x{burstCount}");
+        }
+
+        // Way数
+        int wayCount = 0;
+        if (weaponLevel >= 10) wayCount = 7;
+        else if (weaponLevel >= 7) wayCount = 5;
+        else if (weaponLevel >= 4) wayCount = 3;
+
+        if (wayCount > 0) features.Add($"{wayCount}-WAY");
+
+        if (features.Count == 0) return $"LV.{weaponLevel} NORMAL";
+
+        return $"LV.{weaponLevel} {string.Join("/", features)}";
     }
 }

@@ -165,6 +165,10 @@ ReactUnity環境でのパフォーマンス安定のため、JSによる毎フ�
 *   **GameOverPanel**: ゲームオーバー時に表示されるリザルト画面。
     *   **入力制御**: ゲームオーバー状態 (`status.isGameOver`) の時のみ入力を受け付けます。
     *   **機能**: リトライ (`RestartGame`) またはタイトルへ戻る (`ReturnToTitle`) を選択可能です。
+*   **HUD (Head-Up Display)**:
+    *   **Status Monitor**: 機体の状態（SYSTEM, ENGINE, WEAPON）を常時表示するエリア。
+    *   **実装**: `useGameStatus` フックから受け取った文字列（"NORMAL", "OFFLINE" 等）を表示。異常時（HP低下など）は `text-red-500` クラスを適用して赤く点滅させます。
+    *   **メッセージ**: レベルアップ時などの一時的な通知は、モニター下部に強調表示され、一定時間後に消えます。
 
 ### 2.14 KeyIcon (`src/components/KeyIcon.tsx`)
 コントローラーのボタンやキーボードのキーを表示するためのアイコンコンポーネントです。

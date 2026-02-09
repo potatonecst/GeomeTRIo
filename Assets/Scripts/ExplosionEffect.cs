@@ -90,5 +90,10 @@ public class ExplosionEffect : MonoBehaviour
         {
             ps.Play();
         }
+
+        // 振動演出（Vibration）
+        // VibrationManagerを使用することで、優先度管理や設定の一元管理を行います。
+        // 強さ: 左0.6/右0.7, 時間: 0.25秒, 優先度: 0.8 (通常攻撃(0.5)より強く、被弾(2.0)より弱い)
+        VibrationManager.instance?.Vibrate(0.6f, 0.7f, 0.25f, 0.8f);
     }
 }

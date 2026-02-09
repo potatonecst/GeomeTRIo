@@ -572,3 +572,56 @@ if (other.TryGetComponent<IDamageable>(out var damageable))
 * **TryGetComponent**: コンポーネントがあれば true を返し、中身を out 引数に入れます。なければ false を返します。
 * **out var 変数名**: メソッドの結果を受け取るための変数を、その場で宣言する機能です。
 * **メリット**: GetComponent して null チェックするよりも処理が少し速く、コードもスッキリします。また、メモリ割り当て（GC Alloc）も抑えられます。
+
+---
+
+## 21. enum (列挙型)
+
+複数の状態や種類などを、名前付きの定数としてひとまとめに定義する機能です。「魔法の数字（マジックナンバー）」を排除し、コードを読みやすく安全にするために使われます。
+
+### 構文
+```csharp
+// ゲームの状態を定義する例
+public enum GameState { Playing, Paused, GameOver, Menu }
+
+// 変数として使用
+private GameState currentState;
+
+// 値の比較
+if (currentState == GameState.Playing)
+{
+    // プレイ中の処理
+}
+```
+
+### メリット
+1.  **可読性:** `if (state == 0)` よりも `if (state == GameState.Playing)` の方が、何をしているか一目瞭然です。
+2.  **安全性:** `GameState` 型の変数には、定義された値（`Playing`, `Paused` など）しか代入できないため、無効な値（例: `5`）が入るのを防げます。
+
+---
+
+## 22. switch ステートメント
+
+1つの変数の値に応じて、処理を多方向に分岐させるための構文です。`if-else if` を何度も繰り返すよりも、コードがスッキリして見通しが良くなります。
+
+### 構文
+```csharp
+// PlayerController.cs のレベルアップメッセージ処理の例
+switch (weaponLevel)
+{
+    case 2:
+        effectText = "BURST FIRE x2";
+        break; // breakを忘れると次のcaseも実行されてしまうので注意
+    case 3:
+        effectText = "POWER UP";
+        break;
+    default: // どのcaseにも当てはまらない場合
+        effectText = "";
+        break;
+}
+```
+
+### 解説
+*   **`case 値:`**: 変数がこの値と一致した場合に、次の `break;` までの処理を実行します。
+*   **`break;`**: `switch` 文を抜けます。C#では原則として必須です。
+*   **`default:`**: どの `case` にも一致しなかった場合に実行されます。

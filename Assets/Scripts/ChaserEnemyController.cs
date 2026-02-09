@@ -29,11 +29,15 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
 
     [Header("Effects")]
     public GameObject deathEffectPrefab;
+    public GameObject powerUpItemPrefab;
 
     [Header("UI")]
     public Transform hpBarTransform;
     private Vector3 hpBarOriginalLocalPosition;
     private float hpBarOriginalScaleX;
+
+    // 画面外判定用の境界値
+    private float visibleYLimit = 5.5f;
 
     /// <summary>
     /// 初期化処理。
@@ -67,6 +71,13 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
         if (maxHP <= 1 && hpBarTransform != null)
         {
             hpBarTransform.gameObject.SetActive(false);
+        }
+
+        // カメラの表示範囲に基づいて、画面外の境界値を計算します
+        if (Camera.main != null)
+        {
+            // 敵のサイズ(0.5)の半分(0.25)をマージンとして設定します。
+            visibleYLimit = Camera.main.orthographicSize + 0.24f;
         }
     }
 
@@ -145,6 +156,13 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
     /// </summary>
     public void TakeDamage(int damage)
     {
+        // 画面外（出現直後など）にいる場合はダメージを受けない
+        // これにより、出現した瞬間にプレイヤーの弾幕に当たって即死するのを防ぎます。
+        if (transform.position.y > visibleYLimit || transform.position.y < -visibleYLimit)
+        {
+            return;
+        }
+
         currentHP -= damage;
 
         // HPが残っている場合はヒットフラッシュ演出を入れる
@@ -177,6 +195,12 @@ public class ChaserEnemyController : MonoBehaviour, IDamageable
             if (deathEffectPrefab != null)
             {
                 Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+            }
+
+            // ドロップ判定 (追尾敵は少し高めの30%とか)
+            if (powerUpItemPrefab != null && Random.value <= 0.3f)
+            {
+                Instantiate(powerUpItemPrefab, transform.position, Quaternion.identity);
             }
             Destroy(gameObject);
         }

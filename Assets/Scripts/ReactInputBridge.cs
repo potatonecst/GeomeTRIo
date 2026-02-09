@@ -67,6 +67,15 @@ public class GameInterop
         public bool isGameOver;
         public bool isNewHighScore;
         public bool isPaused;
+        public int level;
+        public int currentExp;
+        public int nextExp;
+        public string systemMessage;
+        public string systemStatus;
+        public string engineStatus;
+        public string weaponStatus;
+        public string stageName;
+        public float timeElapsed;
     }
 
     /// <summary>
@@ -118,6 +127,29 @@ public class GameInterop
     {
         if (GameManager.instance == null) return "{}";
 
+        // 各ステータスの文字列を決定
+        // HPが1以下なら "CRITICAL"、それ以外なら "NORMAL"
+        string sysStatus = "NORMAL";
+        if (GameManager.instance.CurrentHP <= 1) sysStatus = "CRITICAL";
+
+        // COMBAT -> ENGINE に変更
+        string engStatus = "ACTIVE";
+        if (GameManager.instance.IsGameOver) engStatus = "OFFLINE";
+        else if (GameManager.instance.IsPaused) engStatus = "STANDBY";
+
+        // 武器ステータス詳細を取得
+        // PlayerControllerから現在の武器状態（バースト数やWay数）の文字列をもらいます。
+        int lvl = PlayerController.instance != null ? PlayerController.instance.weaponLevel : 1;
+        string wpnDetail = PlayerController.instance != null ? PlayerController.instance.GetWeaponStatusDescription() : $"LV.{lvl}";
+
+        string wpnStatus = $"ONLINE [{wpnDetail}]";
+
+        // ステージ名の取得と整形
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        string displayStage = currentScene == "Stage1" ? "STAGE 1" :
+                              currentScene == "ScoreAttack" ? "SCORE ATTACK" : currentScene;
+
+        // データをオブジェクトにまとめます。
         var status = new InGameStatus
         {
             score = GameManager.instance.CurrentScore,
@@ -129,8 +161,18 @@ public class GameInterop
             maxSpCharge = GameManager.instance.MaxSPCharge,
             isGameOver = GameManager.instance.IsGameOver,
             isNewHighScore = GameManager.instance.IsNewHighScore,
-            isPaused = GameManager.instance.IsPaused
+            isPaused = GameManager.instance.IsPaused,
+            level = lvl,
+            currentExp = PlayerController.instance != null ? PlayerController.instance.GetCurrentExp() : 0,
+            nextExp = PlayerController.instance != null ? PlayerController.instance.GetNextLevelExp() : 1,
+            systemMessage = GameManager.instance.SystemMessage,
+            systemStatus = sysStatus,
+            engineStatus = engStatus,
+            weaponStatus = wpnStatus,
+            stageName = displayStage,
+            timeElapsed = GameManager.instance.timeElapsed
         };
+        // JSON形式の文字列に変換して返します。React側はこの文字列を受け取って解析します。
         return JsonUtility.ToJson(status);
     }
 

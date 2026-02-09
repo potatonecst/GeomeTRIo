@@ -53,6 +53,9 @@ public class GameManager : MonoBehaviour
     public bool IsGameOver { get; private set; } = false;
     public bool IsNewHighScore { get; private set; } = false;
 
+    // UIに表示するシステムメッセージ
+    public string SystemMessage { get; private set; } = "";
+
     // タイトル画面の演出（Press Any Button -> ログ）をスキップするかどうかのフラグ
     // ゲームプレイからタイトルに戻った際に、演出を飛ばしてすぐにメニューを表示するために使用します。
     public bool SkipTitleSequence { get; set; } = false;
@@ -98,15 +101,18 @@ public class GameManager : MonoBehaviour
     private int nextScoreExtend = 50000;
     private const int scoreExtendInterval = 50000;
 
+    // メッセージリセット用のコルーチン
+    private Coroutine messageResetCoroutine;
+
     /// <summary>
     /// インスタンスの初期化とシングルトンの設定を行います。
     /// セーブデータのロードや、シーン遷移用オーバーレイの準備もここで実行されます。
     /// </summary>
     void Awake()
     {
-        // シーン内にGameManagerが一つしか存在しないようにするための一般的な設定（シングルトンパターン）
-        // static変数 'instance' に自分自身を代入することで、外部から GameManager.instance でアクセス可能にします。
-        // これにより、どのスクリプトからでも GameManager.instance でアクセスできるようになります。
+        // シングルトンパターン (Singleton Pattern)
+        // ゲーム中に GameManager は「たった1つ」しか存在してはいけません。
+        // static変数 'instance' に自分自身を代入することで、外部から GameManager.instance と書くだけでアクセスできるようにします。
         if (instance == null)
         {
             instance = this;
@@ -118,7 +124,8 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
 
             // フレームレート設定
-            // シューティングゲームとして滑らかな操作感を実現するため、60fpsに固定します。
+            // ゲームの動作速度を秒間60フレーム（60fps）に固定します。
+            // これにより、PCの性能差によるゲームスピードのばらつきを抑えます。
             QualitySettings.vSyncCount = 0; // VSyncを無効化（targetFrameRateを有効にするため）
             Application.targetFrameRate = 60;
 
@@ -131,6 +138,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // もし既に別の GameManager が存在していた場合（シーン遷移で戻ってきた時など）、
+            // 自分自身（新しい方）を破壊して、重複を防ぎます。
             Destroy(gameObject);
         }
 
@@ -160,11 +169,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void SetupOverlayCanvas()
     {
+        // Unityのエディタ上でPrefabを作らず、プログラム（コード）だけで画面を覆う黒い幕を作ります。
         // 新しいゲームオブジェクトを作成
         overlayCanvasObj = new GameObject("TransitionOverlayCanvas");
         DontDestroyOnLoad(overlayCanvasObj); // これもシーン遷移で消えないようにする
 
         // Canvasコンポーネントを追加（UIの描画に必要）
+        // RenderMode.ScreenSpaceOverlay: カメラの位置に関係なく、常に画面の最前面に表示する設定です。
         Canvas canvas = overlayCanvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 32767; // 最前面に表示
@@ -322,6 +333,7 @@ public class GameManager : MonoBehaviour
     // コルーチンとは、処理を途中で中断（yield）し、次のフレームや指定時間後に再開できる特別な関数です。
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
     {
+        // 振動が残らないように、シーン遷移前に強制停止します。
         // 遷移開始時に振動を停止
         VibrationManager.instance?.StopAllVibrations();
 
@@ -340,6 +352,7 @@ public class GameManager : MonoBehaviour
         // allowSceneActivation = false: 
         // 読み込みが完了しても、自動的に画面を切り替えないようにします。
         // これにより、ロード画面（ReactUI側）を表示し続けることができます。
+        // 準備ができたら、あとで true にして画面を切り替えます。
         asyncLoad.allowSceneActivation = false;
 
         // 読み込み完了まで待機 (progressは0.9までしか進まない)
@@ -353,6 +366,7 @@ public class GameManager : MonoBehaviour
         }
 
         // ロード完了後、Unity側のオーバーレイを使って滑らかにフェードアウト（暗転）させる
+        // StartCoroutine: 別のコルーチン（FadeOutOverlay）を実行し、それが終わるまでここで待ちます。
         // yield return StartCoroutine(...): 指定したコルーチンが完了するまで、この処理をここで一時停止します。
         yield return StartCoroutine(FadeOutOverlay());
 
@@ -389,6 +403,7 @@ public class GameManager : MonoBehaviour
         // 指定時間かけて透明度（alpha）を0から1に変化させるループ
         while (elapsed < duration)
         {
+            // Time.unscaledDeltaTime: ゲーム内時間が止まっていても（ポーズ中など）、現実の時間経過を取得できます。
             // Time.unscaledDeltaTime: ゲーム内時間が止まっていても（Time.timeScale=0）、
             // 現実の時間経過を取得できるプロパティです。UIアニメーションなどで使用します。
             elapsed += Time.unscaledDeltaTime;
@@ -440,6 +455,7 @@ public class GameManager : MonoBehaviour
     public void ResetScore()
     {
         CurrentScore = 0;
+        // Time.timeScale = 1f: ゲームの時間の流れを通常速度（1倍）に戻します。ポーズ解除やリスタート時に重要です。
         Time.timeScale = 1f; // 時間停止を確実に解除
         // 表示用のキャッシュも初期値に戻しておく（プレイヤー生成までの繋ぎ）
         MaxHP = SettingsManager.GetInitialHP();
@@ -456,6 +472,7 @@ public class GameManager : MonoBehaviour
 
         timeElapsed = 0;
         nextScoreExtend = scoreExtendInterval; // エクステンド目標もリセット
+        SetSystemMessage("");
     }
 
     /// <summary>
@@ -569,6 +586,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void PauseGame()
     {
+        // Time.timeScale = 0f: ゲーム内の時間を完全に停止させます。物理演算やアニメーションも止まります。
         // Time.timeScale: ゲーム内の時間の流れの速さ。0にすると停止、1で通常速度、0.5でスローモーションになります。
         Time.timeScale = 0f; //時間を停止
         bgmAudioSource?.Pause(); //BGMを一時停止
@@ -673,6 +691,7 @@ public class GameManager : MonoBehaviour
             // 「全く同じ条件」のデータだけを抽出してソート
             // Where: 条件に合うものだけ残す / OrderByDescending: 降順（大きい順）に並べ替え
             var sameConditionScores = currentScores
+                // LINQを使って、リストの中から条件に一致するデータだけを抽出・並べ替えしています。
                 .Where(s => s.hp == currentInitialHp && s.sp == currentInitialSp && s.autoFire == currentAutoFire)
                 .OrderByDescending(s => s.score)
                 .ToList();
@@ -892,4 +911,29 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
+    /// <summary>
+    /// HUDに表示するシステムメッセージを設定します。
+    /// </summary>
+    /// <param name="message">表示するメッセージ</param>
+    /// <param name="duration">表示時間（秒）。0の場合は永続表示。</param>
+    public void SetSystemMessage(string message, float duration = 0f)
+    {
+        // メッセージを更新
+        SystemMessage = message;
+
+        // 既にメッセージ消去のタイマーが動いていたらキャンセルします（上書きのため）
+        if (messageResetCoroutine != null) StopCoroutine(messageResetCoroutine);
+
+        if (duration > 0f)
+        {
+            messageResetCoroutine = StartCoroutine(ResetSystemMessageCoroutine(duration));
+        }
+    }
+
+    private IEnumerator ResetSystemMessageCoroutine(float duration)
+    {
+        // 指定された時間（秒）だけ待機してから、メッセージを空にします。
+        yield return new WaitForSeconds(duration);
+        SystemMessage = "";
+    }
 }

@@ -31,11 +31,15 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     [Header("Effects")]
     public GameObject deathEffectPrefab; // 死亡時のエフェクト（パーティクル）
+    public GameObject powerUpItemPrefab; // パワーアップアイテムのプレハブ
 
     [Header("UI")]
     public Transform hpBarTransform; // HPバーのTransform（Scaleを変えるため）
     private Vector3 hpBarOriginalLocalPosition; // HPバーの初期位置（左寄せ計算用）
     private float hpBarOriginalScaleX; // HPバーの初期スケールX
+
+    // 画面外判定用の境界値（初期値は5.5だが、Startでカメラに合わせて再計算する）
+    private float visibleYLimit = 5.5f;
 
     /// <summary>
     /// 初期化処理。
@@ -81,6 +85,16 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (maxHP <= 1 && hpBarTransform != null)
         {
             hpBarTransform.gameObject.SetActive(false);
+        }
+
+        // カメラの表示範囲に基づいて、画面外の境界値を計算します
+        if (Camera.main != null)
+        {
+            // Camera.main.orthographicSize: カメラの中心から上端までの距離（高さの半分）です。
+            // orthographicSizeは画面の高さの半分です。これに少し余裕(0.5)を持たせます。
+            // 敵のサイズ(0.5)の半分より少し小さい値(0.24)をマージンとして設定します。
+            // これにより、敵が完全に画面外にいる間はダメージを受けなくなります。
+            visibleYLimit = Camera.main.orthographicSize + 0.24f;
         }
     }
 
@@ -174,6 +188,13 @@ public class EnemyController : MonoBehaviour, IDamageable
     /// </summary>
     public void TakeDamage(int damage)
     {
+        // 画面外（出現直後など）にいる場合はダメージを受けない
+        // Y座標が境界値を超えているかチェックします。
+        if (transform.position.y > visibleYLimit || transform.position.y < -visibleYLimit)
+        {
+            return;
+        }
+
         currentHP -= damage;
 
         // まだ生きている場合、ダメージを受けたことを視覚的に伝えます。
@@ -214,6 +235,14 @@ public class EnemyController : MonoBehaviour, IDamageable
             {
                 Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
             }
+
+            // パワーアップアイテムのドロップ判定 (例: 20%の確率)
+            // Random.value: 0.0 から 1.0 の間のランダムな数値を返します。
+            if (powerUpItemPrefab != null && Random.value <= 0.2f)
+            {
+                Instantiate(powerUpItemPrefab, transform.position, Quaternion.identity);
+            }
+
             // 自分自身をゲームから削除します。
             Destroy(gameObject);
         }

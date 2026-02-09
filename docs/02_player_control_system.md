@@ -75,3 +75,24 @@ Instantiate(bulletPrefab, firePoints[currentFirePointIndex].position, firePoints
 ```
 
 ここで重要なのは、**「発射点の `rotation`（向き）をそのまま弾に渡している」** 点です。これにより、三角形の斜めの辺から発射される弾は、自動的にその角度で飛んでいきます。計算で角度を求める必要がなく、UnityのTransform機能を活かした効率的な実装です。
+
+## バースト射撃の実装 (Burst Fire)
+
+手動連射時の爽快感を高めるため、1回の入力で複数発の弾を発射する「バースト射撃」をコルーチンで実装しています。
+
+```csharp
+private IEnumerator BurstFireCoroutine()
+{
+    int count = burstCount; // 現在のレベルに応じた発射数
+    for (int i = 0; i < count; i++)
+    {
+        FireSingleShot(); // 1発発射
+        // 次の弾までの短い待機時間
+        if (i < count - 1) yield return new WaitForSeconds(0.06f);
+    }
+}
+```
+
+*   **仕組み:** `StartCoroutine` で非同期に処理を開始し、`WaitForSeconds` で弾と弾の間隔（0.06秒）を作っています。
+*   **メリット:** `Update` ループで時間を管理するよりもコードが簡潔になり、発射リズムの調整も容易です。
+*   **切り替え:** `SettingsManager.IsAutofireEnabled()` をチェックし、オート連射時はこのコルーチンを使わず、単純な連射速度アップ（Rapid Fire）に切り替えています。

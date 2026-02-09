@@ -18,7 +18,16 @@ export const useGameStatus = () => {
         maxSpCharge: 2500,
         isGameOver: false,
         isNewHighScore: false,
-        isPaused: false
+        isPaused: false,
+        level: 1,
+        currentExp: 0,
+        nextExp: 1,
+        systemMessage: "",
+        systemStatus: "NORMAL",
+        engineStatus: "ACTIVE",
+        weaponStatus: "ONLINE",
+        stageName: "",
+        timeElapsed: 0
     });
 
     useEffect(() => {
