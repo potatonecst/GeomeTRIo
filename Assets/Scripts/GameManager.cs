@@ -60,6 +60,9 @@ public class GameManager : MonoBehaviour
     // ゲームプレイからタイトルに戻った際に、演出を飛ばしてすぐにメニューを表示するために使用します。
     public bool SkipTitleSequence { get; set; } = false;
 
+    // ゲームプレイが進行中かどうか（カットイン終了後からtrue）
+    public bool IsGameActive { get; private set; } = false;
+
     //ポーズ関連
     private bool isPaused = false;
     public bool IsPaused => isPaused; // 外部公開用プロパティ
@@ -252,8 +255,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        // ポーズ中でなければ経過時間を加算
-        if (Time.timeScale > 0f)
+        // ポーズ中でなく、かつゲーム開始演出が終わっていれば経過時間を加算
+        if (Time.timeScale > 0f && IsGameActive)
         {
             timeElapsed += Time.deltaTime;
         }
@@ -341,7 +344,8 @@ public class GameManager : MonoBehaviour
         ResetScore();
 
         // React側の描画更新を待つために少し待機
-        yield return new WaitForSeconds(0.1f);
+        // Time.timeScaleが0になっているため、Realtimeを使用する
+        yield return new WaitForSecondsRealtime(0.1f);
 
         // 非同期読み込み開始
         // SceneManager.LoadSceneAsync: Unity標準のAPIです。
@@ -365,10 +369,11 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // ロード完了後、Unity側のオーバーレイを使って滑らかにフェードアウト（暗転）させる
-        // StartCoroutine: 別のコルーチン（FadeOutOverlay）を実行し、それが終わるまでここで待ちます。
-        // yield return StartCoroutine(...): 指定したコルーチンが完了するまで、この処理をここで一時停止します。
-        yield return StartCoroutine(FadeOutOverlay());
+        // ロード完了後、React側の描画準備が整うまで少し待機してからオーバーレイを消す。
+        // フェードアウトはReact側で行うため、ここでは単に非表示にするだけで良い。
+        // これにより、React側のカットイン演出がUnityの黒画面に隠されるのを防ぐ。
+        yield return new WaitForSecondsRealtime(0.2f);
+        overlayCanvasObj.SetActive(false);
 
         // シーン遷移を許可（ここで一瞬フリーズするが、ユーザーは既にロード画面を見ているので違和感が減る）
         asyncLoad.allowSceneActivation = true;
@@ -381,38 +386,9 @@ public class GameManager : MonoBehaviour
     {
         // ReactUnityの初期化とフェードイン開始を待つ（0.2秒程度）
         // React側は isBlackout=true で開始されるため、この黒幕が消えても下は黒い状態になっている
-        yield return new WaitForSeconds(0.2f);
+        // Time.timeScaleが0になっているため、Realtimeを使用する
+        yield return new WaitForSecondsRealtime(0.2f);
         overlayCanvasObj.SetActive(false);
-    }
-
-    /// <summary>
-    /// オーバーレイ（黒幕）の透明度を上げてフェードアウト（暗転）させるコルーチン。
-    /// </summary>
-    private IEnumerator FadeOutOverlay()
-    {
-        // 黒い幕を有効化
-        overlayCanvasObj.SetActive(true);
-        overlayImage.color = new Color(0, 0, 0, 0); // 透明から開始
-
-        // Canvasを表示した直後の描画更新を待つ（いきなり黒くならないようにする安全策）
-        yield return null;
-
-        float duration = 0.5f;
-        float elapsed = 0f;
-
-        // 指定時間かけて透明度（alpha）を0から1に変化させるループ
-        while (elapsed < duration)
-        {
-            // Time.unscaledDeltaTime: ゲーム内時間が止まっていても（ポーズ中など）、現実の時間経過を取得できます。
-            // Time.unscaledDeltaTime: ゲーム内時間が止まっていても（Time.timeScale=0）、
-            // 現実の時間経過を取得できるプロパティです。UIアニメーションなどで使用します。
-            elapsed += Time.unscaledDeltaTime;
-            float alpha = Mathf.Clamp01(elapsed / duration);
-            overlayImage.color = new Color(0, 0, 0, alpha);
-            yield return null;
-        }
-
-        overlayImage.color = Color.black; // 確実に真っ黒にする
     }
 
     /// <summary>
@@ -455,8 +431,8 @@ public class GameManager : MonoBehaviour
     public void ResetScore()
     {
         CurrentScore = 0;
-        // Time.timeScale = 1f: ゲームの時間の流れを通常速度（1倍）に戻します。ポーズ解除やリスタート時に重要です。
-        Time.timeScale = 1f; // 時間停止を確実に解除
+        // ゲーム開始前は時間を止めておく（カットイン演出のため）
+        Time.timeScale = 0f;
         // 表示用のキャッシュも初期値に戻しておく（プレイヤー生成までの繋ぎ）
         MaxHP = SettingsManager.GetInitialHP();
         MaxSP = SettingsManager.GetInitialSP();
@@ -469,6 +445,7 @@ public class GameManager : MonoBehaviour
         IsNewHighScore = false;
 
         isPaused = false; // ポーズ状態もリセット
+        IsGameActive = false; // ゲーム開始前状態にリセット
 
         timeElapsed = 0;
         nextScoreExtend = scoreExtendInterval; // エクステンド目標もリセット
@@ -567,6 +544,9 @@ public class GameManager : MonoBehaviour
     {
         // タイトル画面ではポーズ機能（BGM停止など）を無効化する
         if (SceneManager.GetActiveScene().name == "TitleScene") return;
+
+        // ゲーム開始前（カットイン中）はポーズ不可
+        if (!IsGameActive) return;
 
         PlaySubmitSound(); //効果音再生
         isPaused = !isPaused;
@@ -741,8 +721,8 @@ public class GameManager : MonoBehaviour
         //現在のシーンをもう一度読み込む
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
-        //止まっていて時間を戻す
-        Time.timeScale = 1f;
+        // 時間は止めたままにする（ResetScoreで0fに設定済み）。
+        // カットイン演出終了後に StartGameLoop() で 1f に戻される。
     }
 
     /// <summary>
@@ -935,5 +915,15 @@ public class GameManager : MonoBehaviour
         // 指定された時間（秒）だけ待機してから、メッセージを空にします。
         yield return new WaitForSeconds(duration);
         SystemMessage = "";
+    }
+
+    /// <summary>
+    /// カットイン演出が終了し、ゲームプレイを開始する際に呼び出されます。
+    /// </summary>
+    public void StartGameLoop()
+    {
+        IsGameActive = true;
+        // カットイン終了、ゲーム開始（時間を動かす）
+        Time.timeScale = 1f;
     }
 }

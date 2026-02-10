@@ -173,6 +173,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// <param name="context">入力イベントの情報</param>
     private void OnFireButtonPressed(InputAction.CallbackContext context)
     {
+        if (!GameManager.instance.IsGameActive) return;
+
         fireButtonHeld = true;
         ShootBullet();
 
@@ -250,15 +252,20 @@ public class PlayerController : MonoBehaviour, IDamageable
         // 中央の弾を発射
         CreateBullet(firePoints[currentFirePointIndex].position, firePoints[currentFirePointIndex].rotation, centerDamage, 1.0f);
 
-        int wayCount = 0;
-        if (weaponLevel >= 10) wayCount = 3; // 7-Way (左右3つずつ追加)
-        else if (weaponLevel >= 7) wayCount = 2; // 5-Way (左右2つずつ追加)
-        else if (weaponLevel >= 4) wayCount = 1; // 3-Way (左右1つずつ追加)
+        // サイドの弾（Way弾）のペア数を決定します。
+        // 1ペアにつき左右に1発ずつ、計2発追加されます。
+        // Lv4-6: 1ペア追加 -> 中央1 + 左右2 = 3-Way
+        // Lv7-9: 2ペア追加 -> 中央1 + 左右4 = 5-Way
+        // Lv10+: 3ペア追加 -> 中央1 + 左右6 = 7-Way
+        int sidePairCount = 0;
+        if (weaponLevel >= 10) sidePairCount = 3;
+        else if (weaponLevel >= 7) sidePairCount = 2;
+        else if (weaponLevel >= 4) sidePairCount = 1;
 
         // サイドの弾（Way弾）を発射するループ
-        if (wayCount > 0)
+        if (sidePairCount > 0)
         {
-            for (int i = 1; i <= wayCount; i++)
+            for (int i = 1; i <= sidePairCount; i++)
             {
                 int sideDamage = 1;
                 float alpha = 1.0f;
@@ -331,6 +338,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// </summary>
     private void SwitchWeapon(InputAction.CallbackContext context)
     {
+        if (!GameManager.instance.IsGameActive) return;
+
         //入力値を読み込む（-1 or +1)
         float switchValue = context.ReadValue<float>();
 
@@ -395,6 +404,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// </summary>
     private void PerformSpinAttack(InputAction.CallbackContext context)
     {
+        if (!GameManager.instance.IsGameActive) return;
+
         //スピンアタック中でなければ発動
         if (!isSpinning && GameManager.instance.TryUseSP())
         {
@@ -425,10 +436,65 @@ public class PlayerController : MonoBehaviour, IDamageable
 
             if (Time.time > nextFireTime)
             {
+                // レベルに応じたダメージ計算（通常射撃と同じロジック）
+                int damage = 1;
+                if (weaponLevel >= 9) damage = 4;
+                else if (weaponLevel >= 6) damage = 3;
+                else if (weaponLevel >= 3) damage = 2;
+
+                // Way数の計算 (通常射撃と同じ)
+                int sidePairCount = 0;
+                if (weaponLevel >= 10) sidePairCount = 3;
+                else if (weaponLevel >= 7) sidePairCount = 2;
+                else if (weaponLevel >= 4) sidePairCount = 1;
+
                 foreach (Transform firePoint in firePoints)
                 {
-                    Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-                    GameManager.instance?.IncrementShotsFired(); //スピンアタックの弾もカウント
+                    // 中央弾
+                    CreateBullet(firePoint.position, firePoint.rotation, damage, 1.0f);
+                    GameManager.instance?.IncrementShotsFired();
+
+                    // Way弾 (サイド弾)
+                    if (sidePairCount > 0)
+                    {
+                        for (int i = 1; i <= sidePairCount; i++)
+                        {
+                            int sideDamage = 1;
+                            float alpha = 1.0f;
+
+                            // サイド弾のダメージと透明度計算 (FireSingleShotと同じロジック)
+                            if (i == 1) // 1st Side
+                            {
+                                if (weaponLevel >= 9) sideDamage = 3;
+                                else if (weaponLevel >= 6) sideDamage = 2;
+                                alpha = 0.8f;
+                            }
+                            else if (i == 2) // 2nd Side
+                            {
+                                if (weaponLevel >= 9) sideDamage = 2;
+                                alpha = 0.6f;
+                            }
+                            else if (i == 3) // 3rd Side
+                            {
+                                sideDamage = 1;
+                                alpha = 0.4f;
+                            }
+
+                            float angle = i * 5f;
+
+                            // 右側
+                            Quaternion rotR = firePoint.rotation * Quaternion.Euler(0, 0, -angle);
+                            CreateBullet(firePoint.position, rotR, sideDamage, alpha);
+
+                            // 左側
+                            Quaternion rotL = firePoint.rotation * Quaternion.Euler(0, 0, angle);
+                            CreateBullet(firePoint.position, rotL, sideDamage, alpha);
+
+                            // サイド弾の発射数カウント（左右で2発分）
+                            GameManager.instance?.IncrementShotsFired();
+                            GameManager.instance?.IncrementShotsFired();
+                        }
+                    }
                 }
                 nextFireTime = Time.time + spinAttackFireRate;
             }
@@ -518,7 +584,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         switch (weaponLevel)
         {
             case 2:
-                effectText = SettingsManager.IsAutofireEnabled() ? "RAPID FIRE UP" : "BURST FIRE x2";
+                effectText = SettingsManager.IsAutofireEnabled() ? "FIRE RATE UP" : "BURST FIRE x2";
                 break;
             case 3:
                 effectText = "POWER UP";
@@ -527,7 +593,7 @@ public class PlayerController : MonoBehaviour, IDamageable
                 effectText = "3-WAY SHOT";
                 break;
             case 5:
-                effectText = SettingsManager.IsAutofireEnabled() ? "RAPID FIRE UP" : "BURST FIRE x3";
+                effectText = SettingsManager.IsAutofireEnabled() ? "FIRE RATE UP" : "BURST FIRE x3";
                 break;
             case 6:
                 effectText = "POWER UP";
@@ -536,7 +602,7 @@ public class PlayerController : MonoBehaviour, IDamageable
                 effectText = "5-WAY SHOT";
                 break;
             case 8:
-                effectText = SettingsManager.IsAutofireEnabled() ? "RAPID FIRE UP" : "BURST FIRE x4";
+                effectText = SettingsManager.IsAutofireEnabled() ? "FIRE RATE UP" : "BURST FIRE x4";
                 break;
             case 9:
                 effectText = "POWER UP";
@@ -547,7 +613,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
 
         // Status Monitorに表示するメッセージを作成し、GameManagerに渡します。
-        string message = string.IsNullOrEmpty(effectText) ? "LEVEL UP!" : $"LEVEL UP! {effectText}";
+        string message = string.IsNullOrEmpty(effectText) ? "[LEVEL UP!]" : $"[LEVEL UP!] {effectText}";
         GameManager.instance?.SetSystemMessage(message, 3.0f);
 
         // Lv3, Lv4はShootBullet内で判定
@@ -599,6 +665,11 @@ public class PlayerController : MonoBehaviour, IDamageable
             if (burstCount > 1) features.Add($"BURST x{burstCount}");
         }
 
+        // 攻撃力アップ (Lv3: +1, Lv6: +2, Lv9: +3)
+        if (weaponLevel >= 9) features.Add("POWER UP x3");
+        else if (weaponLevel >= 6) features.Add("POWER UP x2");
+        else if (weaponLevel >= 3) features.Add("POWER UP");
+
         // Way数
         int wayCount = 0;
         if (weaponLevel >= 10) wayCount = 7;
@@ -609,6 +680,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         if (features.Count == 0) return $"LV.{weaponLevel} NORMAL";
 
-        return $"LV.{weaponLevel} {string.Join("/", features)}";
+        // スラッシュの前後にスペースを入れて読みやすくする
+        return $"LV.{weaponLevel} {string.Join(" / ", features)}";
     }
 }

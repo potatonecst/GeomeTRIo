@@ -135,14 +135,16 @@ public class GameInterop
         // COMBAT -> ENGINE に変更
         string engStatus = "ACTIVE";
         if (GameManager.instance.IsGameOver) engStatus = "OFFLINE";
-        else if (GameManager.instance.IsPaused) engStatus = "STANDBY";
+        // ポーズ中、またはゲーム開始前（カットイン中）は STANDBY
+        else if (GameManager.instance.IsPaused || !GameManager.instance.IsGameActive) engStatus = "STANDBY";
 
         // 武器ステータス詳細を取得
         // PlayerControllerから現在の武器状態（バースト数やWay数）の文字列をもらいます。
         int lvl = PlayerController.instance != null ? PlayerController.instance.weaponLevel : 1;
         string wpnDetail = PlayerController.instance != null ? PlayerController.instance.GetWeaponStatusDescription() : $"LV.{lvl}";
 
-        string wpnStatus = $"ONLINE [{wpnDetail}]";
+        // "ONLINE" は冗長なので削除し、詳細情報を直接表示する
+        string wpnStatus = wpnDetail;
 
         // ステージ名の取得と整形
         string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
@@ -322,6 +324,14 @@ public class GameInterop
         // ビルド済みアプリではアプリケーションを終了します。
         Application.Quit();
 #endif
+    }
+
+    /// <summary>
+    /// ゲームループを開始します（カットイン演出終了後に呼ばれる）。
+    /// </summary>
+    public void StartGameLoop()
+    {
+        GameManager.instance?.StartGameLoop();
     }
 }
 

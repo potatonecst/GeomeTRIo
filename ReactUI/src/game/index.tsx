@@ -1,7 +1,7 @@
 import { render, useGlobals } from '@reactunity/renderer';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import '../index.css';
-import { HUD } from './HUD';
+import { HUD, type HUDState } from './HUD';
 import { GlitchText } from '../components/GlitchText';
 import { useGameStatus } from '../hooks/useGameStatus';
 import { MenuButton } from '../components/MenuButton';
@@ -189,6 +189,111 @@ const PausePanel = () => {
     );
 };
 
+// ステージ開始カットインコンポーネント
+type CutinAction = 'show_frame' | 'show_labels' | 'show_engine' | 'show_weapon' | 'show_vital' | 'show_telemetry' | 'start_scan' | 'end_scan' | 'show_system' | 'show_vision';
+
+const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: string, onComplete: () => void, onProgress: (action: CutinAction) => void }) => {
+    // アニメーションを開始するためのトリガー
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    // onCompleteの最新の参照を保持するRef
+    const onCompleteRef = useRef(onComplete);
+    const onProgressRef = useRef(onProgress);
+
+    useEffect(() => {
+        onCompleteRef.current = onComplete;
+        onProgressRef.current = onProgress;
+    }, [onComplete, onProgress]);
+
+    const sequence = [
+        { text: "BOOT_SEQUENCE_INIT...", delay: 200 },
+        { text: "INITIALIZING_INTERFACE...", delay: 500, action: 'show_frame' as CutinAction },
+        { text: "CONNECTING_ENGINE... OK", delay: 900, action: 'show_engine' as CutinAction },
+        { text: "LOADING_WEAPON_MODULES... OK", delay: 1200, action: 'show_weapon' as CutinAction },
+        { text: "CHECKING_VITAL_SIGNS... OK", delay: 1500, action: 'show_vital' as CutinAction },
+        { text: "STARTING_TELEMETRY... OK", delay: 1800, action: 'show_telemetry' as CutinAction },
+        { text: "SCANNING_ENVIRONMENT...", delay: 2100, action: 'start_scan' as CutinAction },
+        { text: `ENTRY_POINT_CONFIRMED: [ ${stageName} ]`, delay: 2600, action: 'end_scan' as CutinAction },
+        { text: "SYSTEM_ALL_GREEN", delay: 3000, action: 'show_system' as CutinAction },
+        { text: "VISUAL_FEED_ONLINE", delay: 3400, action: 'show_vision' as CutinAction },
+        { text: ">> MISSION START", delay: 4000 },
+    ];
+
+    useEffect(() => {
+        const timeouts: any[] = [];
+
+        // アニメーション開始トリガー
+        const startTimer = setTimeout(() => setIsAnimating(true), 100);
+        timeouts.push(startTimer);
+
+        // ログに対応するアクションを時間差で実行
+        sequence.forEach(({ delay, action }) => {
+            const t = setTimeout(() => {
+                if (action && onProgressRef.current) {
+                    onProgressRef.current(action);
+                }
+            }, delay);
+            timeouts.push(t);
+        });
+
+        // 完了通知
+        const tComplete = setTimeout(() => {
+            if (onCompleteRef.current) onCompleteRef.current();
+        }, 5000); // シーケンス終了まで待機
+        timeouts.push(tComplete);
+
+        return () => { timeouts.forEach(clearTimeout); };
+    }, [stageName]); // stageNameが変わったら再実行
+
+    return (
+        <view
+            className="absolute inset-0 bg-black items-center justify-center pointer-events-none"
+            style={{ zIndex: 10001, backgroundColor: 'rgba(0,0,0,0.4)' }}
+        >
+            {/* ターミナルウィンドウ */}
+            <view
+                className={`flex-col w-[800px] bg-black border-2 border-cyan-600 bg-opacity-90 p-1 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
+                style={{
+                }}
+            >
+                {/* ウィンドウヘッダー */}
+                <view className="flex-row justify-between bg-cyan-900 px-2 py-1 mb-2">
+                    <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>TERMINAL_OUTPUT</text>
+                    <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>v3.0.1</text>
+                </view>
+
+                {/* ログエリア */}
+                <view className="flex-col items-start p-4">
+                    {/* 全てのログを最初から描画しておく */}
+                    {sequence.map((item, i) => {
+                        // 最後の行（MISSION START）は強調表示
+                        const isHighlight = item.text.includes("MISSION START");
+                        return (
+                            <text
+                                key={i}
+                                className={`text-xl font-mono mb-1 tracking-wider transition-opacity duration-300 ${isHighlight ? 'text-yellow-400 font-bold' : 'text-cyan-400'} ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
+                                style={{
+                                    fontFamily: 'SourceHanCodeJP',
+                                    transitionDelay: `${item.delay}ms`,
+                                }}
+                            >
+                                {`> ${item.text}`}
+                            </text>
+                        );
+                    })}
+                    {/* カーソルも最後のログの後に表示 */}
+                    <view
+                        className={`w-3 h-5 bg-cyan-400 mt-1 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
+                        style={{
+                            transitionDelay: `${sequence[sequence.length - 1].delay + 100}ms`,
+                        }}
+                    />
+                </view>
+            </view>
+        </view>
+    );
+};
+
 // ゲームシーン全体のルートコンポーネント
 // 役割: HUD、ポーズ、ゲームオーバー画面の統括と、シーン遷移時の演出（ローディング、暗転）を管理
 const GameApp = () => {
@@ -196,25 +301,74 @@ const GameApp = () => {
     const [isLoading, setIsLoading] = useState(false);
     // シーン遷移直後は真っ暗な状態から始める（フェードインのため true で初期化）
     const [isBlackout, setIsBlackout] = useState(true);
+    // カットイン表示中かどうか
+    const [isCutinPlaying, setIsCutinPlaying] = useState(true);
+
+    // HUDの表示状態管理
+    const [hudState, setHudState] = useState<HUDState>({
+        frame: false,
+        labels: false,
+        vital: false,
+        engine: false,
+        weapon: false,
+        env: false,
+        isScanning: false,
+        telemetry: false,
+        system: false
+    });
+
+    const globals = useGlobals() as any;
+    const interop = globals.GameInterop;
+    // ステージ名を取得（HUDと同じロジックで取得するか、statusから取る）
+    const status = useGameStatus();
 
     useEffect(() => {
-        // マウント後、少し待ってからフェードイン（暗転解除）を開始
-        const timer = setTimeout(() => setIsBlackout(false), 100);
+        // マウント後の自動フェードインは廃止し、カットインの進行に任せる
+        // ただし、カットインがない場合（万が一のフォールバック）のために安全策を入れても良いが、
+        // 基本的に isCutinPlaying=true で始まるため、カットイン側で制御する。
 
         // C#からの演出リクエストを受け取るハンドラを登録
         // onLoadingRequest: ローディング画面を表示せよ
         (window as any).onLoadingRequest = () => setIsLoading(true);
         (window as any).onFadeOutRequest = () => setIsBlackout(true);
         return () => {
-            clearTimeout(timer);
             (window as any).onLoadingRequest = () => { };
             (window as any).onFadeOutRequest = () => { };
         };
     }, []);
 
+    // カットイン完了時の処理
+    const handleCutinComplete = useCallback(() => {
+        setIsCutinPlaying(false);
+        // ゲームループ開始をUnityに通知
+        interop?.StartGameLoop();
+    }, [interop]);
+
+    // カットイン進行中のアクション処理
+    const handleCutinProgress = useCallback((action: CutinAction) => {
+        if (action === 'show_frame') {
+            setHudState(prev => ({ ...prev, frame: true, labels: true }));
+        } else if (action === 'show_engine') {
+            setHudState(prev => ({ ...prev, engine: true }));
+        } else if (action === 'show_weapon') {
+            setHudState(prev => ({ ...prev, weapon: true }));
+        } else if (action === 'show_vital') {
+            setHudState(prev => ({ ...prev, vital: true }));
+        } else if (action === 'show_telemetry') {
+            setHudState(prev => ({ ...prev, telemetry: true }));
+        } else if (action === 'start_scan') {
+            setHudState(prev => ({ ...prev, env: true, isScanning: true }));
+        } else if (action === 'end_scan') {
+            setHudState(prev => ({ ...prev, isScanning: false }));
+        } else if (action === 'show_system') {
+            setHudState(prev => ({ ...prev, system: true }));
+        } else if (action === 'show_vision') {
+            setIsBlackout(false);
+        }
+    }, []);
+
     return (
         <view className="w-full h-full">
-            <HUD />
             <PausePanel />
             <GameOverPanel />
 
@@ -233,6 +387,21 @@ const GameApp = () => {
                 className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
                 style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
             />
+
+            {/* HUD: Blackout Overlay(9999)より手前に表示するために、この位置に配置しzIndexを指定 */}
+            <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
+                <HUD hudState={hudState} />
+            </view>
+
+            {/* Start Cutin */}
+            {/* HUD(10000)よりもさらに手前に表示するために、JSXの最後に配置 */}
+            {isCutinPlaying && (
+                <StageStartCutin
+                    stageName={status.stageName || "STAGE START"}
+                    onComplete={handleCutinComplete}
+                    onProgress={handleCutinProgress}
+                />
+            )}
         </view>
     );
 };
