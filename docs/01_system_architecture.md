@@ -2,7 +2,7 @@
 
 本ドキュメントでは、GeomeTRIoのシステム全体の構造、UnityとReactUnityの連携方式、および主要なゲームロジック（GameManager）の設計について、コードの行間にある意図まで含めて解説します。
 
-## 1. 全体構成 (System Overview)
+## 1. 全体構成とハイブリッドアーキテクチャ (System Overview)
 
 本プロジェクトは、ゲームプレイ部分（アクション）に Unity 標準機能を使用し、タイトル画面やメニュー画面などのUI部分に **ReactUnity** を採用したハイブリッドアーキテクチャを採用しています。
 
@@ -11,7 +11,7 @@
     *   物理演算、衝突判定、パーティクルエフェクトなどは Unity の機能をフル活用。
     *   HUD (Head-Up Display) も ReactUnity で実装し、C#側の状態をポーリングして描画します。
 *   **Title Scene (ReactUnity):**
-    *   `TitleScene`。タイトル、メニュー、ランキング、設定画面。
+    *   `TitleScene`。タイトル、メニュー、ランキング、設定画面など、UI主体のシーン。
     *   HTML/CSS (Tailwind CSS like) + React でUIを構築。
     *   アニメーションやグリッチ演出を React コンポーネントとして実装。
 
@@ -20,22 +20,27 @@
 ## 2. Unity (C#) と React (TypeScript) の連携
 
 ReactUnity 環境下では、C# と JavaScript (QuickJS) が相互に通信を行う必要があります。
+これは、Unityの世界（ゲームロジック）とReactの世界（UI表示）をつなぐ「橋」のようなものです。
 
 ### 2.1 入力イベントの伝達 (C# -> React)
 Unity の `Input System` で検知したコントローラーやキーボードの入力を、React 側のグローバル関数を呼び出すことで伝達します。
 
 *   **C#側 (`ReactInputBridge.cs`):**
     *   `ReactRenderer` のコンテキストを取得し、`ExecuteScript` を使用して JS側の関数 `window.onMenuInput(event)` 等を実行。
+    *   例: 「上キーが押された」→ `onMenuInput('up')` を実行。
 *   **React側 (`Menu.tsx` 等):**
     *   `useEffect` 内で `(window as any).onMenuInput` にコールバック関数を登録してイベントを受信。
+    *   例: `onMenuInput` が呼ばれたら、選択中の項目を一つ上にずらす。
 
 ### 2.2 データと機能の提供 (C# -> React)
 ランキングデータの取得やゲーム開始などの機能は、C# 側のオブジェクトを React 側に公開することで実現しています。
 
 *   **C#側 (`ReactInputBridge.cs`):**
     *   `GameInterop` クラスを定義し、`ReactRenderer.Globals` に登録。
+    *   これにより、React側からは `Globals.GameInterop` という名前でC#のオブジェクトが見えるようになります。
 *   **React側 (`Ranking.tsx` 等):**
     *   `useGlobals` フック経由で `GameInterop` のメソッド (`GetGameData`, `StartGame` 等) を呼び出し。
+    *   例: `interop.StartGame("Stage1")` を呼ぶと、C#側の `StartGame` メソッドが実行され、シーン遷移が始まります。
 
 ---
 
@@ -47,11 +52,11 @@ Unity側のゲームロジックは、各オブジェクト（自機、敵、UI�
 - **GameManager:** ゲーム全体の状態（プレイ中、ゲームオーバー、スコア計算）、セーブデータ(GameData)の保持・保存、BGM管理を行うシングルトンクラス。
 - **PlayerController:** 自機の操作を担当。
 - **EnemySpawner:** 敵の出現タイミングと生成を担当。
-- **SettingsManager:** ゲーム設定（音量、振動など）の管理と永続化（PlayerPrefs）を担当する静的クラス。
+- **SettingsManager:** ゲーム設定（音量、振動など）の管理と永続化（PlayerPrefs）を担当する静的クラス。どこからでも `SettingsManager.GetBGMVolume()` のようにアクセスできます。
 - **VibrationManager:** ゲームパッドの振動制御を担当。優先度付きの振動リクエストを管理するシングルトンクラス。
 - **ReactInputBridge:** Unityの入力イベントをReactに伝達し、ReactからのAPI呼び出し(GameInterop)を処理するブリッジクラス。
 
-### 3.2 シングルトンパターン (Singleton Pattern)
+### 3.2 シングルトンパターン (Singleton Pattern) の詳細
 `GameManager` は、ゲーム中に常に1つだけ存在し、どこからでもアクセス可能にするために **シングルトンパターン** を採用しています。
 
 #### なぜシングルトンを使うのか？
@@ -157,7 +162,7 @@ ReactUIの `Settings` 画面での変更は即座にメモリ上に反映され�
 
 タイトル画面内の遷移は React の State (`currentScreen`) で管理し、ゲームプレイへの遷移は Unity の `SceneManager` を使用します。
 
-### 5.1 起動からメニューまで
+### 7.1 起動からメニューまで
 1.  **起動**: `TitleScene` (Unity) -> `TitleApp` (React) マウント。
 2.  **タイトル**: `currentScreen = 'title'`。
 3.  **メニュー**: 任意のキー入力で接続演出 -> メニュー表示。
@@ -165,7 +170,7 @@ ReactUIの `Settings` 画面での変更は即座にメモリ上に反映され�
     *   Ranking選択 -> `currentScreen = 'ranking'` (Rankingコンポーネント表示)。
     *   Stage Select選択 -> `currentScreen = 'stage_select'`。
 
-### 5.2 ゲーム開始シーケンス (ローディング演出)
+### 7.2 ゲーム開始シーケンス (ローディング演出)
 ReactUIによるリッチな演出と、Unityのシーンロードによるフリーズを両立させるため、以下の遷移フローを採用しています。
 
 1.  **開始リクエスト:** React (`StageSelect`) が `StartGame` を呼び出す。

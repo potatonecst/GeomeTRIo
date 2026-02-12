@@ -4,11 +4,11 @@
 
 ## Input System の活用
 
-従来の `Input.GetKey(KeyCode.Space)` ではなく、Unityの新しい **Input System** を使用しています。
+従来の `Input.GetKey(KeyCode.Space)` ではなく、Unityの新しい **Input System** パッケージを使用しています。
 
 ### メリット
 1. **マルチデバイス対応:** キーボード、ゲームパッド、タッチ操作を統一的に扱えます。
-2. **イベント駆動:** 「ボタンが押された瞬間」に特定のメソッドを呼び出す仕組み（Action）が作りやすいです。
+2. **イベント駆動:** 「ボタンが押された瞬間」に特定のメソッドを呼び出す仕組み（Action）が作りやすいです。「毎フレームチェックする」必要がなくなります。
 
 ### Actionの設定 (PlayerInputActions)
 - **Move:** Action Type = `Value`, Control Type = `Vector2` (WASD, 左スティック)
@@ -27,7 +27,8 @@ private void OnEnable()
     inputActions.Player.Enable();
     
     // "Fire" アクションが実行された（performed）時に Fire() メソッドを呼ぶ
-    inputActions.Player.Fire.performed += ctx => Fire();
+    // += は「イベントに登録する」という意味です。
+    inputActions.Player.Fire.performed += context => Fire();
     
     // 移動入力はUpdate内で毎フレーム取得する（イベントではない）
 }

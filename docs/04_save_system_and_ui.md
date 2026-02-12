@@ -74,6 +74,7 @@ ReactUnityのUI操作は、UnityのInput Systemからの入力を `ReactInputBri
     *   **ナビゲーション:** `Update` ループ内で毎フレーム入力をポーリングし、長押しによる連続移動（キーリピート）を実装しています。
         *   **Initial Delay:** 初回入力後の待機時間（例: 0.5秒）。
         *   **Repeat Rate:** 連続入力時の間隔（例: 0.1秒）。
+        *   **設計意図:** 単純なイベント駆動（`performed`）では「押しっぱなし」の挙動をOS標準のように自然に実装するのが難しいため、ポーリング方式を採用しました。
 2.  **イベント送信 (C# -> React):**
     *   入力が発生すると、`ReactRenderer.Context.Script.ExecuteScript` を介して、React側のグローバル関数 `window.onMenuInput(eventName)` を呼び出します。
     *   イベント名: `'up'`, `'down'`, `'left'`, `'right'`, `'submit'`, `'cancel'`, `'backspace'`

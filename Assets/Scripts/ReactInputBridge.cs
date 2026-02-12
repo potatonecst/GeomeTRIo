@@ -128,23 +128,35 @@ public class GameInterop
         if (GameManager.instance == null) return "{}";
 
         // 各ステータスの文字列を決定
-        // HPが1以下なら "CRITICAL"、それ以外なら "NORMAL"
+        // SYSTEMステータス: 機体の耐久状況を表します。
+        // - FATAL ERROR: ゲームオーバー時（HPが0）
+        // - CRITICAL: HPが1以下の危険状態
+        // - NORMAL: 通常状態
         string sysStatus = "NORMAL";
-        if (GameManager.instance.CurrentHP <= 1) sysStatus = "CRITICAL";
+        if (GameManager.instance.IsGameOver) sysStatus = "FATAL ERROR";
+        else if (GameManager.instance.CurrentHP <= 1) sysStatus = "CRITICAL";
 
-        // COMBAT -> ENGINE に変更
+        // ENGINEステータス: 機体の動力・稼働状況を表します。
+        // - DESTROYED: ゲームオーバー時
+        // - STANDBY: ポーズ中、またはゲーム開始前のカットイン中
+        // - ACTIVE: 通常稼働中
         string engStatus = "ACTIVE";
-        if (GameManager.instance.IsGameOver) engStatus = "OFFLINE";
-        // ポーズ中、またはゲーム開始前（カットイン中）は STANDBY
+        if (GameManager.instance.IsGameOver) engStatus = "DESTROYED";
         else if (GameManager.instance.IsPaused || !GameManager.instance.IsGameActive) engStatus = "STANDBY";
 
-        // 武器ステータス詳細を取得
-        // PlayerControllerから現在の武器状態（バースト数やWay数）の文字列をもらいます。
+        // WEAPONステータス: 武装システムの状況を表します。
         int lvl = PlayerController.instance != null ? PlayerController.instance.weaponLevel : 1;
-        string wpnDetail = PlayerController.instance != null ? PlayerController.instance.GetWeaponStatusDescription() : $"LV.{lvl}";
-
-        // "ONLINE" は冗長なので削除し、詳細情報を直接表示する
-        string wpnStatus = wpnDetail;
+        string wpnStatus;
+        if (GameManager.instance.IsGameOver)
+        {
+            // ゲームオーバー時は武器システムもダウンした演出
+            wpnStatus = "CRITICAL ERROR";
+        }
+        else
+        {
+            // 通常時は PlayerController から現在の武装詳細（例: "LV.3 POWER UP / 3-WAY"）を取得
+            wpnStatus = PlayerController.instance != null ? PlayerController.instance.GetWeaponStatusDescription() : $"LV.{lvl}";
+        }
 
         // ステージ名の取得と整形
         string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;

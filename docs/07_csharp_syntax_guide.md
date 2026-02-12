@@ -80,6 +80,10 @@ public class GameData { ... }
     *   スクリプトが動作するために必須となるコンポーネント（例: `ParticleSystem`）を指定します。
     *   この属性がついたスクリプトをGameObjectに追加すると、指定したコンポーネントも自動的に追加されます。また、誤って削除できなくなります。
     *   **メリット:** `GetComponent` で取得する際に「コンポーネントがない！」というエラー（NullReferenceException）を未然に防げます。
+*   **`[DefaultExecutionOrder(order)]`**:
+    *   スクリプトの `Awake`, `OnEnable`, `Start` などが呼ばれる順番を制御します。
+    *   数値が小さいほど先に実行されます（デフォルトは0）。
+    *   **メリット:** 「マネージャーが初期化される前に他のスクリプトがアクセスしてエラーになる」といったタイミング問題を解決できます。`ReactInputBridge` では `-100` に設定して早期初期化を行っています。
 
 ---
 
@@ -625,3 +629,53 @@ switch (weaponLevel)
 *   **`case 値:`**: 変数がこの値と一致した場合に、次の `break;` までの処理を実行します。
 *   **`break;`**: `switch` 文を抜けます。C#では原則として必須です。
 *   **`default:`**: どの `case` にも一致しなかった場合に実行されます。
+
+---
+
+## 23. 三項演算子 (Ternary Operator)
+
+`if-else` 文を使わずに、条件に応じて値を切り替える式を1行で書くための演算子 `? :` です。
+
+### 構文
+`条件式 ? 真の場合の値 : 偽の場合の値`
+
+### コード例
+```csharp
+// ReactInputBridge.cs の例
+// GameManagerが存在すればその統計情報を、なければ新規作成して使う
+var stats = GameManager.instance != null ? GameManager.instance.Data.stats : new PlayerStats();
+
+// 通常の if-else で書いた場合
+PlayerStats stats;
+if (GameManager.instance != null) {
+    stats = GameManager.instance.Data.stats;
+} else {
+    stats = new PlayerStats();
+}
+```
+
+---
+
+## 24. ネストされたクラス (Nested Classes)
+
+クラスの中に定義されたクラスのことです。親クラスと密接に関係するデータ構造やヘルパークラスを定義する場合に使われます。
+
+### コード例
+```csharp
+public class GameInterop
+{
+    // GameInterop 内部でのみ使用するデータ構造
+    // private なので外部からは見えない（隠蔽）
+    [System.Serializable]
+    private class SettingsData
+    {
+        public int hp;
+        public int sp;
+        // ...
+    }
+}
+```
+
+### メリット
+1.  **カプセル化:** そのクラス内部でしか使わない型を外部から隠すことができます。
+2.  **整理整頓:** 関連する型を物理的に近くに配置でき、プロジェクトのファイル数が増えるのを防げます。

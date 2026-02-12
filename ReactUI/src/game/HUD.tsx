@@ -24,6 +24,8 @@ type GameStatus = {
     timeElapsed: number;
 };
 
+// HUDの各パーツの表示/非表示を制御するフラグ群。
+// カットイン演出に合わせて段階的にtrueになります。
 export type HUDState = {
     frame: boolean;
     labels: boolean;
@@ -61,6 +63,9 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
             >
                 <view className={`flex-col items-end transition-opacity duration-500 ${hudState.labels ? 'opacity-100' : 'opacity-0'}`}>
                     <text className="text-cyan-600 text-3xl tracking-widest mb-1">STAGE</text>
+                    {/* レイアウトシフト対策: 
+                        中身が表示される前でも高さ(h-10)を確保しておくことで、
+                        表示された瞬間に下の要素がガタッと動くのを防ぎます。 */}
                     <view className="mb-8 h-10 flex items-center justify-end">
                         {hudState.isScanning ? (
                             <GlitchText text="SCANNING..." className="text-yellow-400 text-4xl tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
@@ -161,20 +166,20 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                         </view>
 
                         {/* ENGINE */}
-                        <view className="flex-row">
-                            <text className={`text-2xl ${status.engineStatus === 'OFFLINE' ? "text-red-500" : "text-cyan-600"}`}>&gt; ENGINE: </text>
+                        <view className={`flex-row ${status.engineStatus === 'DESTROYED' ? "animate-pulse" : ""}`}>
+                            <text className={`text-2xl ${status.engineStatus === 'DESTROYED' ? "text-red-500" : "text-cyan-600"}`}>&gt; ENGINE: </text>
                             {hudState.engine ? (
-                                <text className={`text-2xl ml-2 ${status.engineStatus === 'OFFLINE' ? "text-red-500" : "text-white"}`}>{status.engineStatus}</text>
+                                <text className={`text-2xl ml-2 ${status.engineStatus === 'DESTROYED' ? "text-red-500" : "text-white"}`}>{status.engineStatus}</text>
                             ) : (
                                 <text className="text-gray-700 text-2xl ml-2">---</text>
                             )}
                         </view>
 
                         {/* WEAPON */}
-                        <view className="flex-row">
-                            <text className="text-cyan-600 text-2xl">&gt; WEAPON: </text>
+                        <view className={`flex-row ${status.weaponStatus === 'CRITICAL ERROR' ? "animate-pulse" : ""}`}>
+                            <text className={`text-2xl ${status.weaponStatus === 'CRITICAL ERROR' ? "text-red-500" : "text-cyan-600"}`}>&gt; WEAPON: </text>
                             {hudState.weapon ? (
-                                <text className="text-white text-2xl ml-2">{status.weaponStatus}</text>
+                                <text className={`text-2xl ml-2 ${status.weaponStatus === 'CRITICAL ERROR' ? "text-red-500" : "text-white"}`}>{status.weaponStatus}</text>
                             ) : (
                                 <text className="text-gray-700 text-2xl ml-2">---</text>
                             )}

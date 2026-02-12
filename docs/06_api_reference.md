@@ -23,6 +23,18 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
 *   **説明:** ゲームプレイ中の動的なステータス（スコア、HP、SP、フラグなど）を JSON 文字列として返します。
 *   **戻り値:** `InGameStatus` 構造体をシリアライズした JSON 文字列。
 *   **用途:** React側で毎フレーム呼び出し、HUDを更新するために使用します。
+*   **ステータス詳細:**
+    *   `systemStatus`:
+        *   `"NORMAL"`: 通常
+        *   `"CRITICAL"`: HPが1以下
+        *   `"FATAL ERROR"`: ゲームオーバー
+    *   `engineStatus`:
+        *   `"ACTIVE"`: 通常
+        *   `"STANDBY"`: ポーズ中またはゲーム開始前
+        *   `"DESTROYED"`: ゲームオーバー
+    *   `weaponStatus`:
+        *   `"LV.X ..."`: 通常（レベルと詳細）
+        *   `"CRITICAL ERROR"`: ゲームオーバー
 
 #### `void UpdateSetting(string key, string value)`
 *   **説明:** 指定した設定項目の値を更新します（メモリ上のみ）。
@@ -40,6 +52,11 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
 *   **動作:**
     1.  現在のスコアをリセット。
     2.  `GameManager.LoadSceneWithTransition` を呼び出し、ローディング演出と暗転を伴う非同期遷移を開始。
+
+#### `void StartGameLoop()`
+*   **説明:** ゲームのメインループを開始します。
+*   **用途:** ステージ開始時のカットイン演出（React側）が終了したタイミングで呼び出します。
+*   **動作:** `GameManager.IsGameActive` を `true` にし、`Time.timeScale` を `1` に設定してゲームを進行させます。
 
 ---
 
@@ -80,3 +97,50 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
         className="h-8 mb-2"
     />
     ```
+
+---
+
+## React Hooks
+
+`ReactUI/src/hooks/` にあるカスタムフックです。
+
+### `useGlitch(options)`
+
+グリッチ演出（ランダムな座標ズレ）を計算して返すフック。
+
+*   **引数:**
+    *   `options` (object, optional):
+        *   `auto` (boolean): `true` の場合、ランダムな間隔で自動的にグリッチが発生します。デフォルトは `true`。
+*   **戻り値:**
+    *   `offset` ({ x: number, y: number }): 現在の座標ズレ量。
+    *   `isGlitching` (boolean): 現在グリッチ中かどうか。
+    *   `trigger(duration, intensity)` (function): 手動でグリッチを発生させる関数。
+        *   `duration` (number): 持続時間（ミリ秒）。デフォルト 200。
+        *   `intensity` (number): 揺れの強さ（ピクセル）。デフォルト 10。
+*   **使用例:**
+    ```typescript
+    // 自動モード (タイトルロゴなど)
+    const { offset, isGlitching } = useGlitch();
+
+    // 手動トリガーモード (演出など)
+    const { offset, trigger } = useGlitch({ auto: false });
+    // ...
+    trigger(300, 20);
+    ```
+
+### `useGameStatus()`
+
+Unity側から提供されるゲームのステータス（スコア、HP、SPなど）を定期的に取得するフック。
+
+*   **戻り値:**
+    *   `status` (object): 現在のゲーム状態オブジェクト。
+        *   `score`, `hp`, `sp`, `maxHp`, `maxSp` (number): 基本ステータス。
+        *   `isGameOver`, `isNewHighScore`, `isPaused` (boolean): フラグ。
+        *   `systemStatus`, `engineStatus`, `weaponStatus` (string): HUD表示用のステータス文字列。
+        *   その他、レベルや経験値などの情報が含まれます。
+*   **使用例:**
+    ```typescript
+    const status = useGameStatus();
+    return <text>SCORE: {status.score}</text>;
+    ```
+    ※ 内部で `requestAnimationFrame` を使用して毎フレーム更新を行っています。

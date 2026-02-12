@@ -16,32 +16,16 @@ ReactUnityは、Web開発で使われる **React** という技術を使って�
 ### 2.1 TitleApp (`src/title/index.tsx`)
 アプリケーションの「司令塔」となるメインコンポーネントです。画面全体の切り替えや、ゲームの状態管理を行います。
 
-#### 状態管理 (`useState`)
-画面の状態を「変数」として保持し、その値が変わると自動的に画面を書き換えます。
-```typescript
-// 画面遷移の状態: 'title' か 'ranking' か 'settings' か
-const [currentScreen, setCurrentScreen] = useState<Screen>('title');
-
-// 接続演出の状態: 'idle'(待機) -> 'connecting'(ログ) -> 'connected'(メニュー)
-const [connectionState, setConnectionState] = useState('idle');
-```
-
-#### 入力ハンドリング (`useEffect`)
-Unity（C#側）からの入力を受け取るための「橋渡し」を行っています。
-Reactコンポーネントが表示された時（マウント時）にイベントを登録し、消える時（アンマウント時）に解除する処理です。
-
-```typescript
-useEffect(() => {
-    // Unityから呼ばれる関数をwindowオブジェクトに定義
-    (window as any).onAnyKeyPress = () => {
-        // 待機中なら接続を開始する
-        if (connectionState === 'idle') setConnectionState('connecting');
-    };
-
-    // クリーンアップ関数: コンポーネントが消える時にイベントを空にする
-    return () => { (window as any).onAnyKeyPress = () => {}; };
-}, [connectionState]); // connectionStateが変わるたびに再登録
-```
+*   **役割:** タイトルシーン内の画面遷移（ステートマシン）を管理します。
+*   **状態管理 (State Management):**
+    *   `currentScreen`: 現在表示している画面を文字列で管理します（`'title'`, `'menu'`, `'ranking'`, `'settings'`, `'stage_select'`）。
+    *   `connectionState`: オープニングの接続演出の状態を管理します（`'idle'` → `'connecting'` → `'connected'`）。
+*   **画面遷移ロジック:**
+    *   条件付きレンダリング (`{currentScreen === 'menu' && <Menu ... />}`) を使用して、現在のステートに応じたコンポーネントのみを表示します。
+    *   子コンポーネントには `onNavigate` や `onBack` といったコールバック関数をPropsとして渡し、子側から画面遷移をトリガーできるように設計しています。
+*   **入力ハンドリング:**
+    *   タイトル画面（`'title'`）では `window.onAnyKeyPress` を監視し、任意のキー入力で接続演出を開始します。
+    *   演出中やメニュー画面では、それぞれのコンポーネントに入力制御を委譲します。
 
 ### 2.2 GridBackground
 サイバーパンク感を出すための、背景でスクロールし続けるグリッド線です。
@@ -108,18 +92,14 @@ const sequence = [
 ### 2.6 Menu (`src/title/Menu.tsx`)
 メインメニューのリスト部分です。
 
-#### 選択状態の可視化
-現在どの項目を選んでいるかを `selectedIndex` (0, 1, 2...) で管理しています。
-描画時に、自分のインデックスが `selectedIndex` と一致していれば、スタイルを変更します。
-
-```typescript
-// 選択されている項目のスタイル
-className={`
-    transition-all duration-200  // アニメーション設定
-    ${isSelected ? 'w-80 bg-cyan-500' : 'w-60 bg-gray-800'} // 条件によるクラス切り替え
-`}
-```
-このように、**「状態（State）」に応じて「見た目（Class）」を切り替える** のがReactでのUI構築の基本です。
+*   **役割:** ユーザーが次に何をするかを選択するハブ画面。
+*   **入力制御:**
+    *   `useEffect` で `window.onMenuInput` を購読します。
+    *   `up` / `down` イベントで `selectedIndex` を増減させます。この際、配列の長さを使った剰余演算 (`(prev + 1) % count`) ではなく、端で止まるロジック（`Math.min`, `Math.max`）を採用しています。
+*   **音響フィードバック:**
+    *   カーソル移動時、`selectedIndex` が実際に変化した場合のみ `interop.PlaySound('move')` を呼び出します。これにより、リストの端で連打した際に無駄なSEが鳴るのを防いでいます。
+*   **フォーカス復帰:**
+    *   `TitleApp` から `initialIndex` をPropsとして受け取ることで、サブ画面（設定やランキング）から戻ってきた時に、直前に選んでいた項目にカーソルを合わせる機能を実装しています。
 
 ### 2.7 Footer (操作ガイド)
 画面下部の帯です。現在はコピーライトのみを表示しています。
@@ -129,11 +109,32 @@ className={`
 
 ### 2.8 Ranking (`src/title/Ranking.tsx`)
 *   **データ取得:** マウント時に `interop.GetGameData()` を呼び出し、JSONをパースしてStateに格納します。
-*   **フィルタリング:** `useMemo` を使用し、フィルタ条件（HP, SP, Auto）やステージ選択が変更された時のみリストを再計算・ソートします。
+*   **フィルタリングロジック:**
+    *   `useMemo` フックを使用し、フィルタ条件（HP, SP, AutoFire）やステージ選択が変更された時のみ、リストのフィルタリングとソート（スコア降順）を再実行します。
+    *   これにより、描画のたびに重い配列操作が走るのを防ぎ、パフォーマンスを維持しています。
+*   **表示制御:**
+    *   データが存在しない場合は "NO DATA" を表示し、存在する場合は `map` 関数でリストを展開します。
+    *   上位5件のみを表示するように `slice(0, 5)` で制限をかけています。
 
 ### 2.9 GlitchText & useGlitch (`src/components/GlitchText.tsx`, `src/hooks/useGlitch.ts`)
 *   **仕組み:** `useGlitch` フックがランダムなタイミングで `offset` (x, y) と `isGlitching` フラグを更新します。
-*   **描画:** `GlitchText` はメインのテキストに加え、`isGlitching` が true の間だけ、色違い（赤・シアン）のテキストをずらして配置（ゴースト）することで、色収差と振動を表現しています。
+*   **描画:** `GlitchText` はメインのテキストに加え、`isGlitching` が true の間だけ、色違い（赤・シアン）のテキストをずらして配置（ゴースト）することで、色収差と振動を表現しています
+*   **内部実装 (Internal Logic):**
+    *   **再帰的タイムアウト:** `setTimeout` の中で次の `setTimeout` を予約するパターンを使用し、ランダムな間隔（2〜5秒）での実行を実現しています。
+    *   **高速ループ:** グリッチ発生中は `setInterval` を使い、50msごとに座標をランダムに更新して「振動」を表現しています。
+    *   **マウント判定:** `useRef` を使ってコンポーネントがマウントされているかを確認し、アンマウント後のステート更新（メモリリーク）を防いでいます。
+*   **モード:**
+    *   **Auto Mode (デフォルト):** 2〜5秒ごとにランダムにグリッチが発生します。タイトルロゴなどで使用。
+    *   **Trigger Mode (`auto: false`):** `trigger(duration, intensity)` 関数を呼び出した時だけグリッチが発生します。カットイン演出の消失時などで使用。
+*   **実装コード例:**
+    ```typescript
+    // 自動実行オフで初期化
+    const { offset, trigger } = useGlitch({ auto: false });
+    
+    // 任意のタイミングで発火（300ms間、強度40で揺らす）
+    // 既存のグリッチがあればキャンセルして上書き実行されます
+    trigger(300, 40);
+    ```
 
 ### 2.10 CSSアニメーション (`src/index.css`)
 ReactUnity環境でのパフォーマンス安定のため、JSによる毎フレーム更新ではなく、CSS Animationを使用しています。
@@ -141,34 +142,74 @@ ReactUnity環境でのパフォーマンス安定のため、JSによる毎フ�
 
 ### 2.11 Settings (`src/title/Settings.tsx`)
 *   **構成:** 左側にカテゴリ、右側に設定項目を表示する2カラムレイアウト。
-*   **カテゴリ:** GAMEPLAY, AUDIO, SYSTEM, STATS, RESET。
-*   **Unity連携:**
-    *   マウント時に `interop.GetSettings()` で現在の設定値（統計情報含む）を取得。
-    *   値の変更は `interop.UpdateSetting()` で即座にUnity側へ通知（プレビュー用）。
-    *   画面終了時に `interop.SaveSettings()` でファイルへ保存。
-*   **文字入力:**
-    *   ゲームパッド操作を考慮し、ドラムロール式の文字入力UIを独自実装。
-    *   キーボード入力も `window.onTextInput` イベント経由でサポート。
-    *   バックスペース操作（キーボード/ゲームパッド西ボタン）に対応し、カーソル位置に応じた削除挙動（Delete/Backspace）を実装。
+*   **データフロー:**
+    *   **初期化:** マウント時に `interop.GetSettings()` を呼び出し、Unity側の `PlayerPrefs` や `GameData` から設定値をロードします。
+    *   **即時反映:** ユーザーが値を変更すると、即座に `interop.UpdateSetting(key, value)` を呼び出します。これにより、BGM音量の変更などがリアルタイムにプレビューされます。
+    *   **永続化:** 画面から戻る（アンマウントされる）タイミングで `interop.SaveSettings()` を呼び出し、変更をファイルに書き込みます。
+*   **入力制御 (Input Handling):**
+    *   **ナビゲーション:** 通常時は上下キーで項目の移動、左右キーで値の変更（音量など）を行います。
+    *   **編集モード:** `Player Name` などのテキスト項目では、決定キーで「編集モード」に入ります。
+        *   **ドラムロール入力:** 上下キーで文字コードをインクリメント/デクリメントし、アルファベットや記号を循環させます。
+        *   **カーソル移動:** 左右キーで文字の入力位置を移動します。
+    *   **キーボード対応:** `window.onTextInput` イベントをリッスンし、キーボードからの直接入力も受け付けます。
+    *   **削除機能:** `window.onMenuInput('backspace')` を検知し、カーソル位置の文字を削除します。
 
 ### 2.12 Visual Feedback (`src/components/MenuButton.tsx`)
 *   **isPressedプロパティ**: ボタンが押された瞬間のフィードバック（白く発光）を制御するプロパティを追加。
-*   **実装**: `Menu`, `StageSelect`, `Ranking`, `Settings` 各画面で、決定操作時に一時的にこのフラグを有効化することで、操作のレスポンスを視覚的に伝えています。
+*   **実装テクニック**:
+    *   親コンポーネント（`Menu` 等）で `isPressed` ステートを持ち、決定キー押下時に `true` にします。
+    *   `setTimeout` で200ms程度待機してから画面遷移やアクションを実行し、その後 `false` に戻します。
+    *   これにより、ユーザーは「ボタンが押された」ことを視覚的に認識でき、操作の確実性を感じることができます。
 
 ### 2.13 Game Scene UI (`src/game/index.tsx`)
 ゲームプレイ中のUI（HUD以外）を管理するコンポーネント群です。
 
-*   **GameApp**: ゲームシーンのルートコンポーネント。ローディング画面や暗転（フェードイン）の制御を行います。
+*   **GameApp**: ゲームシーンのルートコンポーネント。
+    *   **役割:** HUD、ポーズ、ゲームオーバー画面の統括と、シーン遷移時の演出（ローディング、暗転）を管理します。
+    *   **イベントリスナー:** `useEffect` 内で `window.onLoadingRequest` や `window.onFadeOutRequest` を定義し、C#側からの演出リクエストを待ち受けます。
+    *   **状態管理:** `hudState` オブジェクトでHUDの各パーツ（枠、ラベル、計器類）の表示フラグを一元管理し、カットイン演出からのコールバックで順次更新します。
+
 *   **PausePanel**: ポーズ中に表示されるメニュー。
-    *   **入力制御**: ゲームがポーズ状態 (`status.isPaused`) の時のみ入力を受け付けます。
-    *   **音響制御**: カーソル移動音は、実際に選択インデックスが変化した時のみ再生するように制御し、操作感を向上させています。
+    *   **入力制御:** `useEffect` で `window.onMenuInput` イベントを購読します。ただし、ゲームがポーズ状態 (`status.isPaused`) の時のみ処理を実行するガード節を入れています。
+    *   **音響制御:** カーソル移動音は、`selectedIndex` が実際に変化した時のみ `interop.PlaySound('move')` を呼び出すことで、端での連打による不快な音の重複を防いでいます。
+    *   **キャンセル操作:** `cancel` イベント（Escキー/Bボタン）でもゲーム再開 (`ResumeGame`) ができるように実装しています。
+
 *   **GameOverPanel**: ゲームオーバー時に表示されるリザルト画面。
-    *   **入力制御**: ゲームオーバー状態 (`status.isGameOver`) の時のみ入力を受け付けます。
+    *   **入力制御:** ゲームオーバー状態 (`status.isGameOver`) の時のみ入力を受け付けます。
     *   **機能**: リトライ (`RestartGame`) またはタイトルへ戻る (`ReturnToTitle`) を選択可能です。
+    *   **演出:** ハイスコア更新時は `status.isNewHighScore` フラグを見て "NEW HIGH SCORE!" テキストを点滅 (`animate-pulse`) させます。
+    *   **決定時のフィードバック:** ボタン押下時に `isPressed` ステートをtrueにし、`setTimeout` で200ms待機してからアクションを実行することで、ボタンが光るアニメーションを見せる時間を確保しています。
+
 *   **HUD (Head-Up Display)**:
     *   **Status Monitor**: 機体の状態（SYSTEM, ENGINE, WEAPON）を常時表示するエリア。
     *   **実装**: `useGameStatus` フックから受け取った文字列（"NORMAL", "OFFLINE" 等）を表示。異常時（HP低下など）は `text-red-500` クラスを適用して赤く点滅させます。
-    *   **メッセージ**: レベルアップ時などの一時的な通知は、モニター下部に強調表示され、一定時間後に消えます。
+    *   **段階的表示 (Progressive Reveal) の実装**:
+        *   `HUDState` 型オブジェクト (`frame`, `labels`, `vital`...) を Props として受け取り、各パーツの `opacity` を個別に制御します。
+        *   CSSの `transition-opacity duration-500` クラスと組み合わせることで、フラグが `true` になった瞬間にふわっと表示されるフェードイン演出を実現しています。
+        *   これにより、ターミナルログの進行（「システム起動...」「武器チェック...」）に合わせて、対応する計器が順番に点灯する演出を実現しています。
+    *   **レイアウトシフト対策 (Layout Shift Prevention) の実装**:
+        *   `STAGE` や `TIME` の数値が表示される前でも、親コンテナに `h-10` (高さ固定) を指定し、さらにプレースホルダー（`---`）をグレーで表示しておくことで、表示/非表示の切り替え時に周囲の要素がガタつく（Layout Shift）のを防いでいます。
+    *   **異常状態の表現**:
+        *   ゲームオーバー時、各ステータスは以下のように変化し、行全体が赤色で点滅 (`animate-pulse`) します。
+            *   SYSTEM: `FATAL ERROR`
+            *   ENGINE: `DESTROYED`
+            *   WEAPON: `CRITICAL ERROR`
+
+*   **StageStartCutin**:
+    *   ステージ開始時のターミナル風演出コンポーネント。
+    *   **シーケンス制御**:
+        *   `sequence` 配列にオブジェクト `{ text, delay, action }` を定義します。
+        *   `useEffect` 内で `sequence.forEach` を回し、`setTimeout` を使って各行の表示タイミングをスケジュールします。
+        *   指定時間になったら `visibleLines` ステート配列を更新して行を表示し、同時に `action` があれば `onProgress` コールバックを呼んで親コンポーネント（GameApp）にHUD表示を依頼します。
+    *   **ターミナルウィンドウ**:
+        *   **DOM先行描画**: ログが追加されるたびにウィンドウの高さが変わるのを防ぐため、**「全てのログ行を最初からDOMとして描画し、opacity: 0 で隠しておく」** 手法を採用しました。
+        *   **表示制御**: `visibleLines` というState配列で各行の表示状態を管理し、時間差で `true` に切り替えることで、タイピング風の表示を実現しています。
+    *   **消失演出 (Exit Glitch) の実装**:
+        *   演出終了時、`useGlitch` フックの `trigger(300, 40)` 関数を呼び出し、ウィンドウ全体に激しい座標ブレ（グリッチ）を与えます。
+        *   同時に、CSS transform で `scale(1.5, 0.05)` のように変形させ、CRTモニターの電源を切るような「横に伸びて縦に潰れる」エフェクトを表現しています。
+        *   さらに、終了時のみ「赤とシアンの枠線（ゴースト）」や「走査線ノイズ」を表示する要素を条件付きレンダリングで追加しています。
+    *   **描画順序**:
+        *   暗転用の黒幕 (`Blackout Overlay`) よりも手前に表示するため、`zIndex` を `10001` に設定し、JSX内でも `Blackout Overlay` より後に記述しています。
 
 ### 2.14 KeyIcon (`src/components/KeyIcon.tsx`)
 コントローラーのボタンやキーボードのキーを表示するためのアイコンコンポーネントです。

@@ -5,6 +5,7 @@ import { HUD, type HUDState } from './HUD';
 import { GlitchText } from '../components/GlitchText';
 import { useGameStatus } from '../hooks/useGameStatus';
 import { MenuButton } from '../components/MenuButton';
+import { useGlitch } from '../hooks/useGlitch';
 
 // ゲームオーバーパネルコンポーネント
 // 役割: ゲームオーバー時に表示され、リトライかタイトルへ戻るかを選択させる
@@ -190,11 +191,34 @@ const PausePanel = () => {
 };
 
 // ステージ開始カットインコンポーネント
+// 役割: ゲーム開始時にターミナル風の起動ログを表示し、没入感を高める演出を行います。
+// ログの進行に合わせてHUD（ヘッドアップディスプレイ）の各パーツを順次表示させます。
 type CutinAction = 'show_frame' | 'show_labels' | 'show_engine' | 'show_weapon' | 'show_vital' | 'show_telemetry' | 'start_scan' | 'end_scan' | 'show_system' | 'show_vision';
 
 const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: string, onComplete: () => void, onProgress: (action: CutinAction) => void }) => {
-    // アニメーションを開始するためのトリガー
-    const [isAnimating, setIsAnimating] = useState(false);
+    // 各行の表示状態を管理する配列。
+    // trueになったインデックスの行が画面に表示されます。
+    const [visibleLines, setVisibleLines] = useState<boolean[]>([]);
+
+    // 終了アニメーション（ウィンドウ消失）中かどうかのフラグ
+    const [isExiting, setIsExiting] = useState(false);
+
+    // カーソル（点滅する四角）を表示するかどうかのフラグ
+    const [showCursor, setShowCursor] = useState(false);
+
+    // useGlitchフック: グリッチ演出（座標ズレ）を計算するカスタムフック。
+    // auto: false に設定し、手動で trigger() を呼んだ時だけグリッチするようにします。
+    const { offset, trigger } = useGlitch({ auto: false });
+
+    const globals = useGlobals() as any;
+    const interop = globals.GameInterop;
+    const [appVersion, setAppVersion] = useState("v0.3.0");
+
+    useEffect(() => {
+        if (interop && typeof interop.GetAppVersion === 'function') {
+            setAppVersion(`v${interop.GetAppVersion()}`);
+        }
+    }, [interop]);
 
     // onCompleteの最新の参照を保持するRef
     const onCompleteRef = useRef(onComplete);
@@ -205,6 +229,10 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
         onProgressRef.current = onProgress;
     }, [onComplete, onProgress]);
 
+    // 演出シーケンスの定義
+    // text: 表示するログのテキスト
+    // delay: 開始からの遅延時間（ミリ秒）
+    // action: そのログが表示されたタイミングで実行するアクション（HUDの表示など）
     const sequence = [
         { text: "BOOT_SEQUENCE_INIT...", delay: 200 },
         { text: "INITIALIZING_INTERFACE...", delay: 500, action: 'show_frame' as CutinAction },
@@ -216,19 +244,27 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
         { text: `ENTRY_POINT_CONFIRMED: [ ${stageName} ]`, delay: 2600, action: 'end_scan' as CutinAction },
         { text: "SYSTEM_ALL_GREEN", delay: 3000, action: 'show_system' as CutinAction },
         { text: "VISUAL_FEED_ONLINE", delay: 3400, action: 'show_vision' as CutinAction },
-        { text: ">> MISSION START", delay: 4000 },
+        { text: "MISSION START", delay: 3800 },
     ];
 
     useEffect(() => {
         const timeouts: any[] = [];
 
-        // アニメーション開始トリガー
-        const startTimer = setTimeout(() => setIsAnimating(true), 100);
-        timeouts.push(startTimer);
+        // 初期化: 全ての行を非表示状態にする
+        setVisibleLines(new Array(sequence.length).fill(false));
+        setShowCursor(false);
 
-        // ログに対応するアクションを時間差で実行
-        sequence.forEach(({ delay, action }) => {
+        // シーケンスに従ってタイマーをセットし、時間差で表示を切り替える
+        sequence.forEach(({ delay, action }, index) => {
             const t = setTimeout(() => {
+                // 指定時間になったら、その行を表示状態にする
+                setVisibleLines(prev => {
+                    const next = [...prev];
+                    next[index] = true;
+                    return next;
+                });
+
+                // アクションが定義されていれば、親コンポーネントに通知してHUDを表示させる
                 if (action && onProgressRef.current) {
                     onProgressRef.current(action);
                 }
@@ -236,14 +272,34 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
             timeouts.push(t);
         });
 
+        // カーソル表示（最後のログ "MISSION START" が出た後、少し遅れて表示）
+        const tCursor = setTimeout(() => {
+            setShowCursor(true);
+        }, 4200); // MISSION START (3800) + 400ms
+        timeouts.push(tCursor);
+
+        // 終了アニメーション（ウィンドウ消失）の開始
+        const tExit = setTimeout(() => {
+            setIsExiting(true);
+        }, 4500);
+        timeouts.push(tExit);
+
         // 完了通知
         const tComplete = setTimeout(() => {
             if (onCompleteRef.current) onCompleteRef.current();
-        }, 5000); // シーケンス終了まで待機
+        }, 4800); // アニメーション終了後に完了通知
         timeouts.push(tComplete);
 
         return () => { timeouts.forEach(clearTimeout); };
     }, [stageName]); // stageNameが変わったら再実行
+
+    // 終了フラグが立った時にグリッチ演出を実行
+    useEffect(() => {
+        if (isExiting) {
+            // useGlitchのtrigger関数を呼び出し、300ms間、強度40ピクセルで座標をランダムにずらす
+            trigger(300, 40);
+        }
+    }, [isExiting, trigger]);
 
     return (
         <view
@@ -252,29 +308,52 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
         >
             {/* ターミナルウィンドウ */}
             <view
-                className={`flex-col w-[800px] bg-black border-2 border-cyan-600 bg-opacity-90 p-1 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
+                className="relative flex-col w-[800px] bg-black border-2 border-cyan-600 p-1 shadow-[0_0_20px_rgba(0,255,255,0.3)]"
                 style={{
+                    // 終了時はグリッチオフセットを適用、かつランダムに点滅して消える
+                    transform: isExiting ? `translate(${offset.x}px, ${offset.y}px)` : 'none',
+                    opacity: isExiting && Math.random() > 0.7 ? 0.1 : 1,
                 }}
             >
+                {/* ノイズ演出用のゴースト（色ズレ）と走査線（終了時のみ表示） */}
+                {isExiting && (
+                    <>
+                        <view
+                            className="absolute inset-0 border-2 border-red-500 opacity-70"
+                            style={{ transform: `translate(${offset.x * 0.5}px, ${offset.y * 0.5}px)` }}
+                        />
+                        <view
+                            className="absolute inset-0 border-2 border-cyan-400 opacity-70"
+                            style={{ transform: `translate(${-offset.x * 0.5}px, ${-offset.y * 0.5}px)` }}
+                        />
+                        <view
+                            className="absolute left-0 w-full bg-white opacity-80"
+                            style={{ top: `${Math.random() * 100}%`, height: Math.random() * 20 + 2 }}
+                        />
+                    </>
+                )}
+
                 {/* ウィンドウヘッダー */}
                 <view className="flex-row justify-between bg-cyan-900 px-2 py-1 mb-2">
                     <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>TERMINAL_OUTPUT</text>
-                    <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>v3.0.1</text>
+                    <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>{appVersion}</text>
                 </view>
 
                 {/* ログエリア */}
                 <view className="flex-col items-start p-4">
-                    {/* 全てのログを最初から描画しておく */}
+                    {/* レイアウト崩れを防ぐため、全てのログを最初からDOMとして描画しておき、
+                        opacity（不透明度）を切り替えることで表示・非表示を制御します。 */}
                     {sequence.map((item, i) => {
                         // 最後の行（MISSION START）は強調表示
                         const isHighlight = item.text.includes("MISSION START");
+                        const isVisible = visibleLines[i];
+
                         return (
                             <text
                                 key={i}
-                                className={`text-xl font-mono mb-1 tracking-wider transition-opacity duration-300 ${isHighlight ? 'text-yellow-400 font-bold' : 'text-cyan-400'} ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
+                                className={`text-xl font-mono mb-1 tracking-wider transition-opacity duration-300 ${isHighlight ? 'text-yellow-400 font-bold' : 'text-cyan-400'} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
                                 style={{
                                     fontFamily: 'SourceHanCodeJP',
-                                    transitionDelay: `${item.delay}ms`,
                                 }}
                             >
                                 {`> ${item.text}`}
@@ -282,11 +361,9 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
                         );
                     })}
                     {/* カーソルも最後のログの後に表示 */}
+                    {/* カーソルも同様にDOMとしては存在させておき、opacityで制御 */}
                     <view
-                        className={`w-3 h-5 bg-cyan-400 mt-1 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
-                        style={{
-                            transitionDelay: `${sequence[sequence.length - 1].delay + 100}ms`,
-                        }}
+                        className={`w-3 h-5 bg-cyan-400 mt-1 transition-opacity duration-300 ${showCursor ? 'opacity-100 animate-pulse' : 'opacity-0'}`}
                     />
                 </view>
             </view>
@@ -304,7 +381,8 @@ const GameApp = () => {
     // カットイン表示中かどうか
     const [isCutinPlaying, setIsCutinPlaying] = useState(true);
 
-    // HUDの表示状態管理
+    // HUDの各パーツの表示状態を管理するState。
+    // カットイン演出からの通知（onProgress）を受けて、徐々にtrueになっていきます。
     const [hudState, setHudState] = useState<HUDState>({
         frame: false,
         labels: false,
@@ -337,14 +415,14 @@ const GameApp = () => {
         };
     }, []);
 
-    // カットイン完了時の処理
+    // カットイン演出が完全に終了した時に呼ばれる処理
     const handleCutinComplete = useCallback(() => {
         setIsCutinPlaying(false);
-        // ゲームループ開始をUnityに通知
+        // Unity側に「ゲームを開始せよ（時間を動かせ）」と通知
         interop?.StartGameLoop();
     }, [interop]);
 
-    // カットイン進行中のアクション処理
+    // カットイン演出の進行に合わせてHUDを表示する処理
     const handleCutinProgress = useCallback((action: CutinAction) => {
         if (action === 'show_frame') {
             setHudState(prev => ({ ...prev, frame: true, labels: true }));

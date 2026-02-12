@@ -60,7 +60,10 @@ public class GameManager : MonoBehaviour
     // ゲームプレイからタイトルに戻った際に、演出を飛ばしてすぐにメニューを表示するために使用します。
     public bool SkipTitleSequence { get; set; } = false;
 
-    // ゲームプレイが進行中かどうか（カットイン終了後からtrue）
+    // ゲームプレイがアクティブに進行中かどうかを示すフラグ。
+    // true: プレイヤーの操作が可能で、敵も動く状態。
+    // false: カットイン演出中、ポーズ中、またはゲームオーバー後。
+    // PlayerControllerやEnemyControllerはこのフラグを見て動作を停止します。
     public bool IsGameActive { get; private set; } = false;
 
     //ポーズ関連
@@ -430,7 +433,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ResetScore()
     {
+        // スコアを0にリセット
         CurrentScore = 0;
+
         // ゲーム開始前は時間を止めておく（カットイン演出のため）
         Time.timeScale = 0f;
         // 表示用のキャッシュも初期値に戻しておく（プレイヤー生成までの繋ぎ）
@@ -445,6 +450,7 @@ public class GameManager : MonoBehaviour
         IsNewHighScore = false;
 
         isPaused = false; // ポーズ状態もリセット
+
         IsGameActive = false; // ゲーム開始前状態にリセット
 
         timeElapsed = 0;
@@ -919,6 +925,8 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// カットイン演出が終了し、ゲームプレイを開始する際に呼び出されます。
+    /// React側の StageStartCutin コンポーネントの演出完了時に、
+    /// ReactInputBridge 経由でこのメソッドが実行されます。
     /// </summary>
     public void StartGameLoop()
     {
