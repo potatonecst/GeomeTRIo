@@ -453,6 +453,7 @@ public class PlayerController : MonoBehaviour, IDamageable
                     // 中央弾
                     CreateBullet(firePoint.position, firePoint.rotation, damage, 1.0f);
                     GameManager.instance?.IncrementShotsFired();
+                    GameManager.instance?.PlayPlayerShootSound();
 
                     // Way弾 (サイド弾)
                     if (sidePairCount > 0)
