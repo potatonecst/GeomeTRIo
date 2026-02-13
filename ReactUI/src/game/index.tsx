@@ -6,6 +6,7 @@ import { GlitchText } from '../components/GlitchText';
 import { useGameStatus } from '../hooks/useGameStatus';
 import { MenuButton } from '../components/MenuButton';
 import { useGlitch } from '../hooks/useGlitch';
+import { AspectRatioWrapper } from '../components/AspectRatioWrapper';
 
 // ゲームオーバーパネルコンポーネント
 // 役割: ゲームオーバー時に表示され、リトライかタイトルへ戻るかを選択させる
@@ -249,6 +250,7 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
 
     useEffect(() => {
         const timeouts: any[] = [];
+        console.log(`[StageStartCutin] Sequence Started. Stage: ${stageName}`);
 
         // 初期化: 全ての行を非表示状態にする
         setVisibleLines(new Array(sequence.length).fill(false));
@@ -266,6 +268,7 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
 
                 // アクションが定義されていれば、親コンポーネントに通知してHUDを表示させる
                 if (action && onProgressRef.current) {
+                    console.log(`[StageStartCutin] Action Triggered: ${action}`);
                     onProgressRef.current(action);
                 }
             }, delay);
@@ -378,6 +381,9 @@ const GameApp = () => {
     const [isLoading, setIsLoading] = useState(false);
     // シーン遷移直後は真っ暗な状態から始める（フェードインのため true で初期化）
     const [isBlackout, setIsBlackout] = useState(true);
+    // 黒幕（Blackout Overlay）をDOMに存在させるかどうか
+    // フェードアウト完了後にfalseにしてDOMから削除することで、描画負荷を下げ、誤って表示されるのを防ぎます
+    const [showOverlay, setShowOverlay] = useState(true);
     // カットイン表示中かどうか
     const [isCutinPlaying, setIsCutinPlaying] = useState(true);
 
@@ -400,6 +406,18 @@ const GameApp = () => {
     // ステージ名を取得（HUDと同じロジックで取得するか、statusから取る）
     const status = useGameStatus();
 
+    // UI準備完了通知用ハンドラ (AspectRatioWrapperのonReadyコールバック)
+    // レイアウト計算が完了し、画面が表示可能になったタイミングで呼び出されます。
+    // Unity側に通知を送り、BGM再生と黒幕消去のトリガーとします。
+    const handleUIReady = useCallback(() => {
+        interop?.NotifyUIReady();
+    }, [interop]);
+
+    // デバッグ: 状態の変化を監視してログ出力
+    useEffect(() => {
+        console.log(`[GameApp Status] isBlackout: ${isBlackout}, isCutinPlaying: ${isCutinPlaying}`);
+    }, [isBlackout, isCutinPlaying]);
+
     useEffect(() => {
         // マウント後の自動フェードインは廃止し、カットインの進行に任せる
         // ただし、カットインがない場合（万が一のフォールバック）のために安全策を入れても良いが、
@@ -415,15 +433,30 @@ const GameApp = () => {
         };
     }, []);
 
+    // 暗転フラグ(isBlackout)が変わったら、アニメーションに合わせてDOMの表示/非表示を切り替える
+    useEffect(() => {
+        if (isBlackout) {
+            setShowOverlay(true);
+        } else {
+            // フェードアウト時間(500ms)待ってからDOMから削除します。
+            // これにより、フェードアウトアニメーションが完了するまで要素を維持します。
+            const timer = setTimeout(() => setShowOverlay(false), 500);
+            return () => clearTimeout(timer);
+        }
+    }, [isBlackout]);
+
     // カットイン演出が完全に終了した時に呼ばれる処理
     const handleCutinComplete = useCallback(() => {
+        console.log("[GameApp] Cutin Complete -> Force clearing blackout");
         setIsCutinPlaying(false);
+        setIsBlackout(false); // 安全策: 演出終了時に確実に暗転を解除する
         // Unity側に「ゲームを開始せよ（時間を動かせ）」と通知
         interop?.StartGameLoop();
     }, [interop]);
 
     // カットイン演出の進行に合わせてHUDを表示する処理
     const handleCutinProgress = useCallback((action: CutinAction) => {
+        console.log(`[GameApp] handleCutinProgress received: ${action}`);
         if (action === 'show_frame') {
             setHudState(prev => ({ ...prev, frame: true, labels: true }));
         } else if (action === 'show_engine') {
@@ -441,46 +474,51 @@ const GameApp = () => {
         } else if (action === 'show_system') {
             setHudState(prev => ({ ...prev, system: true }));
         } else if (action === 'show_vision') {
+            console.log("[GameApp] show_vision -> Setting isBlackout to false");
             setIsBlackout(false);
         }
     }, []);
 
     return (
-        <view className="w-full h-full">
-            <PausePanel />
-            <GameOverPanel />
+        <AspectRatioWrapper onReady={handleUIReady}>
+            <view className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
+                <PausePanel />
+                <GameOverPanel />
 
-            {/* Loading Screen */}
-            {isLoading && (
-                <view className="absolute inset-0 items-center justify-center bg-black bg-opacity-80 pointer-events-none" style={{ zIndex: 9998 }}>
-                    <view className="flex-row items-center">
-                        <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" />
-                        <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
+                {/* Loading Screen */}
+                {isLoading && (
+                    <view className="absolute inset-0 items-center justify-center bg-black bg-opacity-80 pointer-events-none" style={{ zIndex: 9998 }}>
+                        <view className="flex-row items-center">
+                            <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" />
+                            <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
+                        </view>
                     </view>
+                )}
+
+                {/* Blackout Overlay */}
+                {showOverlay && (
+                    <view
+                        className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
+                        style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
+                    />
+                )}
+
+                {/* HUD: Blackout Overlay(9999)より手前に表示するために、この位置に配置しzIndexを指定 */}
+                <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
+                    <HUD hudState={hudState} />
                 </view>
-            )}
 
-            {/* Blackout Overlay */}
-            <view
-                className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
-                style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
-            />
-
-            {/* HUD: Blackout Overlay(9999)より手前に表示するために、この位置に配置しzIndexを指定 */}
-            <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
-                <HUD hudState={hudState} />
+                {/* Start Cutin */}
+                {/* HUD(10000)よりもさらに手前に表示するために、JSXの最後に配置 */}
+                {isCutinPlaying && (
+                    <StageStartCutin
+                        stageName={status.stageName || "STAGE START"}
+                        onComplete={handleCutinComplete}
+                        onProgress={handleCutinProgress}
+                    />
+                )}
             </view>
-
-            {/* Start Cutin */}
-            {/* HUD(10000)よりもさらに手前に表示するために、JSXの最後に配置 */}
-            {isCutinPlaying && (
-                <StageStartCutin
-                    stageName={status.stageName || "STAGE START"}
-                    onComplete={handleCutinComplete}
-                    onProgress={handleCutinProgress}
-                />
-            )}
-        </view>
+        </AspectRatioWrapper>
     );
 };
 

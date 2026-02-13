@@ -240,9 +240,9 @@ public class GameManager : MonoBehaviour
         // 音量設定を適用
         ApplyAudioSettings();
 
-        // 現在のシーン名に合わせてBGMを再生（デバッグ起動時なども考慮）
+        // BGM再生はReact側の準備完了通知（OnGameUIReady）を待ってから行います。
+        // これにより、起動時に画面が表示される前にBGMが鳴り始めてしまう「フライング再生」を防ぎます。
         string currentScene = SceneManager.GetActiveScene().name;
-        PlayGameBGM(currentScene);
 
         // ゲームプレイシーンならプレイ回数を加算して保存
         if (currentScene == "Stage1" || currentScene == "ScoreAttack")
@@ -284,7 +284,8 @@ public class GameManager : MonoBehaviour
     // プログラマーが自分で呼び出す必要はありません。
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        PlayGameBGM(scene.name);
+        // BGM再生とオーバーレイ（黒幕）の消去は、React側の準備完了（OnGameUIReady）を待ってから行います。
+        // そのため、ここでは処理を行いません。これにより、画面表示とBGMのタイミングが完全に同期します。
 
         // ゲームプレイシーンならプレイ回数を加算して保存
         if (scene.name == "Stage1" || scene.name == "ScoreAttack")
@@ -292,9 +293,6 @@ public class GameManager : MonoBehaviour
             gameData.stats.totalGamesPlayed++;
             SaveGameData();
         }
-
-        // シーンロード完了後、少し待ってからオーバーレイを消す（Reactの初期化待ち）
-        StartCoroutine(HideOverlayCoroutine());
     }
 
     /// <summary>
@@ -302,6 +300,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void PlayGameBGM(string sceneName)
     {
+        Debug.Log($"[GameManager] PlayGameBGM: {sceneName}");
         if (sceneName == "TitleScene") PlayBGM(titleBgm);
         else if (sceneName == "Stage1") PlayBGM(stage1Bgm);
         else if (sceneName == "ScoreAttack") PlayBGM(scoreAttackBgm);
@@ -387,11 +386,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private IEnumerator HideOverlayCoroutine()
     {
-        // ReactUnityの初期化とフェードイン開始を待つ（0.2秒程度）
-        // React側は isBlackout=true で開始されるため、この黒幕が消えても下は黒い状態になっている
-        // Time.timeScaleが0になっているため、Realtimeを使用する
-        yield return new WaitForSecondsRealtime(0.2f);
+        // React側から準備完了通知が来た時点で、即座にオーバーレイ（黒幕）を非表示にします。
+        // これにより、BGM再生開始と同時に画面が表示され、違和感のない遷移を実現します。
         overlayCanvasObj.SetActive(false);
+        yield break;
     }
 
     /// <summary>
@@ -933,5 +931,19 @@ public class GameManager : MonoBehaviour
         IsGameActive = true;
         // カットイン終了、ゲーム開始（時間を動かす）
         Time.timeScale = 1f;
+    }
+
+    /// <summary>
+    /// React側のUI準備が完了した時に呼び出されます。
+    /// BGMの再生と、遷移用オーバーレイの消去を行います。
+    /// </summary>
+    public void OnGameUIReady()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+        Debug.Log($"[GameManager] OnGameUIReady received. Current Scene: {currentScene}. Playing BGM and hiding overlay.");
+
+        // 全てのシーンにおいて、UIの準備が完了したこのタイミングでBGM再生とオーバーレイ消去を行います。
+        PlayGameBGM(currentScene);
+        StartCoroutine(HideOverlayCoroutine());
     }
 }

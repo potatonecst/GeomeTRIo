@@ -58,6 +58,20 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
 *   **用途:** ステージ開始時のカットイン演出（React側）が終了したタイミングで呼び出します。
 *   **動作:** `GameManager.IsGameActive` を `true` にし、`Time.timeScale` を `1` に設定してゲームを進行させます。
 
+#### `string GetScreenSize()`
+*   **説明:** 現在の画面解像度（またはUI Toolkitの描画領域サイズ）を JSON 文字列として返します。
+*   **戻り値:** `Vector2` (x: width, y: height) をシリアライズした JSON 文字列。
+    *   UI Toolkitのレイアウト計算が完了していない場合は `"{}"` (空のJSON) を返し、React側に待機を指示します。
+*   **用途:** React側の `AspectRatioWrapper` コンポーネントが、画面サイズに合わせてコンテンツをスケーリングするために使用します。
+
+#### `void NotifyUIReady()`
+*   **説明:** React側のUI準備（レイアウト計算と描画）が完了したことをUnity側に通知します。
+*   **用途:** `AspectRatioWrapper` の `onReady` コールバックから呼び出されます。
+*   **動作:**
+    *   `GameManager.OnGameUIReady()` を実行します。
+    *   BGMの再生を開始します。
+    *   シーン遷移用の黒いオーバーレイ（暗転）を非表示にします。
+
 ---
 
 ## React Components

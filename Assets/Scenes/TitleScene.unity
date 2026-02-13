@@ -340,6 +340,7 @@ GameObject:
   - component: {fileID: 1230158219}
   - component: {fileID: 1230158218}
   - component: {fileID: 1230158222}
+  - component: {fileID: 1230158223}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -427,9 +428,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: 0.05023244
     width: 1
-    height: 1
+    height: 0.8995351
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -562,6 +563,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1230158223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230158217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3679846cbb9304c278a08f1d1014003b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AspectRatioEnforcer
+  targetAspect: 1.7777778
 --- !u!1 &1450926812
 GameObject:
   m_ObjectHideFlags: 0

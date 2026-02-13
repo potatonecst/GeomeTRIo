@@ -2,6 +2,7 @@ using UnityEngine;
 using ReactUnity;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// React側へ公開するメソッドを持つクラス。
@@ -10,6 +11,13 @@ using TMPro;
 /// </summary>
 public class GameInterop
 {
+    private ReactRendererBase _reactRenderer;
+
+    public GameInterop(ReactRendererBase renderer)
+    {
+        _reactRenderer = renderer;
+    }
+
     /// <summary>
     /// ゲームデータをJSON形式で取得します。
     /// ReactはC#のオブジェクトを直接扱えないため、JSON文字列に変換して渡します。
@@ -339,11 +347,58 @@ public class GameInterop
     }
 
     /// <summary>
+    /// 現在の画面解像度を取得します。
+    /// React側のAspectRatioWrapperコンポーネントが、画面サイズに合わせてコンテンツをスケーリングするために使用します。
+    /// </summary>
+    /// <returns>
+    /// 画面サイズ(幅, 高さ)を含むJSON文字列。
+    /// 例: "{\"x\":1920.0,\"y\":1080.0}"
+    /// レイアウト計算が完了していない場合は "{}" (空のJSON) を返し、React側に待機を指示します。
+    /// </returns>
+    public string GetScreenSize()
+    {
+        // ReactRendererがアタッチされているRectTransformのサイズを取得する
+        if (_reactRenderer != null)
+        {
+            // UI Toolkit (UIDocument) の場合
+            // Screen.width (物理ピクセル) ではなく、パネルの論理サイズを取得して返す必要があります。
+            // これにより、Canvas ScalerやPanel Settingsによるスケーリング後の正しい描画領域サイズが得られます。
+            var uiDoc = _reactRenderer.GetComponent<UIDocument>();
+            if (uiDoc != null && uiDoc.rootVisualElement != null)
+            {
+                var layout = uiDoc.rootVisualElement.layout;
+                // レイアウト計算前は NaN や 0 になることがあるためチェックします
+                if (!float.IsNaN(layout.width) && layout.width > 0)
+                {
+                    // 有効なサイズが取得できた場合、JSON形式で返します
+                    return JsonUtility.ToJson(new Vector2(layout.width, layout.height));
+                }
+            }
+        }
+
+        // レイアウト未確定、またはUIDocumentが見つからない場合は
+        // 物理解像度を返さずに「待機」を指示する空JSONを返します。
+        // これにより、FOUC（一瞬大きく表示される現象）を防ぎます。
+        return "{}";
+    }
+
+    /// <summary>
     /// ゲームループを開始します（カットイン演出終了後に呼ばれる）。
     /// </summary>
     public void StartGameLoop()
     {
         GameManager.instance?.StartGameLoop();
+    }
+
+    /// <summary>
+    /// React側のUI準備が完了したことを通知します。
+    /// AspectRatioWrapperのレイアウト計算が完了し、画面が表示されたタイミングで呼び出されます。
+    /// </summary>
+    public void NotifyUIReady()
+    {
+        // GameManagerに通知し、BGM再生や黒幕（オーバーレイ）の消去を行わせます。
+        // これにより、映像の表示とBGMの開始タイミングを完全に同期させます。
+        GameManager.instance?.OnGameUIReady();
     }
 }
 
@@ -475,7 +530,7 @@ public class ReactInputBridge : MonoBehaviour
             {
                 // React側のグローバル変数 'GameInterop' に、C#の GameInterop クラスのインスタンスを登録します。
                 // これにより、React側から `interop.GetGameData()` のようにC#のメソッドを呼べるようになります。
-                _reactRenderer.Context.Globals["GameInterop"] = new GameInterop();
+                _reactRenderer.Context.Globals["GameInterop"] = new GameInterop(_reactRenderer);
             }
         }
 

@@ -7,6 +7,11 @@
 
 ## 2. UI (User Interface)
 - **技術スタック:** ReactUnity (HTML/CSS/React), Input System (UI Navigation)
+- **画面解像度とアスペクト比:**
+  - **基準解像度:** 1920x1080 (FHD)
+  - **アスペクト比:** 16:9 に固定。
+  - **レターボックス:** 画面比率が16:9と異なる場合、Unity側 (`AspectRatioEnforcer`) と React側 (`AspectRatioWrapper`) の双方で制御し、余白部分を黒帯（レターボックス/ピラーボックス）で埋める。
+  - **スケーリング:** UIは基準解像度でレイアウトされ、画面サイズに合わせてアスペクト比を維持したまま最大サイズまで拡大・縮小される。
 - **HUD表示:**
   - **HP / SP / スコア:** ReactUnity側で `GameManager` の状態をポーリングして描画。
   - **発射点インジケーター:** 自機周辺に表示（World Space UI または Sprite）。
@@ -29,6 +34,9 @@
   - **データ連携:**
     - C#側の `GameInterop` クラスを ReactUnity の `Globals` に登録。
     - React側は `useGlobals` フックを使用して `GameInterop` オブジェクトを取得し、メソッド (`GetGameData`, `StartGame`) を呼び出す。
+  - **初期化同期:**
+    - シーン遷移時、Unity側のロード完了後即座に画面を表示せず、React側のレイアウト計算と描画準備完了を待機する。
+    - React側から `NotifyUIReady` シグナルを受け取ったタイミングで、BGM再生と暗転（オーバーレイ）解除を行うことで、音と映像の完全な同期を実現する。
 
 - **改善・展望:**
   - **コントローラー完全対応:** タイトル画面からゲームプレイ、設定までマウス/キーボード不要で操作可能にする。
