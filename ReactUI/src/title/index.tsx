@@ -223,38 +223,47 @@ const GeometricDebris = () => {
 // 意味: サーバーへの接続や認証プロセスをハッキング風に演出
 // 役割: タイトル画面でボタンを押した後、メニューが出るまでの間に文字をパラパラと表示する
 // 技術的ポイント: setTimeoutを連鎖させることで、時間差でのログ表示を実現しています。
-const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
-    // logs: 現在表示されているログのリスト
-    const [logs, setLogs] = useState<{ text: string; isAlert?: boolean }[]>([]);
+const ConnectionSequence = ({ onComplete, appVersion }: { onComplete: () => void, appVersion: string }) => {
+    // 各行の表示状態を管理する配列
+    const [visibleLines, setVisibleLines] = useState<boolean[]>([]);
     // ウィンドウ出現アニメーション用の状態 (高さと不透明度)
     const [windowStyle, setWindowStyle] = useState({ height: 0, opacity: 0 });
+
+    // 表示するログの内容とタイミング
+    const sequence = [
+        { text: "CONNECTION ESTABLISHED...", delay: 100 },
+        { text: "HANDSHAKE ACCEPTED...", delay: 300 },
+        { text: "FIREWALL BYPASSED...", delay: 500 },
+        { text: "CREDENTIALS VERIFIED...", delay: 800 },
+        { text: "ACCESS GRANTED.", delay: 1100 },
+        { text: "SYSTEM ALERT: INTRUDER DETECTED.", delay: 1400, isAlert: true }
+    ];
+
+    // 必要な高さを計算
+    // ヘッダー(約40px) + 上下パディング(約20px) + (行数 × 1行の高さ(約36px))
+    // 少し余裕を持たせて計算します
+    const targetHeight = 70 + (sequence.length * 40);
 
     useEffect(() => {
         // マウント直後にアニメーションを開始（ウィンドウを縦に展開）
         const animTimer = setTimeout(() => {
-            setWindowStyle({ height: 320, opacity: 1 });
+            // 計算した高さまで展開
+            setWindowStyle({ height: targetHeight, opacity: 1 });
         }, 50);
 
-        // 表示するログの内容とタイミング
-        // delayは「開始から何ミリ秒後に表示するか」を指定
-        const sequence = [
-            { text: "> ESTABLISHING CONNECTION...", delay: 100 }, // ウィンドウが開き始めてから表示
-            { text: "> HANDSHAKE INITIATED...", delay: 300 },
-            { text: "> VERIFYING CREDENTIALS...", delay: 500 },
-            { text: "> BYPASSING FIREWALL...", delay: 800 },
-            { text: "> ACCESS GRANTED.", delay: 1100 },
-            { text: "> SYSTEM ALERT: INTRUDER DETECTED.", delay: 1400, isAlert: true }
-        ];
+        // 初期化: 全ての行を非表示
+        setVisibleLines(new Array(sequence.length).fill(false));
 
         let timeouts: number[] = [];
 
         // 定義したシーケンスに従って、setTimeoutで遅延実行を予約していく
-        sequence.forEach(({ text, delay, isAlert }, index) => {
-            // setTimeout: 指定した時間（ミリ秒）後に、関数を一度だけ実行するタイマーメソッド。
-            // ここでは、delayミリ秒後に setLogs を実行してログを追加するように予約しています。
+        sequence.forEach(({ delay }, index) => {
             const timeout = setTimeout(() => {
-                // 既存のログ(prev)の後ろに新しいログを追加する
-                setLogs(prev => [...prev, { text, isAlert }]);
+                setVisibleLines(prev => {
+                    const next = [...prev];
+                    next[index] = true;
+                    return next;
+                });
 
                 // もしこれが最後のログなら、少し待ってから完了通知(onComplete)を呼ぶ
                 if (index === sequence.length - 1) {
@@ -273,39 +282,49 @@ const ConnectionSequence = ({ onComplete }: { onComplete: () => void }) => {
     }, [onComplete]);
 
     // 最後のログが警告（ALERT）の場合、枠線を赤くする
-    const isAlert = logs.length > 0 && logs[logs.length - 1].isAlert;
+    // visibleLinesの最後の要素がtrueなら、sequenceの最後の要素がisAlertかどうかチェック
+    const isLastLineVisible = visibleLines[sequence.length - 1];
+    const isAlert = isLastLineVisible && sequence[sequence.length - 1].isAlert;
 
     return (
         <view
-            className="flex-col items-start p-2 bg-black bg-opacity-80 border transition-all duration-300 ease-out"
+            className="flex-col bg-black border-2 transition-all duration-300 ease-out shadow-[0_0_20px_rgba(0,255,255,0.3)]"
             style={{
                 width: 1000,
                 height: windowStyle.height, // アニメーション
                 opacity: windowStyle.opacity, // アニメーション
-                justifyContent: 'flex-start',
-                flexShrink: 0,
                 borderColor: isAlert ? '#ff3333' : '#00ffff',
-                fontFamily: 'SourceHanCodeJP',
-                overflow: 'hidden' // アニメーション中の中身のはみ出し防止
+                overflow: 'hidden', // アニメーション中の中身のはみ出し防止
+                padding: 4, // StageStartCutinに合わせる
             }}
         >
-            {/* ターミナルウィンドウ: 幅と高さを固定し、上詰め(justify-start)で表示。flexShrink: 0で縮小防止 */}
-            {logs.map((log, i) => (
-                <text
-                    key={i}
-                    className="text-4xl font-mono"
-                    style={{
-                        color: log.isAlert ? '#ff3333' : '#00ffff',
-                        fontFamily: 'monospace',
-                        textShadow: '0 0 5px currentColor',
-                        flexShrink: 0,
-                        marginBottom: 2,
-                        whiteSpace: 'nowrap'
-                    }}
-                >
-                    {log.text}
-                </text>
-            ))}
+            {/* ヘッダー: StageStartCutinと統一 */}
+            <view className="flex-row justify-between bg-cyan-900 px-2 py-1 mb-2 shrink-0">
+                <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>CONNECTION_SEQUENCE</text>
+                <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>{appVersion}</text>
+            </view>
+
+            {/* ログエリア */}
+            <view className="flex-col items-start px-4 py-2">
+                {sequence.map((item, i) => {
+                    const isVisible = visibleLines[i];
+                    return (
+                        <text
+                            key={i}
+                            className={`text-2xl font-mono mb-1 transition-opacity duration-100 ${item.isAlert ? 'text-red-500 font-bold' : 'text-cyan-400'} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                            style={{
+                                fontFamily: 'SourceHanCodeJP', // フォント統一
+                                textShadow: '0 0 5px currentColor',
+                                whiteSpace: 'nowrap',
+                                // 配列追加方式ではないので、flexShrinkは不要だが念のため
+                                flexShrink: 0,
+                            }}
+                        >
+                            {`> ${item.text}`}
+                        </text>
+                    );
+                })}
+            </view>
         </view>
     );
 };
@@ -563,7 +582,7 @@ const TitleApp = () => {
 
                             {/* 接続中: コンソールログを表示 */}
                             {connectionState === 'connecting' && (
-                                <ConnectionSequence onComplete={handleConnectionComplete} />
+                                <ConnectionSequence onComplete={handleConnectionComplete} appVersion={appVersion} />
                             )}
 
                             {/* 接続完了: メニューを表示 */}

@@ -338,7 +338,7 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
 
                 {/* ウィンドウヘッダー */}
                 <view className="flex-row justify-between bg-cyan-900 px-2 py-1 mb-2">
-                    <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>TERMINAL_OUTPUT</text>
+                    <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>BOOT_SEQUENCE</text>
                     <text className="text-cyan-100 text-xl font-mono" style={{ fontFamily: 'SourceHanCodeJP' }}>{appVersion}</text>
                 </view>
 
