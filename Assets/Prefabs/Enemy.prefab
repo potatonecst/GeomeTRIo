@@ -111,9 +111,13 @@ MonoBehaviour:
   aimingStartTime: 60
   fireRate: 1.5
   baseHP: 1
+  baseScore: 100
+  scoreMultiplier: 1
+  formationId: -1
   deathEffectPrefab: {fileID: 639211555639795330, guid: a64fd46e83ae648d9a0cc45b4b8a94ed, type: 3}
   powerUpItemPrefab: {fileID: 5167439125495829321, guid: 00640a6d105094b9fa1d37c51e506d83, type: 3}
   hpBarTransform: {fileID: 5768910205223144465}
+  useFireRateScaling: 1
 --- !u!50 &6603533557860482465
 Rigidbody2D:
   serializedVersion: 5

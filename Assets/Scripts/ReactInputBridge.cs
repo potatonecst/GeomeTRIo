@@ -84,6 +84,9 @@ public class GameInterop
         public string weaponStatus;
         public string stageName;
         public float timeElapsed;
+        public int scoreEventAmount;
+        public string scoreEventLabel;
+        public float scoreEventTime;
     }
 
     /// <summary>
@@ -162,8 +165,9 @@ public class GameInterop
         }
         else
         {
-            // 通常時は PlayerController から現在の武装詳細（例: "LV.3 POWER UP / 3-WAY"）を取得
-            wpnStatus = PlayerController.instance != null ? PlayerController.instance.GetWeaponStatusDescription() : $"LV.{lvl}";
+            // 通常時は PlayerController から現在の武装詳細（例: "[LV.3] PWR 1 / 3-WAY"）を取得
+            // PlayerController側で文字列生成ロジックを持つことで、武器の仕様変更（名称変更など）に柔軟に対応できます。
+            wpnStatus = PlayerController.instance != null ? PlayerController.instance.GetWeaponStatusDescription() : $"[LV.{lvl}]";
         }
 
         // ステージ名の取得と整形
@@ -192,7 +196,10 @@ public class GameInterop
             engineStatus = engStatus,
             weaponStatus = wpnStatus,
             stageName = displayStage,
-            timeElapsed = GameManager.instance.timeElapsed
+            timeElapsed = GameManager.instance.timeElapsed,
+            scoreEventAmount = GameManager.instance.LastScoreEventAmount,
+            scoreEventLabel = GameManager.instance.LastScoreEventLabel,
+            scoreEventTime = GameManager.instance.LastScoreEventTime
         };
         // JSON形式の文字列に変換して返します。React側はこの文字列を受け取って解析します。
         return JsonUtility.ToJson(status);
@@ -495,6 +502,7 @@ public class ReactInputBridge : MonoBehaviour
         // 以前は _navigateAction.performed += ... としてイベント駆動で実装していましたが、
         // 連続入力（押しっぱなし）の挙動をOS標準のようにスムーズにするため（初回は長く、以降は短く待機）、
         // Updateメソッド内で HandleNavigation() を毎フレーム呼び出す「ポーリング方式」に変更しました。
+        // これにより、メニュー画面でのカーソル移動が「タタタッ」と軽快に動くようになります。
 
         // --- 決定操作 (Enter, Space, 南ボタン) ---
         _submitAction = new InputAction("Submit");

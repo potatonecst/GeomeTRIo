@@ -62,7 +62,15 @@ React側（JavaScript）は、`requestAnimationFrame` ループ内で毎フレ�
 2.  **React側 (`useGameStatus.ts`):**
     *   毎フレーム `interop.GetInGameStatus()` を呼び出し、返却されたJSONをパースしてReactのStateを更新します。
     *   Reactの差分検知機能により、値が変化した箇所だけが効率的に再描画されます。
- 
+
+### スコア表示の安全策 (Score Display Safety)
+スコア表示において、以下の二重の安全策を講じています。
+
+1.  **C#側 (GameManager):** `int` 型のオーバーフローを防ぐため、加算時に `int.MaxValue` (約21億) を超えないようにキャップしています。
+2.  **React側 (HUD):** 万が一、通信エラーやバグで異常な桁数の数値が送られてきた場合に備え、表示時に `9999999999` (10桁) でカンスト表示にする処理を入れています。
+
+これにより、ゲームロジックの破綻と、UIレイアウトの崩れ（桁あふれ）の両方を防いでいます。
+
 ## Input SystemによるUIナビゲーション
 
 ReactUnityのUI操作は、UnityのInput Systemからの入力を `ReactInputBridge` が中継することで実現しています。

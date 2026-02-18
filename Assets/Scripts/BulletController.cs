@@ -26,6 +26,8 @@ public class BulletController : MonoBehaviour
     void Start()
     {
         //弾が向いている方向に、指定したスピードを与える
+        // transform.up: このオブジェクトの「上」方向（回転を考慮した進行方向）のベクトル。
+        // これに速度(scalar)を掛けることで、向いている方向に進む速度ベクトルを作れます。
         // linearVelocity は Unity 6 以降の新しいプロパティです（旧 velocity）
         rb.linearVelocity = transform.up * bulletSpeed;
     }
@@ -40,6 +42,8 @@ public class BulletController : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             // インターフェースを取得してダメージを与える（SendMessageより高速で安全）
+            // 相手がどんなクラス（通常敵、追尾敵、ボスなど）であっても、
+            // IDamageableさえ持っていれば、共通の方法でダメージを与えられます（ポリモーフィズム）。
             if (other.TryGetComponent<IDamageable>(out var target))
             {
                 target.TakeDamage(damage);

@@ -56,6 +56,11 @@ public class GameManager : MonoBehaviour
     // UIに表示するシステムメッセージ
     public string SystemMessage { get; private set; } = "";
 
+    // スコア獲得イベント（React側でのポップアップ表示用）
+    public int LastScoreEventAmount { get; private set; }
+    public string LastScoreEventLabel { get; private set; }
+    public float LastScoreEventTime { get; private set; } // イベント発生時刻
+
     // タイトル画面の演出（Press Any Button -> ログ）をスキップするかどうかのフラグ
     // ゲームプレイからタイトルに戻った際に、演出を飛ばしてすぐにメニューを表示するために使用します。
     public bool SkipTitleSequence { get; set; } = false;
@@ -92,6 +97,7 @@ public class GameManager : MonoBehaviour
     public AudioClip scoreAttackBgm;
     private AudioSource audioSource;
     private AudioSource bgmAudioSource;
+    private AudioSource lowPriorityAudioSource; // 弾などの低優先度SE用
 
     // ユーザーIDとファイル名
     public string currentUserId = "default_player";
@@ -104,8 +110,8 @@ public class GameManager : MonoBehaviour
 
     // スコアエクステンド関連
     // 次にHPが回復するスコアの目標値
-    private int nextScoreExtend = 50000;
-    private const int scoreExtendInterval = 50000;
+    private int nextScoreExtend = 200000; // 初期目標 (50000 -> 200000)
+    private const int scoreExtendInterval = 200000; // 間隔 (50000 -> 200000)
 
     // メッセージリセット用のコルーチン
     private Coroutine messageResetCoroutine;
@@ -162,11 +168,25 @@ public class GameManager : MonoBehaviour
 
         //自分についているAudioSourceを取得
         audioSource = GetComponent<AudioSource>();
+        // SE用の優先度は標準(128)にしておく
+        // Priority: 0(最優先) 〜 256(最低)。デフォルトは128。
+        if (audioSource != null) audioSource.priority = 128;
+
+        // 弾発射音などの低優先度SE用AudioSourceを追加
+        // AddComponent<T>(): ゲームオブジェクトに新しいコンポーネントを動的に追加します。
+        lowPriorityAudioSource = gameObject.AddComponent<AudioSource>();
+        lowPriorityAudioSource.playOnAwake = false;
+        // 弾の音は大量に鳴るため、同時発音数制限（Voice Count）に引っかかった場合、
+        // BGM(0)や重要なSE(128)よりも先に消されるように、優先度を低く(200)設定します。
+        lowPriorityAudioSource.priority = 200; // 128より大きく設定して優先度を下げる（0が最高、256が最低）
 
         // BGM用のAudioSourceを動的に追加（SE用とは分けるため）
         bgmAudioSource = gameObject.AddComponent<AudioSource>();
         bgmAudioSource.loop = true;
         bgmAudioSource.playOnAwake = false;
+        // BGMの優先度を最高(0)に設定する。
+        // Unityのオーディオシステムは同時発音数を超えると優先度の低い音を消すため、SE(128)にBGMが消されないようにする。
+        bgmAudioSource.priority = 0;
     }
 
     /// <summary>
@@ -462,7 +482,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void AddScore(int points)
     {
-        CurrentScore += points;
+        // オーバーフロー対策: 加算するとintの最大値(約21億)を超える場合は、最大値で止める
+        // longにキャストして計算することで、溢れた分を正しく判定できるようにする
+        if ((long)CurrentScore + points > int.MaxValue)
+        {
+            CurrentScore = int.MaxValue;
+        }
+        else
+        {
+            CurrentScore += points;
+        }
 
         // スコアエクステンド判定
         if (CurrentScore >= nextScoreExtend)
@@ -470,6 +499,29 @@ public class GameManager : MonoBehaviour
             HealPlayer(1);
             nextScoreExtend += scoreExtendInterval;
             PlaySubmitSound(); // エクステンド音（仮で決定音を使用）
+        }
+    }
+
+    /// <summary>
+    /// スコアを加算し、同時にUI表示用のイベントを発火させます。
+    /// </summary>
+    /// <param name="amount">加算スコア</param>
+    /// <param name="label">表示ラベル（例: "FORMATION BONUS"）</param>
+    public void TriggerScoreEvent(int amount, string label)
+    {
+        AddScore(amount);
+
+        // 同一フレーム内で同じラベルのイベントが発生した場合、数値を合算する
+        // これにより、誘爆で2体同時に倒した時に「250」が2回出るのではなく、「500」とまとめて表示されるようになる
+        if (Mathf.Approximately(LastScoreEventTime, Time.unscaledTime) && LastScoreEventLabel == label)
+        {
+            LastScoreEventAmount += amount;
+        }
+        else
+        {
+            LastScoreEventAmount = amount;
+            LastScoreEventLabel = label;
+            LastScoreEventTime = Time.unscaledTime; // ポーズ中でもUIが反応できるように実時間を使用
         }
     }
 
@@ -844,27 +896,43 @@ public class GameManager : MonoBehaviour
         VibrationManager.instance?.Vibrate(0.3f, 0.0f, 0.05f, 1.0f);
     }
 
+    // 発射音の間引き用タイマー
+    private float lastPlayerShootTime = 0f;
+    private float lastEnemyShootTime = 0f;
+    private const float MIN_PLAYER_SHOOT_SOUND_INTERVAL = 0.02f; // プレイヤー用（秒間50回まで）。最大連射(0.05s)でも音が抜けないように余裕を持たせる。
+    private const float MIN_ENEMY_SHOOT_SOUND_INTERVAL = 0.01f; // 敵用（秒間100回まで）。敵は数が多いので制限を緩くする。
+
     /// <summary>
     /// プレイヤーの射撃音を再生します。
+    /// 短時間に連続して呼ばれた場合は間引きます。
     /// </summary>
     public void PlayPlayerShootSound()
     {
+        // 間引き処理: 前回の再生から一定時間経過していない場合は再生しない
+        if (Time.unscaledTime - lastPlayerShootTime < MIN_PLAYER_SHOOT_SOUND_INTERVAL) return;
+        lastPlayerShootTime = Time.unscaledTime;
+
         if (playerShootSound != null)
         {
             float seVol = SettingsManager.GetSEVolume() / 100f;
-            audioSource.PlayOneShot(playerShootSound, seVol);
+            lowPriorityAudioSource.PlayOneShot(playerShootSound, seVol);
         }
     }
 
     /// <summary>
     /// 敵の射撃音を再生します。
+    /// 短時間に連続して呼ばれた場合は間引きます。
     /// </summary>
     public void PlayEnemyShootSound()
     {
+        // 間引き処理
+        if (Time.unscaledTime - lastEnemyShootTime < MIN_ENEMY_SHOOT_SOUND_INTERVAL) return;
+        lastEnemyShootTime = Time.unscaledTime;
+
         if (enemyShootSound != null)
         {
             float seVol = SettingsManager.GetSEVolume() / 100f;
-            audioSource.PlayOneShot(enemyShootSound, seVol);
+            lowPriorityAudioSource.PlayOneShot(enemyShootSound, seVol);
         }
     }
 

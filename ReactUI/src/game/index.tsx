@@ -7,6 +7,7 @@ import { useGameStatus } from '../hooks/useGameStatus';
 import { MenuButton } from '../components/MenuButton';
 import { useGlitch } from '../hooks/useGlitch';
 import { AspectRatioWrapper } from '../components/AspectRatioWrapper';
+import { ScorePopup } from './ScorePopup';
 
 // ゲームオーバーパネルコンポーネント
 // 役割: ゲームオーバー時に表示され、リトライかタイトルへ戻るかを選択させる
@@ -27,6 +28,7 @@ const GameOverPanel = () => {
         if (!status.isGameOver) return;
 
         // window.onMenuInput: C# (ReactInputBridge) から呼び出される入力イベントハンドラ
+        // ここでグローバル関数を上書きして、このコンポーネント専用の入力処理を定義します。
         (window as any).onMenuInput = (event: string) => {
             if (event === 'left') {
                 // 現在の選択が0でない場合のみ移動処理を行う
@@ -375,7 +377,7 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
 };
 
 // ゲームシーン全体のルートコンポーネント
-// 役割: HUD、ポーズ、ゲームオーバー画面の統括と、シーン遷移時の演出（ローディング、暗転）を管理
+// 役割: HUD、ポーズ、ゲームオーバー画面の統括と、シーン遷移時の演出（ローディング、暗転）を管理します。
 const GameApp = () => {
     // ローディング表示フラグ（タイトルへ戻る時などに使用）
     const [isLoading, setIsLoading] = useState(false);
@@ -506,6 +508,9 @@ const GameApp = () => {
                 {/* HUD: Blackout Overlay(9999)より手前に表示するために、この位置に配置しzIndexを指定 */}
                 <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
                     <HUD hudState={hudState} />
+                </view>
+                <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
+                    <ScorePopup />
                 </view>
 
                 {/* Start Cutin */}

@@ -3,6 +3,8 @@ using UnityEngine;
 /// <summary>
 /// ゲーム画面の背景（グリッド線）を生成し、スクロールさせるクラス。
 /// テクスチャのUVオフセットを操作することで、無限スクロールを表現します。
+/// ※現在は ReactUnity (game/background.tsx) 側で背景を描画しているため、
+/// このコンポーネントは使用されていないか、フォールバック用として残されています。
 /// </summary>
 public class BackgroundScroller : MonoBehaviour
 {
@@ -52,6 +54,8 @@ public class BackgroundScroller : MonoBehaviour
     void Update()
     {
         // 時間経過に合わせてY方向のオフセットをずらすことでスクロールを表現
+        // Mathf.Repeat(t, length): t を length で割った余りを返します（0 〜 length の範囲をループする）。
+        // これにより、yの値は 0.0 -> 1.0 -> 0.0 ... と滑らかにループし、無限スクロールに見えます。
         float y = Mathf.Repeat(Time.time * scrollSpeed, 1);
         Vector2 offset = new Vector2(_savedOffset.x, y);
         _renderer.material.mainTextureOffset = offset;
@@ -84,10 +88,12 @@ public class BackgroundScroller : MonoBehaviour
     /// </summary>
     Texture2D GenerateSingleGridTexture()
     {
+        // Texture2D: プログラムから動的に画像を生成・操作できるクラスです。
         Texture2D tex = new Texture2D(textureResolution, textureResolution);
         tex.filterMode = FilterMode.Bilinear; // 滑らかにする
         tex.wrapMode = TextureWrapMode.Repeat; // 繰り返す設定
 
+        // ピクセルデータの配列を作成（サイズは 幅 x 高さ）
         Color[] pixels = new Color[textureResolution * textureResolution];
 
         // 背景色で塗りつぶし
@@ -108,7 +114,9 @@ public class BackgroundScroller : MonoBehaviour
             }
         }
 
+        // SetPixels: 計算した色データをテクスチャにセットします（まだGPUには送られません）。
         tex.SetPixels(pixels);
+        // Apply: 変更を確定し、データをGPUに転送します。これを呼ばないと描画に反映されません。
         tex.Apply(); // 変更を適用
         return tex;
     }

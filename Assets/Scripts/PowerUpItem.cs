@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 取得するとプレイヤーの武器経験値を増やすアイテム。
 /// </summary>
-public class PowerUpItem : MonoBehaviour
+public class PowerUpItem : MonoBehaviour, ICollectable
 {
     public float fallSpeed = 1f;
     public int expValue = 1; // このアイテムで増える経験値量
@@ -82,9 +82,16 @@ public class PowerUpItem : MonoBehaviour
         }
     }
 
-    public void Collect()
+    /// <summary>
+    /// ICollectableの実装。プレイヤーに拾われた時の処理。
+    /// </summary>
+    public void OnCollected(PlayerController player)
     {
+        if (IsCollected) return;
         IsCollected = true;
+
+        player.AddExp(expValue); // プレイヤーに経験値を与える
+        Destroy(gameObject);     // 自分自身を消滅させる
     }
 
     private void OnTriggerEnter2D(Collider2D other)

@@ -45,12 +45,16 @@ public class PlayerController : MonoBehaviour, IDamageable
     private bool isSpinning = false; //スピンアタック判定
 
     // パワーアップ関連
-    public int weaponLevel = 1; // 現在の武器レベル (1~4)
+    public int weaponLevel = 1; // 現在の武器レベル (1~10)
     private int currentExp = 0; // 現在の経験値
     // レベルアップに必要な経験値テーブル (Lv1->2: 5個, ... Lv9->10: 150個)
     private int[] nextLevelExp = new int[] { 5, 10, 20, 35, 50, 70, 90, 120, 150, 9999 };
     private const int MAX_LEVEL = 10;
     private int burstCount = 1; // バースト数（一度の発射で撃つ弾数）
+
+    // デバフ（状態異常）関連
+    private bool isWeaponJammed = false; // 武器ジャミング状態（射撃不可）
+    private Coroutine jamCoroutine;
 
     /// <summary>
     /// スクリプトのインスタンスがロードされた時に呼び出されます。
@@ -200,6 +204,14 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// </summary>
     private void ShootBullet()
     {
+        // ジャミング中は射撃不可
+        if (isWeaponJammed)
+        {
+            // 空撃ち音（キャンセル音）を鳴らす
+            GameManager.instance?.PlayCancelSound();
+            return;
+        }
+
         // 設定によって射撃モードを切り替えます。
         // オート連射が有効な場合は、連射速度重視（シングルショット）
         if (SettingsManager.IsAutofireEnabled())
@@ -448,12 +460,14 @@ public class PlayerController : MonoBehaviour, IDamageable
                 else if (weaponLevel >= 7) sidePairCount = 2;
                 else if (weaponLevel >= 4) sidePairCount = 1;
 
+                // 発射音は一度だけ再生（3つの発射口分をまとめる）
+                GameManager.instance?.PlayPlayerShootSound();
+
                 foreach (Transform firePoint in firePoints)
                 {
                     // 中央弾
                     CreateBullet(firePoint.position, firePoint.rotation, damage, 1.0f);
                     GameManager.instance?.IncrementShotsFired();
-                    GameManager.instance?.PlayPlayerShootSound();
 
                     // Way弾 (サイド弾)
                     if (sidePairCount > 0)
@@ -540,6 +554,26 @@ public class PlayerController : MonoBehaviour, IDamageable
     }
 
     /// <summary>
+    /// 武器ジャミング（射撃不可）状態を適用します。
+    /// </summary>
+    /// <param name="duration">効果時間（秒）</param>
+    public void ApplyWeaponJam(float duration)
+    {
+        if (jamCoroutine != null) StopCoroutine(jamCoroutine);
+        jamCoroutine = StartCoroutine(WeaponJamCoroutine(duration));
+    }
+
+    private IEnumerator WeaponJamCoroutine(float duration)
+    {
+        isWeaponJammed = true;
+        GameManager.instance?.SetSystemMessage("WARNING: WEAPON JAMMED!", duration);
+
+        yield return new WaitForSeconds(duration);
+
+        isWeaponJammed = false;
+    }
+
+    /// <summary>
     /// パワーアップアイテム取得時の処理
     /// </summary>
     public void AddExp(int amount)
@@ -622,20 +656,15 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // パワーアップアイテムに触れた時の処理
-        // TryGetComponent: 相手が PowerUpItem コンポーネントを持っているか確認し、持っていれば取得します。
-        if (other.CompareTag("PowerUp") && other.TryGetComponent<PowerUpItem>(out var item))
+        // アイテム取得判定
+        // 相手が ICollectable（拾えるもの）であれば、その効果を発動させます。
+        // これにより、回復アイテムやSP補充アイテムが増えても、ここのコードを変更する必要がなくなります。
+        if (other.TryGetComponent<ICollectable>(out var item))
         {
-            // 既に取得済みのアイテムは無視する
-            if (item.IsCollected) return;
-
-            // 取得済みフラグを立てる
-            // これにより、同時に複数の当たり判定が発生しても、経験値が二重に入らないようにします。
-            item.Collect();
-
-            // アイテムの設定値分だけ経験値を加算
-            AddExp(item.expValue);
-            Destroy(other.gameObject);
+            // item.OnCollected(this) の 'this' は、このスクリプト（PlayerController）のインスタンス自身を指します。
+            // アイテム側で「誰が拾ったのか」を知る必要があるため（拾った人の経験値を増やすためなど）、
+            // 自分自身（this）を引数として渡しています。
+            item.OnCollected(this);
         }
     }
 
@@ -653,23 +682,28 @@ public class PlayerController : MonoBehaviour, IDamageable
     // 武器の詳細ステータス文字列を生成する
     public string GetWeaponStatusDescription()
     {
+        // ジャミング中はステータスを上書きして警告表示
+        if (isWeaponJammed) return "JAMMED";
+
         List<string> features = new List<string>();
 
         if (SettingsManager.IsAutofireEnabled())
         {
-            // オート連射時はRAPID表記
-            if (fireRate < 0.1f) features.Add("RAPID");
+            // オート連射時はRAPID表記 (短縮)
+            if (weaponLevel >= 8) features.Add("RPD3");
+            else if (weaponLevel >= 5) features.Add("RPD2");
+            else if (weaponLevel >= 2) features.Add("RPD1");
         }
         else
         {
-            // 手動時はバースト表記
-            if (burstCount > 1) features.Add($"BURST x{burstCount}");
+            // 手動時はバースト表記 (短縮)
+            if (burstCount > 1) features.Add($"BST{burstCount}");
         }
 
-        // 攻撃力アップ (Lv3: +1, Lv6: +2, Lv9: +3)
-        if (weaponLevel >= 9) features.Add("POWER UP x3");
-        else if (weaponLevel >= 6) features.Add("POWER UP x2");
-        else if (weaponLevel >= 3) features.Add("POWER UP");
+        // 攻撃力アップ (Lv3: +1, Lv6: +2, Lv9: +3) (短縮)
+        if (weaponLevel >= 9) features.Add("PWR3");
+        else if (weaponLevel >= 6) features.Add("PWR2");
+        else if (weaponLevel >= 3) features.Add("PWR1");
 
         // Way数
         int wayCount = 0;
@@ -677,11 +711,13 @@ public class PlayerController : MonoBehaviour, IDamageable
         else if (weaponLevel >= 7) wayCount = 5;
         else if (weaponLevel >= 4) wayCount = 3;
 
-        if (wayCount > 0) features.Add($"{wayCount}-WAY");
+        if (wayCount > 0) features.Add($"{wayCount}WAY");
 
-        if (features.Count == 0) return $"LV.{weaponLevel} NORMAL";
+        if (features.Count == 0) return $"[LV.{weaponLevel}]NORMAL";
 
-        // スラッシュの前後にスペースを入れて読みやすくする
-        return $"LV.{weaponLevel} {string.Join(" / ", features)}";
+        // スペースなしのスラッシュで区切る
+        // string.Join(separator, list): リストの要素を指定した区切り文字で連結して1つの文字列にします。
+        // 例: features={"RPD1", "PWR1"} -> "RPD1/PWR1"
+        return $"[LV.{weaponLevel}]{string.Join("/", features)}";
     }
 }

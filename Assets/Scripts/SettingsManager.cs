@@ -1,5 +1,10 @@
 using UnityEngine;
 
+/// <summary>
+/// ゲーム全体の環境設定（音量、振動など）を管理する静的クラス。
+/// Unity標準の "PlayerPrefs" 機能を使用して、設定値をデバイスに保存（永続化）します。
+/// staticクラスにすることで、インスタンス化せずにどこからでもアクセス可能にしています。
+/// </summary>
 public static class SettingsManager
 {
     // PlayerPrefsで使用するキー定数

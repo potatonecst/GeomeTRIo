@@ -5,7 +5,7 @@ using System.Collections;
 /// 通常の敵キャラクター（直進タイプ）を制御するクラス。
 /// 画面上部から出現し、下方向へ移動しながら、一定間隔で弾を発射します。
 /// </summary>
-public class EnemyController : MonoBehaviour, IDamageable
+public class EnemyController : MonoBehaviour, IDamageable, IChainExplodable
 {
     //プレイヤー
     private GameObject playerObject;
@@ -15,15 +15,34 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     //敵の射撃に関する変数
     public float shootingStartTime = 40f; //弾を打ち始める時間
-    public float aimingStartTime = 60f; //自機狙いを始める時間
+    public float aimingStartTime = 90f; //自機狙いを始める時間 (レベル1に合わせて90秒に変更)
     public float fireRate = 1.5f; //弾の発射間隔
     private float nextFireTime = 0f; //次回の発射時間
     private bool canShoot = false; //射撃可能かどうか
+
+    // 弾の基礎速度（Spawnerから変更可能にする）
+    public float bulletSpeedBase = 3.0f;
+
+    // 弾の速度変化設定（Spawnerから設定）
+    [HideInInspector] public bool bulletUseSpeedVariation = false;
+    [HideInInspector] public float bulletDecelDelay = 0.5f;
+    [HideInInspector] public float bulletMinSpeed = 5.0f;
+    [HideInInspector] public float bulletDecelerationRate = 10.0f; // 減速率
 
     //HPに関する変数
     public int baseHP = 1;
     private int currentHP;
     private int maxHP; // 最大HPを記憶
+
+    // スコア関連
+    public int baseScore = 100; // 基礎点 (10 -> 100)
+    [HideInInspector] public float scoreMultiplier = 1.0f; // 倍率（Spawnerから設定）
+    private int scoreValue; // 最終的なスコア
+
+    // 編隊ボーナス用
+    [HideInInspector] public int formationId = -1; // -1は編隊なし
+    private bool isDead = false; // プレイヤーに倒されたかどうかのフラグ
+    private bool isSelfDestructing = false; // 誘爆処理中かどうかのフラグ
 
     // ヒット演出用
     private SpriteRenderer spriteRenderer;
@@ -37,9 +56,20 @@ public class EnemyController : MonoBehaviour, IDamageable
     public Transform hpBarTransform; // HPバーのTransform（Scaleを変えるため）
     private Vector3 hpBarOriginalLocalPosition; // HPバーの初期位置（左寄せ計算用）
     private float hpBarOriginalScaleX; // HPバーの初期スケールX
+    private float hpBarXOffset; // HPバーのX方向オフセット（左寄せ用）
+    private float hpBarYOffset; // HPバーのY方向オフセット（高さ）
+    private float hpBarOriginalWidth; // HPバーの初期幅（ワールドサイズ）
+    private float spawnTime; // 生成時刻
 
     // 画面外判定用の境界値（初期値は5.5だが、Startでカメラに合わせて再計算する）
     private float visibleYLimit = 5.5f;
+    private float visibleXLimit = 4.5f; // HUDを考慮した横幅制限（プレイヤー移動範囲3.5 + マージン）
+
+    // 自機狙いモードになる前の固定射撃方向
+    private Quaternion fixedRotation;
+
+    // 難易度による連射速度の自動調整を行うかどうか
+    [HideInInspector] public bool useFireRateScaling = true;
 
     /// <summary>
     /// 初期化処理。
@@ -47,17 +77,49 @@ public class EnemyController : MonoBehaviour, IDamageable
     /// </summary>
     void Start()
     {
+        spawnTime = Time.time; // 生成時刻を記録
+
         // ゲームの経過時間に応じて敵を強化します。
-        // GameManager.instance.timeElapsed: ゲーム開始からの経過時間（秒）
-        // Mathf.FloorToInt: 小数点以下を切り捨てて整数にします（例: 1.9 -> 1）
-        // 90秒経過するごとに HP が +1 されます。
-        int additionalHP = Mathf.FloorToInt(GameManager.instance.timeElapsed / 90f);
-        currentHP = baseHP + additionalHP;
+        // 90秒ごとに難易度レベルが上昇します (開始時:0 -> 90秒:1 -> 180秒:2 ...)
+        // Mathf.FloorToInt: 小数点以下を切り捨てて整数にします。
+        // 例: 45秒 / 90 = 0.5 -> 0 (基礎点のみ加算)
+        int difficultyLevel = Mathf.FloorToInt(GameManager.instance.timeElapsed / 90f);
+
+        // HPはレベル分だけ増加させますが、硬くなりすぎないように上限(30)を設けます。
+        // プレイヤーの攻撃力も上がるため、後半はこれくらいあっても倒せます。
+        currentHP = Mathf.Min(30, baseHP + difficultyLevel);
         maxHP = currentHP;
+
+        // 移動速度の上昇: レベルごとに 0.1f ずつ速くする（上限 3.0f）
+        // Mathf.Min: 2つの値のうち小さい方を返します。これにより、速度が3.0fを超えないように制限（キャップ）しています。
+        // これにより、後半は敵がより速く迫ってくるようになります。
+        speed = Mathf.Min(3.0f, speed + (difficultyLevel * 0.1f));
+
+        if (useFireRateScaling)
+        {
+            // 難易度調整: 90秒ごとのレベルアップに合わせて段階的に連射速度を上げる
+            // 初期: 1.5秒 -> Lv1: 1.4秒 -> ... -> Lv10: 0.5秒 (下限)
+            // Mathf.Max: 2つの値のうち大きい方を返します。これにより、間隔が0.5秒より短くならないようにしています。
+            fireRate = Mathf.Max(0.5f, 1.5f - (difficultyLevel * 0.1f));
+        }
+
+        // スコア計算: (基礎点 + 難易度ボーナス) * 倍率
+        scoreValue = Mathf.RoundToInt((baseScore + (difficultyLevel * 100)) * scoreMultiplier);
 
         // プレイヤーの位置を知るために、"Player" というタグがついたオブジェクトを探します。
         // GameObject.FindGameObjectWithTag: シーン全体から指定タグのオブジェクトを検索します（処理が重いのでStartで一度だけ行います）。
         playerObject = GameObject.FindGameObjectWithTag("Player");
+
+        // 初期位置に基づいて、自機狙いモードになる前の射撃方向（上か下か）を決定・固定します。
+        // 途中でプレイヤーが移動しても向きを変えないことで、「自機狙いではない」挙動を明確にします。
+        if (playerObject != null && playerObject.transform.position.y > transform.position.y)
+        {
+            fixedRotation = Quaternion.Euler(0, 0, 0f); // 上
+        }
+        else
+        {
+            fixedRotation = Quaternion.Euler(0, 0, 180f); // 下
+        }
 
         // 自分の見た目（スプライト）を管理するコンポーネントを取得します。
         // GetComponent<T>(): このゲームオブジェクトについている指定のコンポーネントを探して取得します。
@@ -78,6 +140,28 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
             hpBarOriginalLocalPosition = hpBarTransform.localPosition;
             hpBarOriginalScaleX = hpBarTransform.localScale.x;
+
+            // HPバーの高さをスプライトのサイズに合わせて動的に調整
+            // 回転している敵（斜め移動）はBoundsが高くなるためバーも高く、
+            // 回転していない敵（正方形）はBoundsが低いためバーも低くなります。
+            if (spriteRenderer != null)
+            {
+                // スプライトの上端 + マージン(0.2f)
+                hpBarYOffset = spriteRenderer.bounds.extents.y + 0.2f;
+            }
+            else
+            {
+                hpBarYOffset = hpBarOriginalLocalPosition.y;
+            }
+
+            hpBarXOffset = hpBarOriginalLocalPosition.x;
+
+            // HPバーのSpriteRendererを取得して初期幅を記録
+            var barSr = hpBarTransform.GetComponent<SpriteRenderer>();
+            if (barSr != null)
+            {
+                hpBarOriginalWidth = barSr.bounds.size.x;
+            }
         }
 
         // HPが1（一撃で倒せる雑魚敵）の場合は、HPバーを表示する必要がないため非表示にします。
@@ -91,11 +175,23 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (Camera.main != null)
         {
             // Camera.main.orthographicSize: カメラの中心から上端までの距離（高さの半分）です。
-            // orthographicSizeは画面の高さの半分です。これに少し余裕(0.5)を持たせます。
-            // 敵のサイズ(0.5)の半分より少し小さい値(0.24)をマージンとして設定します。
-            // これにより、敵が完全に画面外にいる間はダメージを受けなくなります。
-            visibleYLimit = Camera.main.orthographicSize + 0.24f;
+            // マージンをスプライトのサイズ（高さの半分）から動的に取得します。
+            // これにより、敵のサイズが変わっても自動的に「画面外」の判定が正しくなります。
+            // 完全に画面外ギリギリだと、見えないのに当たってしまうことがあるため、0.01だけ内側に入れます。
+            float margin = spriteRenderer != null ? spriteRenderer.bounds.extents.y - 0.01f : 0.5f;
+
+            visibleYLimit = Camera.main.orthographicSize + margin;
         }
+
+        // 物理衝突による振動を防ぐため、ColliderをTrigger（すり抜け）にする
+        var col = GetComponent<Collider2D>();
+        if (col != null) col.isTrigger = true;
+
+        // Rigidbody2Dがある場合
+        var rb = GetComponent<Rigidbody2D>();
+        // Kinematicにすると敵同士の衝突判定(誘爆)が効かなくなる可能性があるため、
+        // Dynamicのままにしつつ、重力の影響だけを無効化します。
+        if (rb != null) rb.gravityScale = 0f;
     }
 
     /// <summary>
@@ -131,6 +227,23 @@ public class EnemyController : MonoBehaviour, IDamageable
     }
 
     /// <summary>
+    /// 全てのUpdate処理が終わった後に呼ばれます。
+    /// 敵本体が回転していても、HPバーは常に水平かつ正しい位置に表示されるように調整します。
+    /// </summary>
+    void LateUpdate()
+    {
+        if (hpBarTransform != null && hpBarTransform.gameObject.activeSelf)
+        {
+            // 回転をリセット（常に水平）
+            // Quaternion.identity: 「回転していない」状態を表す値です (0, 0, 0)。
+            hpBarTransform.rotation = Quaternion.identity;
+            // 位置をワールド座標で再設定（敵の真上 + 左寄せオフセット）
+            // Vector3.up, Vector3.right などの方向ベクトルを使って、敵の位置からの相対座標を計算しています。
+            hpBarTransform.position = transform.position + Vector3.up * hpBarYOffset + Vector3.right * hpBarXOffset;
+        }
+    }
+
+    /// <summary>
     /// 弾を発射する処理。
     /// </summary>
     public void Shoot()
@@ -161,25 +274,48 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
         else
         {
-            // まだ自機狙いではない場合は、真下（180度回転）に向けます。
-            rotation = Quaternion.Euler(0, 0, 180f);
+            // 自機狙いではない場合は、Startで決定した固定方向を使用します。
+            rotation = fixedRotation;
         }
 
         // プレハブ（設計図）から弾の実体を生成します。
         // Instantiate(original, position, rotation): オブジェクトを生成するUnityの重要関数です。
         GameObject bullet = Instantiate(GameManager.instance.enemyBulletPrefab, transform.position, rotation);
 
+        // 難易度レベルの取得
+        int difficultyLevel = Mathf.FloorToInt(GameManager.instance.timeElapsed / 90f);
+
         // 生成した弾についている制御スクリプトを取得し、速度を設定します。
         EnemyBulletController bulletController = bullet.GetComponent<EnemyBulletController>();
         if (bulletController != null)
         {
-            // 通常弾なので少し遅めに設定
-            bulletController.speed = 3f;
+            // 通常弾なので少し遅めに設定 + レベルごとに0.1f加速 (Lv0:3.0f -> Lv10:4.0f)
+            bulletController.speed = bulletSpeedBase + (difficultyLevel * 0.1f);
+
+            // 速度変化の設定を適用
+            // Spawnerから受け取った設定（減速開始時間や減速率）を、生成した弾のコントローラーに渡します。
+            if (bulletUseSpeedVariation)
+            {
+                bulletController.useSpeedVariation = true;
+                bulletController.speedVariationDelay = bulletDecelDelay;
+                bulletController.minSpeed = bulletMinSpeed;
+                bulletController.decelerationRate = bulletDecelerationRate;
+            }
         }
 
         // 効果音を再生します。
         // ?. (Null条件演算子): GameManager.instance が null でない場合のみ実行します。
         GameManager.instance?.PlayEnemyShootSound();
+    }
+
+    /// <summary>
+    /// 生成直後から即座に射撃を開始させます（斜め移動の敵などで使用）。
+    /// </summary>
+    // Spawner側からこのメソッドを呼ぶことで、出現アニメーションを待たずに攻撃させることができます。
+    public void EnableShootingImmediately()
+    {
+        canShoot = true;
+        nextFireTime = Time.time; // 待ち時間なしで即発射
     }
 
     /// <summary>
@@ -218,16 +354,29 @@ public class EnemyController : MonoBehaviour, IDamageable
             // 2. 位置を調整します。
             // UnityのScale縮小は「中心に向かって」行われるため、そのままだと両端が縮んでしまいます。
             // 「縮んだ長さの半分」だけ左に移動させることで、見た目上「左端が固定されている」ように見せます。
-            float widthDiff = hpBarOriginalScaleX - newScale.x;
-            Vector3 newPos = hpBarOriginalLocalPosition;
-            newPos.x -= widthDiff * 0.5f;
-            hpBarTransform.localPosition = newPos;
+            var barSr = hpBarTransform.GetComponent<SpriteRenderer>();
+            if (barSr != null)
+            {
+                // Spriteの実際の幅を使って正確に補正
+                float currentWidth = barSr.bounds.size.x;
+                float widthDiff = hpBarOriginalWidth - currentWidth;
+                hpBarXOffset = hpBarOriginalLocalPosition.x - widthDiff * 0.5f;
+            }
+            else
+            {
+                float widthDiff = hpBarOriginalScaleX - newScale.x;
+                hpBarXOffset = hpBarOriginalLocalPosition.x - widthDiff * 0.5f;
+            }
         }
 
         // HPが0以下になったら死亡処理を行います。
         if (currentHP <= 0)
         {
-            GameManager.instance.AddScore(10); //10点加算
+            isDead = true;
+            // 撃破されたことを報告
+            if (formationId != -1) EnemySpawner.instance?.ReportEnemyDespawn(formationId, true);
+
+            GameManager.instance.TriggerScoreEvent(scoreValue, ""); // 計算済みスコアを加算（ポップアップ表示）
             GameManager.instance.IncrementEnemiesDefeated(); //撃破数カウント
 
             // 死亡エフェクト（グリッチノイズ）を生成します。
@@ -245,6 +394,17 @@ public class EnemyController : MonoBehaviour, IDamageable
 
             // 自分自身をゲームから削除します。
             Destroy(gameObject);
+        }
+    }
+
+    // オブジェクトが破棄される時に呼ばれる
+    void OnDestroy()
+    {
+        // まだ死んでいない（HP>0）のに削除された＝画面外へ逃げた、またはシーン遷移
+        // シーン遷移でなければ「逃走」として報告する
+        if (!isDead && formationId != -1 && EnemySpawner.instance != null)
+        {
+            EnemySpawner.instance.ReportEnemyDespawn(formationId, false);
         }
     }
 
@@ -289,32 +449,77 @@ public class EnemyController : MonoBehaviour, IDamageable
     /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 敵同士がぶつかった場合（誘爆ギミック）
-        if (other.CompareTag("Enemy"))
+        // 相手が「誘爆可能なオブジェクト」かどうかをインターフェースで判定します。
+        // TryGetComponent: 相手が IChainExplodable を実装していれば true を返し、取得します。
+        // これにより、タグが "Enemy" でなくても（例: 設置ギミック等）、インターフェースさえあれば誘爆できるようになります。
+        if (other.TryGetComponent<IChainExplodable>(out var explodable))
         {
-            CreateRevengeBulletsAndDestroy();
+            // 出現直後（0.5秒間）は誘爆しない（スポーン時の事故防止）
+            if (Time.time < spawnTime + 0.5f) return;
+
+            // 画面外（上下左右）にいる場合は誘爆しない
+            // HUDの裏側などで誘爆しないようにX座標もチェックします
+            if (transform.position.y > visibleYLimit || transform.position.y < -visibleYLimit ||
+                transform.position.x > visibleXLimit || transform.position.x < -visibleXLimit)
+            {
+                return;
+            }
+
+            // 相手も誘爆可能なら、自分自身の誘爆処理を実行します。
+            // ※相手側の OnTriggerEnter2D も同時に呼ばれるため、相手も自分の処理で爆発します。
+            OnChainExplosion();
         }
     }
 
     /// <summary>
-    /// 誘爆（敵同士の衝突）時の処理。全方位に弾をばら撒いて自滅します。
+    /// IChainExplodableの実装。誘爆時の処理を行います。
+    /// 全方位に弾をばら撒き、ボーナススコアを加算して自滅します。
     /// </summary>
-    private void CreateRevengeBulletsAndDestroy()
+    public void OnChainExplosion()
     {
+        // 既に処理中なら何もしない（多重衝突防止）
+        if (isSelfDestructing) return;
+        isSelfDestructing = true;
+
+        // 難易度レベルの取得
+        int difficultyLevel = Mathf.FloorToInt(GameManager.instance.timeElapsed / 90f);
+
+        // レベル上昇の上限を設定（HPカンスト等に合わせてLv30で打ち止め）
+        int cappedLevel = Mathf.Min(difficultyLevel, 30);
+
+        // レベルに応じて弾数と速度を強化
+        // 弾数: 8 -> 10 -> 12 ... (上限: 68発)
+        int bulletCount = 8 + (cappedLevel * 2);
+        // 速度: 10 -> 10.5 -> 11 ... (上限: 25f)
+        float bulletSpeed = 10f + (cappedLevel * 0.5f);
+
         // 8方向に弾を発射するループ
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < bulletCount; ++i)
         {
-            // 45度ずつ角度をずらします (0, 45, 90, ... 315)
-            float angle = 45f * i;
+            // 均等な角度で発射
+            float angle = (360f / bulletCount) * i;
             // 角度から回転情報を作成
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             //Debug.Log("Spawning bullet at angle: " + angle);
 
-            Instantiate(GameManager.instance.enemyBulletPrefab, transform.position, rotation);
+            GameObject bullet = Instantiate(GameManager.instance.enemyBulletPrefab, transform.position, rotation);
+
+            // 弾速の設定
+            var bc = bullet.GetComponent<EnemyBulletController>();
+            if (bc != null)
+            {
+                bc.speed = bulletSpeed;
+                // 誘爆弾も減速させて、回避の猶予を作る
+                // 初速は速く(bulletSpeed)、0.1秒後から減速し、最終的に4.0fになる
+                bc.useSpeedVariation = true;
+                bc.speedVariationDelay = 0.1f;
+                bc.minSpeed = 4.0f;
+            }
         }
         GameManager.instance?.PlayEnemyShootSound(); //効果音再生
 
-        GameManager.instance.AddScore(5); //相殺ボーナススコア
+        // 誘爆ボーナス: 本来のスコア + 250点 (2体で500点)
+        GameManager.instance.TriggerScoreEvent(scoreValue + 250, "CHAIN");
 
         // 死亡エフェクト生成
         if (deathEffectPrefab != null)

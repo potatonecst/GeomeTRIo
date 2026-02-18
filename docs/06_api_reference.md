@@ -33,7 +33,8 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
         *   `"STANDBY"`: ポーズ中またはゲーム開始前
         *   `"DESTROYED"`: ゲームオーバー
     *   `weaponStatus`:
-        *   `"LV.X ..."`: 通常（レベルと詳細）
+        *   `"[LV.X]..."`: 通常（レベルと詳細）。スペースを削除した短縮表記（例: `[LV.4]RPD1/PWR1/3WAY`）。
+        *   `"JAMMED"`: ジャミング状態（射撃不可）。
         *   `"CRITICAL ERROR"`: ゲームオーバー
 
 #### `void UpdateSetting(string key, string value)`

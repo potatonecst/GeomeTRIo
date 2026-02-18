@@ -730,9 +730,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.05023244
+    y: 0
     width: 1
-    height: 0.8995351
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -1821,10 +1821,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   enemyPrefab: {fileID: 2056807075952447789, guid: 8402286fda533480fb9a755a877a517c, type: 3}
   chaserEnemyPrefab: {fileID: 2056807075952447789, guid: 96e4358fded2c450cbf589301e2e7e1d, type: 3}
-  chaserSpawnStartTime: 20
-  minSpawnDistance: 1
+  jammerEnemyPrefab: {fileID: 3737766693792776777, guid: 18c099bdc2e03456abd2bccdbcf3f797, type: 3}
   spawnInterval: 2
-  chaserSpawnInterval: 5
+  xLimit: 3.2
+  spawnY: 6
+  spawnYBottom: -6
+  chaserSpawnStartTime: 20
+  formationChance: 0.3
 --- !u!4 &1517135909
 Transform:
   m_ObjectHideFlags: 0

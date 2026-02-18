@@ -46,6 +46,8 @@ public class VibrationManager : MonoBehaviour
         if (!SettingsManager.IsVibrationEnabled()) return;
 
         // ゲームパッドが接続されていない場合は何もしない
+        // Gamepad.current: 現在アクティブなゲームパッドを取得する Input System の静的プロパティ。
+        // 接続されていない場合は null になるため、必ずチェックが必要です。
         if (Gamepad.current == null) return;
 
         // 現在再生中の振動があり、かつ新しい振動の優先度が低い場合は、新しい振動を無視する
@@ -59,6 +61,8 @@ public class VibrationManager : MonoBehaviour
         if (currentCoroutine != null) StopCoroutine(currentCoroutine);
 
         // 振動適用
+        // SetMotorSpeeds(low, high): ゲームパッドのモーターを回転させます。
+        // low: 低周波（重い振動）、high: 高周波（軽い振動）。0.0〜1.0で強さを指定。
         Gamepad.current.SetMotorSpeeds(low, high);
 
         // 状態更新
@@ -82,6 +86,7 @@ public class VibrationManager : MonoBehaviour
         }
 
         // 全デバイスの振動をリセット（停止）する
+        // InputSystem.ResetHaptics(): 接続されている全てのデバイスの振動を強制停止します。
         InputSystem.ResetHaptics();
 
         vibrationEndTime = 0;
@@ -95,6 +100,8 @@ public class VibrationManager : MonoBehaviour
     private IEnumerator StopVibrationAfterTime(float duration)
     {
         // ポーズ中（Time.timeScale = 0）でも振動が止まるように、実時間（Realtime）を使用する
+        // WaitForSecondsRealtime: ゲーム内時間の停止（ポーズ）の影響を受けずに待機します。
+        // これを使わないと、振動中にポーズした際、振動が止まらなくなるバグが発生します。
         yield return new WaitForSecondsRealtime(duration);
 
         if (Gamepad.current != null)

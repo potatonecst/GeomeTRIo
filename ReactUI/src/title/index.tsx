@@ -240,7 +240,7 @@ const ConnectionSequence = ({ onComplete, appVersion }: { onComplete: () => void
     ];
 
     // 必要な高さを計算
-    // ヘッダー(約40px) + 上下パディング(約20px) + (行数 × 1行の高さ(約36px))
+    // ヘッダー + 上下パディング(約70px) + (行数 × 1行の高さ(約36px))
     // 少し余裕を持たせて計算します
     const targetHeight = 70 + (sequence.length * 40);
 
