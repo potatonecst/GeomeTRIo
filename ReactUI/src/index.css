@@ -75,3 +75,20 @@
   /* 回転の中心を要素の真ん中に固定 */
   transform-origin: center;
 }
+
+/* マーキー（横スクロール）アニメーション */
+@keyframes marquee {
+  0% {
+    translate: 0 0;
+  }
+
+  100% {
+    translate: -50% 0;
+  }
+}
+
+.animate-marquee {
+  animation-name: marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}

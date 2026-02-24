@@ -14,6 +14,8 @@ export const ScorePopup = () => {
 
     // 前回のイベント時刻を記録して、重複処理を防ぐ
     // Unity側はポーリングで同じ値を返し続けるため、時刻が変わった時だけ処理する必要があります。
+    // useRef: 再描画されても値を保持し続ける「箱」です。
+    // useStateと違い、書き換えても再描画が発生しないため、ロジック内部の管理用変数に適しています。
     const lastEventTimeRef = useRef(0);
     const nextIdRef = useRef(0);
 
@@ -24,6 +26,8 @@ export const ScorePopup = () => {
         }
 
         // 新しいイベントが発生したかチェック (タイムスタンプで比較)
+        // Unity側でイベント発生時に Time.unscaledTime を更新しているため、
+        // 前回記録した時刻よりも新しい時刻であれば「新規イベント」とみなします。
         if (status.scoreEventTime > lastEventTimeRef.current && status.scoreEventAmount > 0) {
             lastEventTimeRef.current = status.scoreEventTime;
 
@@ -42,6 +46,8 @@ export const ScorePopup = () => {
 
             // アニメーション開始 (フェードイン + 上昇)
             // requestAnimationFrameを使うことで、DOM追加の次のフレームでスタイルを変更し、CSS transitionを発火させます。
+            // Reactの状態更新は非同期ですが、requestAnimationFrameでラップすることで
+            // 「要素の描画」→「スタイルの変更（アニメーション開始）」の順序を確実にします。
             requestAnimationFrame(() => {
                 setPopups(prev => prev.map(p => p.id === id ? { ...p, opacity: 1, y: 0 } : p));
             });
@@ -63,7 +69,7 @@ export const ScorePopup = () => {
         // 画面右上（スコア表示の下あたり）に配置
         // HUDのサイドバー内(right-0)に重なるように配置
         // pointer-events-none: ゲームプレイの邪魔にならないようにクリック判定を無効化
-        <view className="absolute top-36 right-8 flex-col items-end pointer-events-none">
+        <view className="absolute top-44 right-8 flex-col items-end pointer-events-none">
             {popups.map(popup => (
                 <view
                     key={popup.id}
@@ -76,7 +82,7 @@ export const ScorePopup = () => {
                             {popup.label}
                         </text>
                     )}
-                    <text className="text-yellow-400 text-4xl font-bold" style={{ textShadow: '0 0 5px yellow', fontFamily: 'SourceHanCodeJP' }}>
+                    <text className="text-yellow-400 text-4xl" style={{ textShadow: '0 0 5px yellow', fontFamily: 'SourceHanCodeJP' }}>
                         +{popup.amount}
                     </text>
                 </view>

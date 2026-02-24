@@ -42,10 +42,10 @@ Destroy(gameObject);
 | **`Start` / `Awake`**  | 自分のHPを設定したり、プレイヤーの位置を取得したりする初期化処理。                                                                                                                            |
 | **`Update`**           | **移動処理の核心。** `transform.Translate` を使って下に移動させたり、追尾ロジックを実行します。また、「画面外に出たか？」をチェックし、出たら `Destroy` します。                              |
 | **`OnTriggerEnter2D`** | **衝突判定。** 「何かに当たった時」にUnityから自動的に呼ばれます。当たった相手 (`other`) のタグを確認し、弾ならダメージを受け、プレイヤーならダメージを与えます。                             |
-| **`TakeDamage`**       | `IDamageable` インターフェースの実装。HPを減らし、**ヒットフラッシュ（白点滅）**を開始します。HPバーの長さを更新し、左寄せになるよう位置を補正します。HPが0以下になったら死亡処理を行います。 |
-| **`Die`**              | 死亡処理。**グリッチエフェクト（ExplosionEffect）**を生成し、スコアを加算(`GameManager.AddScore`)した後、自分を `Destroy` します。                                                            |
+| **`TakeDamage`**       | `IDamageable` インターフェースの実装。HPを減らし、**ヒットフラッシュ（白点滅）**を開始します。**総与ダメージ統計 (`IncrementDamageDealt`) を加算**し、HPが0以下になったら死亡処理を行います。 |
+| **`Die`**              | 死亡処理。**グリッチエフェクト**を生成し、スコア加算イベント(`TriggerScoreEvent`)と**総撃破数加算 (`IncrementEnemiesDefeated`)** を行った後、自分を `Destroy` します。                        |
 | **`FlashWhite`**       | (コルーチン) ダメージを受けた瞬間にスプライトを一瞬だけ白くし、フィードバックを与えます。                                                                                                     |
-| **`Explode`**          | (誘爆ギミック用) 8方向に弾をばら撒く処理。                                                                                                                                                    |
+| **`OnChainExplosion`** | (誘爆ギミック用) **誘爆撃破数統計 (`IncrementChainKills`) を加算**し、8方向に弾をばら撒く処理。                                                                                               |
 
 ## 3. 発展：オブジェクトプーリング (Future Optimization)
 
@@ -108,9 +108,8 @@ private void OnTriggerEnter2D(Collider2D other)
     if (other.CompareTag("Enemy"))
     {
         // 誘爆処理：全方位弾を発射
-        Explode();
-        // 自分自身を破壊（プールに戻す）
-        Die();
+        OnChainExplosion();
+        // 自分自身を破壊（OnChainExplosion内でDestroyされる）
     }
 }
 ```

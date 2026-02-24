@@ -682,3 +682,52 @@ public class GameInterop
 ### メリット
 1.  **カプセル化:** そのクラス内部でしか使わない型を外部から隠すことができます。
 2.  **整理整頓:** 関連する型を物理的に近くに配置でき、プロジェクトのファイル数が増えるのを防げます。
+
+---
+
+## 25. Mathf (数学関数)
+
+Unityが提供する数学計算のための便利なクラスです。ゲームロジック（HP管理、難易度調整、移動制限など）で頻繁に使用されます。
+
+### よく使うメソッド
+*   **`Mathf.Max(a, b)`**: 大きい方の値を返します。「0未満にならないようにする（下限設定）」時によく使います。
+    *   例: `fireRate = Mathf.Max(0.5f, calculatedRate);` // 0.5秒より速くならないようにする
+*   **`Mathf.Min(a, b)`**: 小さい方の値を返します。「上限を超えないようにする」時によく使います。
+    *   例: `currentHP = Mathf.Min(maxHP, currentHP + heal);` // 回復しても最大HPを超えない
+*   **`Mathf.Clamp(value, min, max)`**: 値を指定した範囲内に収めます。
+    *   例: `pos.x = Mathf.Clamp(pos.x, -3.5f, 3.5f);` // 画面外に出ないように制限
+*   **`Mathf.FloorToInt(float)`**: 小数点以下を切り捨てて整数(`int`)にします。
+    *   例: `int level = Mathf.FloorToInt(time / 90f);` // 90秒ごとにレベルアップ
+*   **`Mathf.Approximately(a, b)`**: 2つの浮動小数点数(`float`)が「ほぼ等しいか」を判定します。`float` は計算誤差が出るため、`==` で比較するのは危険です。
+
+---
+
+## 26. VectorとQuaternion (座標と回転)
+
+Unityで「位置」や「回転」を扱うための基本的な構造体です。
+
+### Vector3 / Vector2 (ベクトル)
+位置、方向、速度などを表します。`x`, `y`, `z` の成分を持ちます。
+
+*   **`Vector3.zero`**: `(0, 0, 0)`。原点や停止状態を表します。
+*   **`Vector3.up` / `down` / `left` / `right`**: `(0, 1, 0)` などのショートカット。移動方向の指定に便利です。
+*   **`Normalize()`**: ベクトルの向きを変えずに、長さを「1」にします。斜め移動でも速度を一定にするために必須です。
+    *   例: `direction.Normalize();`
+*   **`Vector3.Distance(a, b)`**: 2点間の距離を返します。
+
+### Quaternion (クォータニオン / 四元数)
+回転を表す型です。内部構造は複雑（x, y, z, w）ですが、通常はヘルパー関数を使って操作します。
+
+*   **`Quaternion.identity`**: 「回転していない状態（0度）」を表します。`Instantiate` で生成する際によく使います。
+*   **`Quaternion.Euler(x, y, z)`**: オイラー角（度数法：0〜360度）から回転を作成します。直感的に回転を指定できます。
+    *   例: `Quaternion.Euler(0, 0, 90)` // Z軸（2Dの回転軸）を中心に90度回転
+
+### コード例
+```csharp
+// プレイヤーの方向に弾を撃つ
+Vector3 direction = player.position - transform.position;
+float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+Quaternion rotation = Quaternion.Euler(0, 0, angle);
+
+Instantiate(bulletPrefab, transform.position, rotation);
+```

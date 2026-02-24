@@ -3,12 +3,18 @@ using UnityEngine;
 /// <summary>
 /// プレイヤーが発射する弾を制御するクラス。
 /// </summary>
-public class BulletController : MonoBehaviour
+public class BulletController : MonoBehaviour, IProjectile
 {
     //弾の速さ
     public float bulletSpeed = 10f;
     //弾の攻撃力
     public int damage = 1;
+
+    // IProjectileの実装: ダメージ量を返す
+    public int Damage => damage;
+
+    // IProjectileの実装: プレイヤーの弾なので false
+    public bool IsEnemy => false;
 
     private Rigidbody2D rb;
 
@@ -32,6 +38,12 @@ public class BulletController : MonoBehaviour
         rb.linearVelocity = transform.up * bulletSpeed;
     }
 
+    // IProjectileの実装: ヒット時の処理（消滅）
+    public void OnHit()
+    {
+        Destroy(gameObject);
+    }
+
     /// <summary>
     /// 他のオブジェクト（トリガー）に接触した瞬間に呼び出されます。
     /// </summary>
@@ -46,11 +58,11 @@ public class BulletController : MonoBehaviour
             // IDamageableさえ持っていれば、共通の方法でダメージを与えられます（ポリモーフィズム）。
             if (other.TryGetComponent<IDamageable>(out var target))
             {
-                target.TakeDamage(damage);
+                target.TakeDamage(Damage);
             }
 
             //自分自身（弾）は破壊する
-            Destroy(gameObject);
+            OnHit();
         }
     }
 }

@@ -40,6 +40,8 @@ public class PulseExplosionController : MonoBehaviour
         if (currentRadius < maxRadius)
         {
             // 半径を時間経過で大きくします。
+            // Time.deltaTime: 前のフレームからの経過時間（秒）。
+            // これを掛けることで、フレームレートに関わらず一定の速度で変化させることができます。
             currentRadius += expansionSpeed * Time.deltaTime;
             // スケール（大きさ）を更新します。Z軸は2Dなので1fのままにします。
             transform.localScale = new Vector3(currentRadius, currentRadius, 1f);

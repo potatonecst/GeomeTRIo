@@ -109,6 +109,7 @@ private IEnumerator BurstFireCoroutine()
     *   `isWeaponJammed` フラグとコルーチン `WeaponJamCoroutine` で管理。
     *   `ApplyWeaponJam(duration)` メソッドで開始し、指定時間後に自動解除されます。
     *   HUDのWeaponステータスが `"JAMMED"` に書き換わります。
+    *   **解除:** スピンアタック（SPスキル）を発動すると、「システムオーバーライド」として強制的にジャミングが解除されます。
 
 ## 6. パワーアップとレベル管理 (Leveling System)
 

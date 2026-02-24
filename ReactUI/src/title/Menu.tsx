@@ -105,7 +105,8 @@ export const Menu = ({ onNavigate, onPlay, onBack, onExit, isExiting, initialInd
 
     return (
         <view
-            className="flex-col items-start w-full mb-10 pl-32 font-sans"
+            className="flex-col items-start w-full mb-10 pl-32 tracking-widest"
+            style={{ fontFamily: 'SourceHanCodeJP' }}
         >
             {/* menuItems配列をループして、各項目のViewを生成する */}
             {/* mapメソッド: 配列の要素を一つずつ取り出し、JSX（タグ）に変換して新しい配列を作ります。 */}

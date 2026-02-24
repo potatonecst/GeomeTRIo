@@ -31,6 +31,21 @@ public class GameData
     public List<ScoreRecord> stage1Scores = new List<ScoreRecord>();
     public List<ScoreRecord> scoreAttackScores = new List<ScoreRecord>();
 }
+
+[System.Serializable]
+public struct PlayerStats
+{
+    public float totalPlayTime;
+    public int totalEnemiesDefeated;
+    public int totalGamesPlayed;
+    public int totalDamageTaken;
+    public int totalDamageDealt;      // 追加
+    public int totalShotsFired;
+    public long totalScore;           // 追加 (long)
+    public int totalSpUsed;           // 追加
+    public int totalChainKills;       // 追加
+    public int itemsCollected;        // 追加
+}
 ```
 
 ### 保存処理 (JSON)

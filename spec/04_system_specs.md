@@ -69,6 +69,14 @@
     - `stats` (PlayerStats): プレイ統計
       - `totalPlayTime` (float): 総プレイ時間
       - `totalEnemiesDefeated` (int): 総撃破数
+      - `totalGamesPlayed` (int): 総プレイ回数
+      - `totalDamageTaken` (int): 総被ダメージ量
+      - `totalDamageDealt` (int): 総与ダメージ量
+      - `totalShotsFired` (int): 総発射弾数
+      - `totalScore` (long): 累計スコア
+      - `totalSpUsed` (int): SP使用回数
+      - `totalChainKills` (int): 誘爆撃破数
+      - `itemsCollected` (int): アイテム取得数
     - `stage1Scores` (List<ScoreRecord>): ステージ1のハイスコアリスト
     - `scoreAttackScores` (List<ScoreRecord>): スコアアタックのハイスコアリスト
   - **データ構造 (`ScoreRecord` 構造体):**

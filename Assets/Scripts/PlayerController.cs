@@ -430,6 +430,17 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// </summary>
     private IEnumerator SpinAttackCoroutine()
     {
+        // ジャミング状態なら強制解除する（システムオーバーライド）
+        // これにより「ジャミングされたらボムでカウンター」という戦略が可能になり、設定上の違和感も解消します。
+        // StopCoroutine: 実行中のコルーチン（ここではジャミングのタイマー）を途中で強制停止します。
+        // これをしないと、スピンアタックが終わった後にジャミング解除処理が走ってしまい、挙動がおかしくなる可能性があります。
+        if (isWeaponJammed)
+        {
+            isWeaponJammed = false;
+            if (jamCoroutine != null) StopCoroutine(jamCoroutine);
+            GameManager.instance?.SetSystemMessage("SYSTEM OVERRIDE: JAMMING CLEARED", 2.0f);
+        }
+
         ActivateInvincibility(spinAttackDuration); //無敵コルーチン開始
         isSpinning = true; //スピン状態
 
@@ -438,11 +449,16 @@ public class PlayerController : MonoBehaviour, IDamageable
         // 振動時間を攻撃の持続時間(spinAttackDuration)に合わせることで、回転中ずっと振動させます
         VibrationManager.instance?.Vibrate(0.4f, 0.6f, spinAttackDuration, 1.5f);
 
+        // 弾消しはループ内で継続的に行うため、ここでの単発呼び出しは削除
+
         float endTime = Time.time + spinAttackDuration;
         float nextFireTime = 0f;
 
         while (Time.time < endTime)
         {
+            // 継続的に弾を消す（安全地帯の確保）
+            ClearEnemyBullets();
+
             //プレイヤーを回転
             transform.Rotate(0, 0, spinSpeed * Time.deltaTime);
 
@@ -453,6 +469,9 @@ public class PlayerController : MonoBehaviour, IDamageable
                 if (weaponLevel >= 9) damage = 4;
                 else if (weaponLevel >= 6) damage = 3;
                 else if (weaponLevel >= 3) damage = 2;
+
+                // スピンアタック中はダメージを大幅強化（必殺技として敵を一掃できるようにする）
+                damage *= 10;
 
                 // Way数の計算 (通常射撃と同じ)
                 int sidePairCount = 0;
@@ -523,6 +542,21 @@ public class PlayerController : MonoBehaviour, IDamageable
     }
 
     /// <summary>
+    /// 画面内に存在する全ての「敵の弾」を消去します。
+    /// </summary>
+    private void ClearEnemyBullets()
+    {
+        // パフォーマンス改善: 毎フレーム呼ぶため、MonoBehaviour全検索ではなくEnemyBulletControllerを直接検索します。
+        var bullets = FindObjectsByType<EnemyBulletController>(FindObjectsSortMode.None);
+
+        foreach (var bullet in bullets)
+        {
+            // 弾を消滅させる
+            bullet.OnHit();
+        }
+    }
+
+    /// <summary>
     /// プレイヤーがダメージを受ける処理。
     /// HPの減少、無敵時間の開始、ゲームオーバー判定、強い振動の発生を行います。
     /// </summary>
@@ -559,6 +593,9 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// <param name="duration">効果時間（秒）</param>
     public void ApplyWeaponJam(float duration)
     {
+        // スピンアタック中（システムオーバーライド中）はジャミングを無効化
+        if (isSpinning) return;
+
         if (jamCoroutine != null) StopCoroutine(jamCoroutine);
         jamCoroutine = StartCoroutine(WeaponJamCoroutine(duration));
     }
@@ -578,6 +615,9 @@ public class PlayerController : MonoBehaviour, IDamageable
     /// </summary>
     public void AddExp(int amount)
     {
+        // 統計情報（アイテム取得数）を加算
+        // ?. (Null条件演算子): GameManagerが存在しない場合（テスト時など）のエラーを防ぎます。
+        GameManager.instance?.IncrementItemsCollected();
         if (weaponLevel >= MAX_LEVEL) return;
 
         currentExp += amount;

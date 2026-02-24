@@ -15,9 +15,14 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
     const data = JSON.parse(json);
     ```
 
+#### `string GetAppVersion()`
+*   **説明:** アプリケーションのバージョン（`Application.version`）を取得します。
+*   **戻り値:** バージョン番号の文字列（例: "0.3.0"）。
+
 #### `string GetSettings()`
 *   **説明:** 現在の設定値（音量、キー設定、統計情報など）を JSON 文字列として返します。
 *   **戻り値:** `SettingsData` 構造体をシリアライズした JSON 文字列。
+    *   統計情報フィールド: `total_play_time`, `total_enemies_defeated`, `total_games_played`, `total_damage_taken`, `total_damage_dealt`, `total_shots_fired`, `total_score`, `total_sp_used`, `total_chain_kills`, `items_collected`
 
 #### `string GetInGameStatus()`
 *   **説明:** ゲームプレイ中の動的なステータス（スコア、HP、SP、フラグなど）を JSON 文字列として返します。
@@ -36,6 +41,8 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
         *   `"[LV.X]..."`: 通常（レベルと詳細）。スペースを削除した短縮表記（例: `[LV.4]RPD1/PWR1/3WAY`）。
         *   `"JAMMED"`: ジャミング状態（射撃不可）。
         *   `"CRITICAL ERROR"`: ゲームオーバー
+    *   スコアイベント:
+        *   `scoreEventAmount`, `scoreEventLabel`, `scoreEventTime`: スコア獲得時のポップアップ表示用データ。
 
 #### `void UpdateSetting(string key, string value)`
 *   **説明:** 指定した設定項目の値を更新します（メモリ上のみ）。
@@ -46,6 +53,11 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
 #### `void SaveSettings()`
 *   **説明:** 現在の設定値をファイル（PlayerPrefsおよびGameData）に保存して永続化します。
 
+#### `bool ShouldSkipTitleSequence()`
+*   **説明:** タイトル画面の演出（Press Any Button等）をスキップすべきかどうかを確認します。
+*   **戻り値:** ゲームプレイから戻ってきた直後なら `true`、それ以外は `false`。
+*   **動作:** 一度 `true` を返すとフラグが消費され、次回は `false` を返します。
+
 #### `void StartGame(string stageName)`
 *   **説明:** 指定されたステージ（シーン）を読み込み、ゲームを開始します。
 *   **引数:**
@@ -53,6 +65,15 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
 *   **動作:**
     1.  現在のスコアをリセット。
     2.  `GameManager.LoadSceneWithTransition` を呼び出し、ローディング演出と暗転を伴う非同期遷移を開始。
+
+#### `void ResumeGame()`
+*   **説明:** ポーズ中のゲームを再開します。
+
+#### `void RestartGame()`
+*   **説明:** 現在のステージを最初からやり直します（リスタート）。
+
+#### `void ReturnToTitle()`
+*   **説明:** ゲームプレイを中断してタイトル画面に戻ります。
 
 #### `void StartGameLoop()`
 *   **説明:** ゲームのメインループを開始します。
@@ -64,6 +85,15 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
 *   **戻り値:** `Vector2` (x: width, y: height) をシリアライズした JSON 文字列。
     *   UI Toolkitのレイアウト計算が完了していない場合は `"{}"` (空のJSON) を返し、React側に待機を指示します。
 *   **用途:** React側の `AspectRatioWrapper` コンポーネントが、画面サイズに合わせてコンテンツをスケーリングするために使用します。
+
+#### `void PlaySound(string type)`
+*   **説明:** 指定したタイプの効果音を再生します。
+*   **引数:**
+    *   `type`: 音の種類 (`"move"`, `"submit"`, `"cancel"`).
+
+#### `void QuitGame()`
+*   **説明:** アプリケーションを終了します。
+*   **動作:** エディタ上では再生停止、ビルド済みアプリではプロセス終了。
 
 #### `void NotifyUIReady()`
 *   **説明:** React側のUI準備（レイアウト計算と描画）が完了したことをUnity側に通知します。

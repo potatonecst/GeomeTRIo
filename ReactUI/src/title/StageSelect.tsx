@@ -108,7 +108,7 @@ export const StageSelect = ({ onBack, onGameStart }: StageSelectProps) => {
     }, [selectedIndex, isExiting, isStarting, interop, onBack, onGameStart]);
 
     return (
-        <view className="flex-col w-full h-full p-12 text-white font-mono transition-opacity duration-300" style={{ opacity }}>
+        <view className="flex-col w-full h-full p-12 text-white transition-opacity duration-300" style={{ opacity, fontFamily: 'SourceHanCodeJP' }}>
             {/* Header: 画面上部の見出し */}
             <view className="flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full">
                 <GlitchText text="STAGE SELECT" className="text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" />

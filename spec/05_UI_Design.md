@@ -14,6 +14,7 @@ graph TD
     Menu -->|Ranking| Ranking[ランキング]
     Menu -->|Settings| Settings[設定]
     Menu -->|Exit Game| Exit[アプリ終了]
+    Settings -->|Licenses| LicenseMenu[ライセンス一覧]
     
     StageSelect -->|Back| Menu
     StageSelect -->|Select Stage| Loading[ローディング演出]
@@ -21,6 +22,7 @@ graph TD
     
     Ranking -->|Back| Menu
     Settings -->|Back| Menu
+    LicenseMenu -->|Back| Settings
 ```
 
 **「幾何学の防衛網を突破せよ」**
@@ -93,8 +95,11 @@ graph TD
         *   **GAMEPLAY**: 初期HP (1-10), 初期SP (0-10), Auto Fire (ON/OFF)。
         *   **AUDIO**: BGM Volume (0-100), SE Volume (0-100)。
         *   **SYSTEM**: Player Name, Vibration (ON/OFF), CRT Filter (ON/OFF)。
-        *   **STATS**: プレイ統計情報（総プレイ時間、撃破数、プレイ回数など）を閲覧。
+        *   **STATS**: プレイ統計情報（総プレイ時間、累計スコア、撃破数、SP使用回数、誘爆数、アイテム取得数、与ダメージなど）を閲覧。
+        *   **ABOUT**: バージョン情報、開発者名、ライセンス情報の閲覧。
         *   **RESET**: 全設定を初期値に戻す（統計情報は維持される）。
+    *   **スクロール**:
+        *   項目数が多く画面に収まらない場合、選択中の項目が常に表示範囲内（上から2番目付近）に来るように、リスト全体が自動的にスクロールする。
     *   **Player Name入力**:
         *   決定キーで編集モードに入り、上下キーで文字変更（ドラムロール）、左右キーでカーソル移動。
         *   使用可能文字: 英大文字、数字、記号 (`-`, `.`, `_`, `!`, `?`, `&`, `@`)。
@@ -102,6 +107,13 @@ graph TD
         *   カーソルは文字の上にある場合はその文字を削除（Delete挙動）、末尾にある場合は直前の文字を削除（Backspace挙動）する。
     *   **保存**: 画面から戻る際に一括で保存される。
     *   **視覚効果**: カテゴリ選択時にボタンが白く発光するフィードバックを行う。
+*   **LicenseMenu**:
+    *   使用しているサードパーティ製ソフトウェア（Unityパッケージ、npmパッケージ）のライセンス一覧を表示。
+    *   **レイアウト**: 左側にライブラリ名リスト、右側に選択したライブラリのライセンス本文を表示。
+    *   **スクロール**:
+        *   リスト: 項目数が多い場合、カーソル移動に合わせてスクロールする。
+        *   本文: 上下キーでスクロール可能。
+    *   **データソース**: ビルド時に生成されたJSONファイル (`unity-licenses.json`, `web-licenses.json`) を読み込む。
 *   **Exit Game**:
     *   アプリケーションを終了する。
     *   "SHUTTING DOWN..." のメッセージを表示し、フェードアウト後に終了処理を実行する。

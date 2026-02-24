@@ -39,6 +39,7 @@ public class GameInterop
     /// JsonUtilityでシリアライズするために使用します。
     /// [System.Serializable]: この属性をクラスや構造体につけることで、
     /// Unityのシリアライザ（Inspector表示やJsonUtilityなど）がそのデータを保存・読み込みできるようになります。
+    /// ここで定義したフィールド名（hp, sp, total_scoreなど）が、そのままJSONのキー名になります。
     /// </summary>
     [System.Serializable]
     private class SettingsData
@@ -50,12 +51,18 @@ public class GameInterop
         public int bgm_vol;
         public int se_vol;
         public bool vibration;
-        // 統計情報
+        // 統計情報 (Stats)
+        // ゲームプレイの記録を表示するために追加されたフィールド群です。
         public float total_play_time;
         public int total_enemies_defeated;
         public int total_games_played;
         public int total_damage_taken;
+        public int total_damage_dealt;
         public int total_shots_fired;
+        public long total_score;
+        public int total_sp_used;
+        public int total_chain_kills;
+        public int items_collected;
     }
 
     /// <summary>
@@ -106,6 +113,7 @@ public class GameInterop
     {
         // 統計情報はセーブデータ（GameData）に含まれているため、GameManagerから取得します。
         // GameManagerが存在しない場合（エディタでの単体テスト時など）は、空のデータを使用します。
+        // ? : (三項演算子): if-else文の短縮形です。「条件 ? 真の場合 : 偽の場合」と書きます。
         var stats = GameManager.instance != null ? GameManager.instance.Data.stats : new PlayerStats();
 
         var settings = new SettingsData
@@ -123,7 +131,12 @@ public class GameInterop
             total_enemies_defeated = stats.totalEnemiesDefeated,
             total_games_played = stats.totalGamesPlayed,
             total_damage_taken = stats.totalDamageTaken,
-            total_shots_fired = stats.totalShotsFired
+            total_damage_dealt = stats.totalDamageDealt,
+            total_shots_fired = stats.totalShotsFired,
+            total_score = stats.totalScore,
+            total_sp_used = stats.totalSpUsed,
+            total_chain_kills = stats.totalChainKills,
+            items_collected = stats.itemsCollected
         };
         // 設定データをJSON文字列に変換して返します。
         return JsonUtility.ToJson(settings);
@@ -217,12 +230,14 @@ public class GameInterop
         {
             // int.Parse(string): 文字列を整数(int)に変換します。変換できない場合は例外が発生します。
             // bool.Parse(string): 文字列("True"/"False")を真偽値(bool)に変換します。
+            // React側からは全ての値が文字列として送られてくるため、適切な型に変換して保存します。
             case "hp": SettingsManager.SetInitialHP(int.Parse(value)); break;
             case "sp": SettingsManager.SetInitialSP(int.Parse(value)); break;
             case "auto_fire": SettingsManager.SetAutofire(bool.Parse(value)); break;
             case "player_name": SettingsManager.SetPlayerName(value); break;
             case "bgm_vol":
                 SettingsManager.SetBGMVolume(int.Parse(value));
+                // 音量は即座に反映させて、プレビュー（操作音の大きさ変化など）ができるようにします。
                 GameManager.instance?.ApplyAudioSettings(); // 即時反映
                 break;
             case "se_vol":
@@ -530,6 +545,8 @@ public class ReactInputBridge : MonoBehaviour
         // ReactUnityのContextは非同期に生成されたり、リロードで再生成されたりするため、
         // Update内で監視して、未登録の状態であれば登録を行う「ポーリング」方式を採用しています。
         // これにより、初期化タイミングのズレやリロード時にも確実にオブジェクトを渡せます。
+        // Start() で一度だけ登録しようとすると、React側の準備がまだできておらず失敗することがあるため、
+        // 毎フレームチェックして「まだ登録されていなければ登録する」というアプローチをとっています。
 
         // Contextが有効で、かつGameInteropが未登録の場合に登録する
         if (_reactRenderer != null && _reactRenderer.Context != null)

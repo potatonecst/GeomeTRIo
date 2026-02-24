@@ -34,6 +34,8 @@ export const AspectRatioWrapper = ({ children, onReady }: { children: ReactNode,
                     const jsonStr = interop.GetScreenSize();
                     // Unity側のレイアウト準備ができていない場合（空のJSONが返る）は処理を中断して待機します
                     // これにより、一瞬大きく表示されてしまう現象（FOUC）を防ぎます
+                    // FOUC (Flash of Unstyled Content): スタイル適用前の崩れた画面が一瞬表示される現象。
+                    // ここでは「サイズ計算前の画面」が表示されるのを防いでいます。
                     if (jsonStr === "{}") return;
 
                     const size = JSON.parse(jsonStr);
@@ -58,6 +60,8 @@ export const AspectRatioWrapper = ({ children, onReady }: { children: ReactNode,
         };
 
         // ResizeObserverが使えない環境のため、windowリサイズイベントとポーリング（定期実行）で監視します
+        // setInterval: 指定時間ごとに処理を繰り返すタイマー。
+        // Unity側で画面サイズが変わった場合（ウィンドウサイズ変更など）に追従するために監視します。
         window.addEventListener('resize', updateLayout);
         const intervalId = setInterval(updateLayout, 500); // 0.5秒ごとにチェック
 

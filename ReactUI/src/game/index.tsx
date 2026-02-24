@@ -73,11 +73,11 @@ const GameOverPanel = () => {
         <view
             className="absolute inset-0 items-center justify-center bg-black bg-opacity-80 transition-opacity duration-500 pointer-events-auto"
         >
-            <view className="flex-col items-center p-12 border-4 border-red-600 bg-black w-[800px]">
-                <GlitchText text="GAME OVER" isAlert={true} className="text-8xl text-red-600 mb-4 font-bold tracking-widest" />
+            <view className="flex-col items-center p-12 border-4 border-red-600 bg-black w-[800px]" style={{ fontFamily: 'SourceHanCodeJP' }}>
+                <GlitchText text="GAME OVER" isAlert={true} className="text-8xl text-red-600 mb-4 tracking-widest whitespace-nowrap" style={{ fontFamily: 'SourceHanCodeJP' }} />
 
                 {status.isNewHighScore && (
-                    <GlitchText text="NEW HIGH SCORE!" isAlert={false} className="text-5xl text-yellow-400 mb-12 font-bold tracking-widest animate-pulse" />
+                    <GlitchText text="NEW HIGH SCORE!" isAlert={false} className="text-5xl text-yellow-400 mb-12 tracking-widest animate-pulse" style={{ fontFamily: 'SourceHanCodeJP' }} />
                 )}
 
                 {/* justify-between で両端に配置し、px-12 で内側に余白を持たせることで確実に間隔を空ける */}
@@ -163,8 +163,8 @@ const PausePanel = () => {
         <view
             className="absolute inset-0 items-center justify-center bg-black bg-opacity-80 transition-opacity duration-500 pointer-events-auto"
         >
-            <view className="flex-col items-center p-12 border-4 border-cyan-600 bg-black w-[800px]">
-                <GlitchText text="PAUSE" isAlert={false} className="text-8xl text-cyan-600 mb-12 font-bold tracking-widest" />
+            <view className="flex-col items-center p-12 border-4 border-cyan-600 bg-black w-[800px]" style={{ fontFamily: 'SourceHanCodeJP' }}>
+                <GlitchText text="PAUSE" isAlert={false} className="text-8xl text-cyan-600 mb-12 tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
 
                 <view className="flex-row w-full justify-between px-12 mt-8">
                     <view className="w-64">
@@ -227,6 +227,9 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
     const onCompleteRef = useRef(onComplete);
     const onProgressRef = useRef(onProgress);
 
+    // 親コンポーネントから渡された関数(onComplete, onProgress)が更新されたら、Refの中身も更新する。
+    // これにより、useEffect内のsetTimeout（非同期処理）が実行される時に、
+    // 常に「最新の関数」を呼び出せるようにします（Stale Closure問題の回避）。
     useEffect(() => {
         onCompleteRef.current = onComplete;
         onProgressRef.current = onProgress;
@@ -262,6 +265,8 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
         sequence.forEach(({ delay, action }, index) => {
             const t = setTimeout(() => {
                 // 指定時間になったら、その行を表示状態にする
+                // setVisibleLines(prev => ...): 関数形式で更新することで、
+                // 最新の状態(prev)を確実に受け取って更新します。
                 setVisibleLines(prev => {
                     const next = [...prev];
                     next[index] = true;
@@ -271,6 +276,8 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
                 // アクションが定義されていれば、親コンポーネントに通知してHUDを表示させる
                 if (action && onProgressRef.current) {
                     console.log(`[StageStartCutin] Action Triggered: ${action}`);
+                    // Ref経由で呼び出すことで、useEffectの依存配列に関数を含める必要がなくなり、
+                    // タイマーの再セット（リセット）を防ぎつつ最新の関数を実行できます。
                     onProgressRef.current(action);
                 }
             }, delay);
@@ -356,7 +363,7 @@ const StageStartCutin = ({ stageName, onComplete, onProgress }: { stageName: str
                         return (
                             <text
                                 key={i}
-                                className={`text-xl font-mono mb-1 tracking-wider transition-opacity duration-300 ${isHighlight ? 'text-yellow-400 font-bold' : 'text-cyan-400'} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                                className={`text-xl font-mono mb-1 tracking-wider transition-opacity duration-300 ${isHighlight ? 'text-yellow-400' : 'text-cyan-400'} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
                                 style={{
                                     fontFamily: 'SourceHanCodeJP',
                                 }}
@@ -459,6 +466,8 @@ const GameApp = () => {
     // カットイン演出の進行に合わせてHUDを表示する処理
     const handleCutinProgress = useCallback((action: CutinAction) => {
         console.log(`[GameApp] handleCutinProgress received: ${action}`);
+        // setHudState(prev => ...): スプレッド構文 (...prev) を使って、
+        // 既存のフラグ状態を維持したまま、特定のフラグだけを true に上書きします。
         if (action === 'show_frame') {
             setHudState(prev => ({ ...prev, frame: true, labels: true }));
         } else if (action === 'show_engine') {
@@ -491,7 +500,7 @@ const GameApp = () => {
                 {isLoading && (
                     <view className="absolute inset-0 items-center justify-center bg-black bg-opacity-80 pointer-events-none" style={{ zIndex: 9998 }}>
                         <view className="flex-row items-center">
-                            <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" />
+                            <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
                             <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
                         </view>
                     </view>

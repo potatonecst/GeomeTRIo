@@ -22,6 +22,8 @@ type GameData = {
 };
 
 // フィルタリング条件の状態管理用型
+// 'ANY' は「条件なし（すべて表示）」を表す特別な値です。
+// TypeScriptのユニオン型を使うことで、数値/真偽値と文字列('ANY')を安全に混在させています。
 type FilterState = {
     hp: number | 'ANY';
     sp: number | 'ANY';
@@ -293,7 +295,7 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
     };
 
     return (
-        <view className="flex-col w-full h-full p-12 text-white font-mono transition-opacity duration-300" style={{ opacity }}>
+        <view className="flex-col w-full h-full p-12 text-white transition-opacity duration-300" style={{ opacity, fontFamily: 'SourceHanCodeJP' }}>
             {/* Header Area: 全幅の見出しとステータス表示 */}
             <view className="flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full">
                 <GlitchText text="RANKING" className="text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" />
@@ -325,7 +327,11 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
                 <view className="w-3/4 pl-8 flex-col h-full">
                     {/* Filter Area */}
                     <view className={`mb-8 p-2 bg-black border border-cyan-900 flex-shrink-0 ${focusArea === 'filter' ? 'shadow-[0_0_15px_rgba(0,255,255,0.3)]' : 'opacity-70'}`}>
-                        <text className="text-4xl text-cyan-600 mb-2">&gt;&gt; FILTER CONFIG ----------------------- [ READY ]</text>
+                        <view className="flex-row justify-between items-center mb-2">
+                            <text className="text-4xl text-cyan-600">&gt;&gt; FILTER CONFIG</text>
+                            {/* 下のゲージ(中身10文字)に合わせて、左2+READY(5)+右3 = 10文字にする */}
+                            <text className="text-4xl text-cyan-600 tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>[ READY  ]</text>
+                        </view>
 
                         {FILTER_KEYS.map((key, idx) => {
                             const display = getFilterDisplay(key as 'hp' | 'sp' | 'auto');
@@ -333,7 +339,7 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
                             return (
                                 <view key={key} className="flex-row justify-between mb-0 items-center">
                                     <view className="flex-row text-3xl">
-                                        <text className={`w-48 ${isFocused ? 'text-cyan-400' : 'text-gray-500'}`}>{display.label} :</text>
+                                        <text className={`w-60 ${isFocused ? 'text-cyan-400' : 'text-gray-500'}`}>{display.label} :</text>
                                         <text className={`${isFocused ? 'text-white bg-cyan-900' : 'text-gray-400'}`}>{display.text}</text>
                                     </view>
                                     <text className="text-gray-600 text-3xl tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>{display.gauge}</text>
@@ -347,32 +353,37 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
                         {/* Header */}
                         <view className="flex-row justify-between px-2 mb-1 border-b border-gray-800 pb-1 items-end flex-shrink-0">
                             <view className="flex-row items-end">
-                                <text className="text-4xl text-cyan-600 w-36">RANK</text>
-                                <text className="text-4xl text-cyan-600 w-[30rem]">SCORE</text>
+                                <text className="text-3xl text-cyan-600 w-24">RANK</text>
+                                <text className="text-3xl text-cyan-600 w-96">SCORE</text>
                             </view>
-                            <view className="flex-row gap-4 items-end">
-                                <text className="text-4xl text-cyan-600" style={{ whiteSpace: 'nowrap' }}>SETTINGS</text>
-                                <text className="text-4xl text-cyan-600 w-80 text-right">DATE</text>
+                            <view className="flex-row gap-4 items-end flex-1 justify-end">
+                                <text className="text-3xl text-cyan-600 flex-1 text-right" style={{ whiteSpace: 'nowrap' }}>SETTINGS</text>
+                                <text className="text-3xl text-cyan-600 w-72 text-right">DATE</text>
                             </view>
                         </view>
 
                         {filteredScores.length === 0 ? (
-                            <text className="text-center text-gray-600 mt-10 text-4xl">NO RECORDS FOUND</text>
+                            <view className="flex-row justify-center items-center bg-gray-900 p-8 border-l-2 border-gray-700 mt-4">
+                                <text className="text-gray-400 text-4xl tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>NO RECORDS FOUND</text>
+                            </view>
                         ) : (
                             // FHD環境での表示崩れを防ぐため、最大5件までに制限して表示する
+                            // 本来はスクロール機能を実装すべきですが、レイアウトの簡素化と
+                            // 「トップランカーのみを表示する」というアーケードライクな仕様のため、
+                            // あえて上位5件のみに絞っています。
                             filteredScores.slice(0, 5).map((score, idx) => (
                                 <view key={idx} className="flex-row justify-between items-center bg-gray-900 p-2 border-l-2 border-gray-700">
                                     <view className="flex-row items-center">
                                         {/* 順位はフィルタ後のリストのインデックス + 1 で表示 */}
-                                        <text className="text-6xl font-bold text-cyan-500 w-36">{`${idx + 1}.`}</text>
+                                        <text className="text-5xl font-bold text-cyan-500 w-24">{`${idx + 1}.`}</text>
                                         {/* toLocaleString(): 数値をカンマ区切りの文字列（例: 1,000）に変換します */}
-                                        <text className="text-6xl text-white w-[30rem]">{score.score.toLocaleString()}</text>
+                                        <text className="text-5xl text-white w-96">{score.score.toLocaleString()}</text>
                                     </view>
-                                    <view className="flex-row items-center gap-4">
+                                    <view className="flex-row items-center gap-4 flex-1 justify-end">
                                         {/* 設定 */}
-                                        <text className="text-4xl text-gray-500">{`HP:${score.hp} SP:${score.sp} Auto:${score.autoFire ? 'ON' : 'OFF'}`}</text>
+                                        <text className="text-3xl text-gray-500 flex-1 text-right">{`HP:${score.hp} SP:${score.sp} Auto:${score.autoFire ? 'ON' : 'OFF'}`}</text>
                                         {/* 日付 */}
-                                        <text className="text-4xl text-gray-500 w-80 text-right">{score.date}</text>
+                                        <text className="text-3xl text-gray-500 w-72 text-right">{score.date}</text>
                                     </view>
                                 </view>
                             ))

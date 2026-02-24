@@ -3,10 +3,17 @@ using UnityEngine;
 /// <summary>
 /// 敵が発射する弾を制御するクラス。
 /// </summary>
-public class EnemyBulletController : MonoBehaviour
+public class EnemyBulletController : MonoBehaviour, IProjectile
 {
     [HideInInspector] public float speed = 20f; //敵同士の相殺時のデフォルト速度
     private Rigidbody2D rb;
+
+    // 攻撃力（デフォルト1）
+    public int damage = 1;
+    public int Damage => damage;
+
+    // IProjectileの実装: 敵の弾なので true
+    public bool IsEnemy => true;
 
     // 速度変化（減速）用の変数
     [HideInInspector] public bool useSpeedVariation = false;
@@ -84,6 +91,12 @@ public class EnemyBulletController : MonoBehaviour
         }
     }
 
+    // IProjectileの実装: ヒット時の処理（消滅）
+    public void OnHit()
+    {
+        Destroy(gameObject);
+    }
+
     /// <summary>
     /// プレイヤーに接触した際の処理。
     /// </summary>
@@ -93,10 +106,10 @@ public class EnemyBulletController : MonoBehaviour
         {
             if (other.TryGetComponent<IDamageable>(out var target))
             {
-                target.TakeDamage(1);
+                target.TakeDamage(Damage);
             }
 
-            Destroy(gameObject);
+            OnHit();
         }
     }
 }

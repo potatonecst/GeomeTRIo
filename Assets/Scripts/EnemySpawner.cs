@@ -105,6 +105,7 @@ public class EnemySpawner : MonoBehaviour
         if (difficultyTimer >= 90f)
         {
             difficultyTimer = 0;
+            // Mathf.Max: 引数の中で大きい方の値を返します。ここでは0.5fを下限として設定しています。
             // 難易度が上がったら出現頻度を少し上げる（最小0.5秒まで）
             spawnInterval = Mathf.Max(0.5f, spawnInterval * 0.95f);
 
@@ -147,6 +148,8 @@ public class EnemySpawner : MonoBehaviour
         reservedSpawnPositions.Clear();
 
         // ジャマー敵の出現判定
+        // Mathf.FloorToInt: 小数点以下を切り捨てて整数にします。
+        // 経過時間(timeElapsed)を90秒で割ることで、現在の難易度レベル(0, 1, 2...)を算出しています。
         int difficultyLevel = Mathf.FloorToInt(GameManager.instance.timeElapsed / 90f);
 
         // レベルに応じて出現率上昇: Lv1=10%, Lv2=15%, Lv3=20% ... Max 30%
@@ -273,6 +276,7 @@ public class EnemySpawner : MonoBehaviour
     {
         // 1. 物理演算でのチェック (既存の敵)
         // Physics2D.OverlapCircle: 指定した位置と半径の円内に、Colliderが存在するかを調べます。
+        // 戻り値は最初に見つかったコライダーです。何もなければnullを返します。
         // 半径0.6fに広げて余裕を持たせる
         Collider2D hit = Physics2D.OverlapCircle(position, 0.6f);
         // Enemyタグを持つものと重なっていたらNG
@@ -285,6 +289,7 @@ public class EnemySpawner : MonoBehaviour
         // まだPhysics2Dには反映されていないが、さっき生成したばかりの敵との距離を測ります。
         foreach (var reservedPos in reservedSpawnPositions)
         {
+            // Vector3.Distance: 2点間の距離を計算します。
             // 距離が1.2f未満なら近すぎると判断 (半径0.6f * 2)
             if (Vector3.Distance(position, reservedPos) < 1.2f)
             {
@@ -326,6 +331,8 @@ public class EnemySpawner : MonoBehaviour
 
     // 1. V字編隊 (The Wedge)
     // 誘爆を狙いやすい逆三角形の編隊
+    // IEnumerator: コルーチンとして動作させるための戻り値の型。
+    // コルーチンを使うことで、敵を一度に全員出すのではなく、少しずつ時間差で出現させる演出が可能になります。
     IEnumerator SpawnVFormation(bool fromBottom = false)
     {
         // 編隊IDを発行 (リーダー1 + 2列目2 + 3列目2 = 計5体)
@@ -364,6 +371,9 @@ public class EnemySpawner : MonoBehaviour
             leaderCtrl.formationId = formationId; // 編隊IDセット
         }
 
+        // yield return new WaitForSeconds(秒数):
+        // ここで処理を中断し、指定した時間が経過した後に再開します。
+        // これにより、リーダーが出現してから少し遅れて2列目が出現する、という動きを作れます。
         yield return new WaitForSeconds(0.2f);
 
         float xOffset = 1.2f;

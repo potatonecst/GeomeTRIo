@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 // [System.Serializable]: この属性をつけることで、Unityがこのクラスのデータを
 // ファイルに保存したり、Inspectorウィンドウで表示・編集したりできるようになります。
+// これがないと、JsonUtility.ToJson() を使っても中身が空っぽになってしまいます。
 [System.Serializable]
 public class GameData
 {
@@ -20,6 +21,7 @@ public class GameData
 }
 
 // プレイヤーの設定項目をまとめた構造体
+// struct (構造体): クラスと似ていますが、データそのものを保持する軽量な型です。
 [System.Serializable]
 public struct PlayerSettings
 {
@@ -37,6 +39,7 @@ public struct PlayerSettings
 }
 
 // プレイヤーの累積統計データ（プレイ時間や撃破数など）
+// ゲームプレイの積み重ねを記録するためのデータ構造です。
 [System.Serializable]
 public struct PlayerStats
 {
@@ -44,7 +47,15 @@ public struct PlayerStats
     public int totalEnemiesDefeated;  // 総撃破数
     public int totalGamesPlayed;      // 総プレイ回数（ステージ開始回数）
     public int totalDamageTaken;      // 総被ダメージ量
+    public int totalDamageDealt;      // 総与ダメージ量
     public int totalShotsFired;       // 総発射弾数
+    // long型: 64bit整数。最大値は約922京。
+    // int型(約21億)では、熱心なプレイヤーが累計スコアをカンストさせてしまう恐れがあるため、
+    // より大きな数値を扱えるlong型を採用しています。
+    public long totalScore;           // 累計スコア
+    public int totalSpUsed;           // SP使用回数
+    public int totalChainKills;       // 誘爆撃破数
+    public int itemsCollected;        // アイテム取得数
 }
 
 // スコアの記録データ

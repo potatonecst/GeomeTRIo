@@ -25,6 +25,7 @@ public class PulseMineController : MonoBehaviour
         StartCoroutine(DetonateSequence());
     }
 
+    // コルーチン: 時間経過で処理を行うためのメソッド
     IEnumerator DetonateSequence()
     {
         float timer = 0f;
@@ -49,6 +50,7 @@ public class PulseMineController : MonoBehaviour
             }
 
             // 指定時間待機してからループの先頭に戻ります。
+            // yield return: コルーチンの処理を一時停止し、Unityに制御を返します。
             yield return new WaitForSeconds(blinkInterval);
             timer += blinkInterval;
         }

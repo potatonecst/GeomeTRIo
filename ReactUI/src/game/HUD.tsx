@@ -67,7 +67,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                 style={{ width: 550 }}
             >
                 <view className={`flex-col items-end transition-opacity duration-500 ${hudState.labels ? 'opacity-100' : 'opacity-0'}`}>
-                    <text className="text-cyan-600 text-3xl tracking-widest mb-1">STAGE</text>
+                    <text className="text-cyan-600 text-3xl tracking-widest mb-1" style={{ fontFamily: 'SourceHanCodeJP' }}>STAGE</text>
                     {/* レイアウトシフト対策: 
                         中身が表示される前でも高さ(h-10)を確保しておくことで、
                         表示された瞬間に下の要素がガタッと動くのを防ぎます。 */}
@@ -82,7 +82,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                         )}
                     </view>
 
-                    <text className="text-cyan-600 text-3xl tracking-widest mb-1">TIME</text>
+                    <text className="text-cyan-600 text-3xl tracking-widest mb-1" style={{ fontFamily: 'SourceHanCodeJP' }}>TIME</text>
                     <view className="h-10 flex items-center justify-end mb-auto">
                         {hudState.telemetry ? (
                             <text className="text-white text-4xl tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>{formatTime(status.timeElapsed)}</text>
@@ -103,7 +103,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                 <view className={`flex-col transition-opacity duration-500 ${hudState.labels ? 'opacity-100' : 'opacity-0'}`}>
                     {/* SCORE AREA */}
                     <view className="mb-8">
-                        <text className="text-cyan-600 text-3xl tracking-widest mb-1 whitespace-nowrap">SCORE</text>
+                        <text className="text-cyan-600 text-3xl tracking-widest mb-1 whitespace-nowrap" style={{ fontFamily: 'SourceHanCodeJP' }}>SCORE</text>
                         {hudState.telemetry ? (
                             <text className="text-white text-7xl tracking-wider whitespace-nowrap" style={{ fontFamily: 'SourceHanCodeJP' }}>
                                 {Math.min(status.score, 9999999999).toString().padStart(10, '0')}
@@ -117,9 +117,9 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                     {/* HPが1以下の時、エリア全体を点滅させて危機感を煽る */}
                     <view className={`mb-6 ${status.hp <= 1 ? "animate-pulse" : ""}`}>
                         <view className="flex-row justify-between mb-1">
-                            <text className={`${status.hp <= 1 ? "text-red-500" : "text-cyan-600"} text-2xl tracking-widest`}>HP</text>
+                            <text className={`${status.hp <= 1 ? "text-red-500" : "text-cyan-600"} text-2xl tracking-widest`} style={{ fontFamily: 'SourceHanCodeJP' }}>HP</text>
                             {hudState.vital ? (
-                                <text className={`${status.hp <= 1 ? "text-red-500" : "text-white"} text-2xl`}>{status.hp} / {status.maxHp}</text>
+                                <text className={`${status.hp <= 1 ? "text-red-500" : "text-white"} text-2xl`} style={{ fontFamily: 'SourceHanCodeJP' }}>{status.hp} / {status.maxHp}</text>
                             ) : (
                                 <text className="text-gray-700 text-2xl">-- / --</text>
                             )}
@@ -130,9 +130,9 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
 
                     <view className="mb-8">
                         <view className="flex-row justify-between mb-1">
-                            <text className="text-cyan-600 text-2xl tracking-widest">SP CHARGE</text>
+                            <text className="text-cyan-600 text-2xl tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>SP CHARGE</text>
                             {hudState.weapon ? (
-                                <text className="text-white text-2xl">x {status.sp}</text>
+                                <text className="text-white text-2xl" style={{ fontFamily: 'SourceHanCodeJP' }}>x {status.sp}</text>
                             ) : (
                                 <text className="text-gray-700 text-2xl">x -</text>
                             )}
@@ -145,13 +145,13 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                         <view className="flex-row justify-between mb-1">
                             {hudState.weapon ? (
                                 <>
-                                    <text className="text-yellow-400 text-2xl tracking-widest">LV {status.level}</text>
-                                    <text className="text-white text-xl">EXP {status.currentExp} / {status.nextExp}</text>
+                                    <text className="text-yellow-400 text-2xl tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>LV {status.level}</text>
+                                    <text className="text-white text-xl" style={{ fontFamily: 'SourceHanCodeJP' }}>EXP {status.currentExp} / {status.nextExp}</text>
                                 </>
                             ) : (
                                 <>
-                                    <text className="text-gray-700 text-2xl tracking-widest">LV --</text>
-                                    <text className="text-gray-700 text-xl">EXP -- / --</text>
+                                    <text className="text-gray-700 text-2xl tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }}>LV --</text>
+                                    <text className="text-gray-700 text-xl" style={{ fontFamily: 'SourceHanCodeJP' }}>EXP -- / --</text>
                                 </>
                             )}
                         </view>
@@ -162,7 +162,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                 {/* STATUS MONITOR */}
                 {/* mt-auto: Flexboxの機能で、この要素を可能な限り下に押し下げます（フッター配置） */}
                 <view className={`flex-1 border-t-2 border-cyan-900 pt-4 mt-auto transition-opacity duration-500 ${hudState.labels ? 'opacity-100' : 'opacity-0'}`}>
-                    <text className="text-cyan-600 text-2xl tracking-widest mb-2">STATUS MONITOR</text>
+                    <text className="text-cyan-600 text-2xl tracking-widest mb-2" style={{ fontFamily: 'SourceHanCodeJP' }}>STATUS MONITOR</text>
 
                     {/* 常時表示ステータス (半透明) */}
                     <view className="flex-col gap-1 opacity-70">
@@ -170,7 +170,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                         <view className={`flex-row ${status.hp <= 1 ? "animate-pulse" : ""}`}>
                             <text className={`text-2xl ${status.hp <= 1 ? "text-red-500" : "text-cyan-600"}`} style={{ fontFamily: 'SourceHanCodeJP' }}>&gt; SYSTEM: </text>
                             {hudState.system ? (
-                                <text className={`text-2xl ml-2 ${status.hp <= 1 ? "text-red-500" : "text-green-500"}`} style={{ fontFamily: 'SourceHanCodeJP' }}>{status.systemStatus}</text>
+                                <text className={`text-2xl ml-2 tracking-widest ${status.hp <= 1 ? "text-red-500" : "text-green-500"}`} style={{ fontFamily: 'SourceHanCodeJP' }}>{status.systemStatus}</text>
                             ) : (
                                 <text className="text-gray-700 text-2xl ml-2" style={{ fontFamily: 'SourceHanCodeJP' }}>---</text>
                             )}
@@ -180,7 +180,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                         <view className={`flex-row ${status.engineStatus === 'DESTROYED' ? "animate-pulse" : ""}`}>
                             <text className={`text-2xl ${status.engineStatus === 'DESTROYED' ? "text-red-500" : "text-cyan-600"}`} style={{ fontFamily: 'SourceHanCodeJP' }}>&gt; ENGINE: </text>
                             {hudState.engine ? (
-                                <text className={`text-2xl ml-2 ${status.engineStatus === 'DESTROYED' ? "text-red-500" : "text-white"}`} style={{ fontFamily: 'SourceHanCodeJP' }}>{status.engineStatus}</text>
+                                <text className={`text-2xl ml-2 tracking-widest ${status.engineStatus === 'DESTROYED' ? "text-red-500" : "text-white"}`} style={{ fontFamily: 'SourceHanCodeJP' }}>{status.engineStatus}</text>
                             ) : (
                                 <text className="text-gray-700 text-2xl ml-2" style={{ fontFamily: 'SourceHanCodeJP' }}>---</text>
                             )}
@@ -190,7 +190,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
                         <view className={`flex-row ${status.weaponStatus === 'CRITICAL ERROR' || status.weaponStatus === 'JAMMED' ? "animate-pulse" : ""}`}>
                             <text className={`text-2xl ${status.weaponStatus === 'CRITICAL ERROR' ? "text-red-500" : status.weaponStatus === 'JAMMED' ? "text-purple-400" : "text-cyan-600"}`} style={{ fontFamily: 'SourceHanCodeJP' }}>&gt; WEAPON: </text>
                             {hudState.weapon ? (
-                                <text className={`text-2xl ml-2 ${status.weaponStatus === 'CRITICAL ERROR' ? "text-red-500" : status.weaponStatus === 'JAMMED' ? "text-purple-400" : "text-white"} whitespace-nowrap`} style={{ fontFamily: 'SourceHanCodeJP' }}>{status.weaponStatus}</text>
+                                <text className={`text-2xl ml-2 tracking-widest ${status.weaponStatus === 'CRITICAL ERROR' ? "text-red-500" : status.weaponStatus === 'JAMMED' ? "text-purple-400" : "text-white"} whitespace-nowrap`} style={{ fontFamily: 'SourceHanCodeJP' }}>{status.weaponStatus}</text>
                             ) : (
                                 <text className="text-gray-700 text-2xl ml-2" style={{ fontFamily: 'SourceHanCodeJP' }}>---</text>
                             )}
@@ -199,7 +199,7 @@ export const HUD = ({ hudState }: { hudState: HUDState }) => {
 
                     {/* 一時的なメッセージ (不透明・強調表示) */}
                     {status.systemMessage !== "" && (
-                        <text className="text-yellow-400 text-2xl animate-pulse mt-4 font-bold" style={{ fontFamily: 'SourceHanCodeJP' }}>&gt; {status.systemMessage}</text>
+                        <text className="text-yellow-400 text-2xl animate-pulse mt-4" style={{ fontFamily: 'SourceCodePro-Medium' }}>&gt; {status.systemMessage}</text>
                     )}
                 </view>
             </view>

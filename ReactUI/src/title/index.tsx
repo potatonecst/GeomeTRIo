@@ -152,10 +152,12 @@ const GeometricDebris = () => {
         const loop = () => {
             // setParticlesに関数を渡す書き方: 現在の状態(prev)を受け取り、新しい状態を返す関数を渡します。
             // setParticlesに関数を渡すことで、現在の状態(prev)をもとに新しい状態を計算する
+            // prev.map: 配列の全要素（パーティクル）に対して順番に処理を行い、新しい配列を作成します。
             setParticles(prev => prev.map(p => {
                 // 上にゆっくり昇る
                 let newY = p.y - p.speed;
-                if (newY < -5) newY = 105; // 画面上部に消えたら、画面下(105%)から再出現させてループさせる
+                // 画面上部(-5%)に消えたら、画面下(105%)から再出現させてループさせる
+                if (newY < -5) newY = 105;
 
                 // 回転させる
                 let newRotation = p.rotation + p.rotationSpeed;
@@ -196,22 +198,19 @@ const GeometricDebris = () => {
                             }}
                         />
                     ) : (
-                        // 三角形（自機のモチーフ）
-                        // SVGで描画に変更。回転時のちらつきを抑え、太さを調整可能にする
-                        // @ts-ignore
-                        <svg
-                            viewBox="0 0 100 100"
-                            style={{ width: '100%', height: '100%' }}
-                        >
+                        // 三角形（自機を模したパーティクル）
+                        // SVGがAmbiguousMatchExceptionを起こすため、画像で代用
+                        // Assets/Resources/Sprites/Triangle.png を用意してください
+                        <image
                             // @ts-ignore
-                            <polygon
-                                points="50,20 85,80 15,80"
-                                fill="none"
-                                stroke={p.color}
-                                strokeWidth="2" // ここで太さを調整（正方形は1px相当なので、より太く強調）
-                                strokeLinejoin="round" // 角を丸くして回転時のノイズを軽減
-                            />
-                        </svg>
+                            source="res:Sprites/Triangle"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain', // アスペクト比を維持して枠内に収める
+                                unityImageTintColor: p.color
+                            } as any}
+                        />
                     )}
                 </view>
             ))}
@@ -311,9 +310,9 @@ const ConnectionSequence = ({ onComplete, appVersion }: { onComplete: () => void
                     return (
                         <text
                             key={i}
-                            className={`text-2xl font-mono mb-1 transition-opacity duration-100 ${item.isAlert ? 'text-red-500 font-bold' : 'text-cyan-400'} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                            className={`text-2xl font-mono mb-1 transition-opacity duration-100 ${item.isAlert ? 'text-red-500' : 'text-cyan-400'} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
                             style={{
-                                fontFamily: 'SourceHanCodeJP', // フォント統一
+                                fontFamily: 'SourceHanCodeJP',
                                 textShadow: '0 0 5px currentColor',
                                 whiteSpace: 'nowrap',
                                 // 配列追加方式ではないので、flexShrinkは不要だが念のため
@@ -573,7 +572,7 @@ const TitleApp = () => {
                                         <text className="text-5xl text-white mr-6">▶</text>
 
                                         {/* テキスト: シアンで発光感 */}
-                                        <text className="text-5xl text-[#00ffff] font-bold tracking-widest" style={{ textShadow: '0 0 8px #00ffff', fontFamily: 'SourceHanCodeJP' }}>
+                                        <text className="text-5xl text-[#00ffff] tracking-widest" style={{ textShadow: '0 0 8px #00ffff', fontFamily: 'SourceHanCodeJP' }}>
                                             PRESS ANY BUTTON
                                         </text>
                                     </view>
@@ -601,7 +600,7 @@ const TitleApp = () => {
                             {/* 終了メッセージ */}
                             {connectionState === 'exiting' && (
                                 <view className="absolute transition-opacity duration-300" style={{ opacity: shutdownOpacity, top: '25%' }}>
-                                    <GlitchText text="SHUTTING DOWN..." isAlert={true} className="text-6xl text-red-500 whitespace-nowrap" />
+                                    <GlitchText text="SHUTTING DOWN..." isAlert={true} className="text-6xl text-red-500 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
                                 </view>
                             )}
                         </view>
@@ -632,7 +631,7 @@ const TitleApp = () => {
                 >
                     {isGameStarting && (
                         <view className="flex-row items-center">
-                            <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" />
+                            <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
                             <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
                         </view>
                     )}

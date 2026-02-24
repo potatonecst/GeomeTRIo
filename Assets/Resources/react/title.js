@@ -20,7 +20,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 (function() {
   "use strict";
   var __vite_style__ = document.createElement("style");
-  __vite_style__.textContent = "*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}/*\n! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n5. Use the user's configured `sans` font-feature-settings by default.\n6. Use the user's configured `sans` font-variation-settings by default.\n7. Disable tap highlights on iOS\n*/\n\nhtml,\n:host {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n  font-feature-settings: normal; /* 5 */\n  font-variation-settings: normal; /* 6 */\n  -webkit-tap-highlight-color: transparent; /* 7 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font-family by default.\n2. Use the user's configured `mono` font-feature-settings by default.\n3. Use the user's configured `mono` font-variation-settings by default.\n4. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-feature-settings: normal; /* 2 */\n  font-variation-settings: normal; /* 3 */\n  font-size: 1em; /* 4 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-feature-settings: inherit; /* 1 */\n  font-variation-settings: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  letter-spacing: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\ninput:where([type='button']),\ninput:where([type='reset']),\ninput:where([type='submit']) {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nReset default styling for dialogs.\n*/\ndialog {\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Make elements with the HTML hidden attribute stay hidden by default */\n[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.pointer-events-auto {\n  pointer-events: auto;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.inset-0 {\n  inset: 0px;\n}\n.bottom-0 {\n  bottom: 0px;\n}\n.bottom-4 {\n  bottom: 1rem;\n}\n.left-0 {\n  left: 0px;\n}\n.right-0 {\n  right: 0px;\n}\n.right-12 {\n  right: 3rem;\n}\n.right-4 {\n  right: 1rem;\n}\n.right-8 {\n  right: 2rem;\n}\n.top-0 {\n  top: 0px;\n}\n.top-36 {\n  top: 9rem;\n}\n.top-64 {\n  top: 16rem;\n}\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n.mb-0 {\n  margin-bottom: 0px;\n}\n.mb-1 {\n  margin-bottom: 0.25rem;\n}\n.mb-10 {\n  margin-bottom: 2.5rem;\n}\n.mb-12 {\n  margin-bottom: 3rem;\n}\n.mb-2 {\n  margin-bottom: 0.5rem;\n}\n.mb-4 {\n  margin-bottom: 1rem;\n}\n.mb-6 {\n  margin-bottom: 1.5rem;\n}\n.mb-8 {\n  margin-bottom: 2rem;\n}\n.mb-auto {\n  margin-bottom: auto;\n}\n.ml-2 {\n  margin-left: 0.5rem;\n}\n.ml-4 {\n  margin-left: 1rem;\n}\n.ml-6 {\n  margin-left: 1.5rem;\n}\n.mr-2 {\n  margin-right: 0.5rem;\n}\n.mr-4 {\n  margin-right: 1rem;\n}\n.mr-6 {\n  margin-right: 1.5rem;\n}\n.mr-8 {\n  margin-right: 2rem;\n}\n.mt-1 {\n  margin-top: 0.25rem;\n}\n.mt-10 {\n  margin-top: 2.5rem;\n}\n.mt-4 {\n  margin-top: 1rem;\n}\n.mt-8 {\n  margin-top: 2rem;\n}\n.mt-auto {\n  margin-top: auto;\n}\n.inline {\n  display: inline;\n}\n.flex {\n  display: flex;\n}\n.hidden {\n  display: none;\n}\n.h-10 {\n  height: 2.5rem;\n}\n.h-12 {\n  height: 3rem;\n}\n.h-20 {\n  height: 5rem;\n}\n.h-24 {\n  height: 6rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.h-5 {\n  height: 1.25rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-full {\n  height: 100%;\n}\n.w-0 {\n  width: 0px;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/3 {\n  width: 33.333333%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-12 {\n  width: 3rem;\n}\n.w-24 {\n  width: 6rem;\n}\n.w-3 {\n  width: 0.75rem;\n}\n.w-3\\/4 {\n  width: 75%;\n}\n.w-36 {\n  width: 9rem;\n}\n.w-4 {\n  width: 1rem;\n}\n.w-48 {\n  width: 12rem;\n}\n.w-64 {\n  width: 16rem;\n}\n.w-80 {\n  width: 20rem;\n}\n.w-\\[1px\\] {\n  width: 1px;\n}\n.w-\\[30rem\\] {\n  width: 30rem;\n}\n.w-\\[325px\\] {\n  width: 325px;\n}\n.w-\\[36rem\\] {\n  width: 36rem;\n}\n.w-\\[600px\\] {\n  width: 600px;\n}\n.w-\\[800px\\] {\n  width: 800px;\n}\n.w-auto {\n  width: auto;\n}\n.w-full {\n  width: 100%;\n}\n.flex-1 {\n  flex: 1 1 0%;\n}\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n.shrink-0 {\n  flex-shrink: 0;\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\n.animate-pulse {\n  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\n.resize {\n  resize: both;\n}\n.flex-row {\n  flex-direction: row;\n}\n.flex-col {\n  flex-direction: column;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-end {\n  align-items: flex-end;\n}\n.items-center {\n  align-items: center;\n}\n.items-baseline {\n  align-items: baseline;\n}\n.justify-start {\n  justify-content: flex-start;\n}\n.justify-end {\n  justify-content: flex-end;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.gap-1 {\n  gap: 0.25rem;\n}\n.gap-2 {\n  gap: 0.5rem;\n}\n.gap-4 {\n  gap: 1rem;\n}\n.overflow-hidden {\n  overflow: hidden;\n}\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.border {\n  border-width: 1px;\n}\n.border-2 {\n  border-width: 2px;\n}\n.border-4 {\n  border-width: 4px;\n}\n.border-8 {\n  border-width: 8px;\n}\n.border-b {\n  border-bottom-width: 1px;\n}\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n.border-l-2 {\n  border-left-width: 2px;\n}\n.border-l-4 {\n  border-left-width: 4px;\n}\n.border-r-2 {\n  border-right-width: 2px;\n}\n.border-t-2 {\n  border-top-width: 2px;\n}\n.border-\\[\\#00ffff\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(0 255 255 / var(--tw-border-opacity, 1));\n}\n.border-\\[\\#ff3333\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 51 51 / var(--tw-border-opacity, 1));\n}\n.border-cyan-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.border-cyan-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(8 145 178 / var(--tw-border-opacity, 1));\n}\n.border-cyan-900 {\n  --tw-border-opacity: 1;\n  border-color: rgb(22 78 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));\n}\n.border-gray-800 {\n  --tw-border-opacity: 1;\n  border-color: rgb(31 41 55 / var(--tw-border-opacity, 1));\n}\n.border-red-500 {\n  --tw-border-opacity: 1;\n  border-color: rgb(239 68 68 / var(--tw-border-opacity, 1));\n}\n.border-red-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(220 38 38 / var(--tw-border-opacity, 1));\n}\n.border-transparent {\n  border-color: transparent;\n}\n.border-white {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));\n}\n.border-t-cyan-400 {\n  --tw-border-opacity: 1;\n  border-top-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.bg-\\[\\#00ffff\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-\\[\\#ff3333\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 51 51 / var(--tw-bg-opacity, 1));\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(34 211 238 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(22 78 99 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-800 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));\n}\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-opacity-10 {\n  --tw-bg-opacity: 0.1;\n}\n.bg-opacity-100 {\n  --tw-bg-opacity: 1;\n}\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n.bg-opacity-80 {\n  --tw-bg-opacity: 0.8;\n}\n.p-1 {\n  padding: 0.25rem;\n}\n.p-12 {\n  padding: 3rem;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-6 {\n  padding: 1.5rem;\n}\n.px-1 {\n  padding-left: 0.25rem;\n  padding-right: 0.25rem;\n}\n.px-12 {\n  padding-left: 3rem;\n  padding-right: 3rem;\n}\n.px-16 {\n  padding-left: 4rem;\n  padding-right: 4rem;\n}\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n.pb-1 {\n  padding-bottom: 0.25rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pb-20 {\n  padding-bottom: 5rem;\n}\n.pl-2 {\n  padding-left: 0.5rem;\n}\n.pl-32 {\n  padding-left: 8rem;\n}\n.pl-5 {\n  padding-left: 1.25rem;\n}\n.pl-8 {\n  padding-left: 2rem;\n}\n.pr-3 {\n  padding-right: 0.75rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.pt-4 {\n  padding-top: 1rem;\n}\n.text-center {\n  text-align: center;\n}\n.text-right {\n  text-align: right;\n}\n.font-mono {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n.font-sans {\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n}\n.text-2xl {\n  font-size: 1.5rem;\n  line-height: 2rem;\n}\n.text-3xl {\n  font-size: 1.875rem;\n  line-height: 2.25rem;\n}\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\n.text-5xl {\n  font-size: 3rem;\n  line-height: 1;\n}\n.text-6xl {\n  font-size: 3.75rem;\n  line-height: 1;\n}\n.text-7xl {\n  font-size: 4.5rem;\n  line-height: 1;\n}\n.text-8xl {\n  font-size: 6rem;\n  line-height: 1;\n}\n.text-9xl {\n  font-size: 8rem;\n  line-height: 1;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.font-bold {\n  font-weight: 700;\n}\n.leading-none {\n  line-height: 1;\n}\n.leading-normal {\n  line-height: 1.5;\n}\n.tracking-tighter {\n  letter-spacing: -0.05em;\n}\n.tracking-wider {\n  letter-spacing: 0.05em;\n}\n.tracking-widest {\n  letter-spacing: 0.1em;\n}\n.text-\\[\\#00ffff\\] {\n  --tw-text-opacity: 1;\n  color: rgb(0 255 255 / var(--tw-text-opacity, 1));\n}\n.text-\\[\\#e2e8f0\\] {\n  --tw-text-opacity: 1;\n  color: rgb(226 232 240 / var(--tw-text-opacity, 1));\n}\n.text-black {\n  --tw-text-opacity: 1;\n  color: rgb(0 0 0 / var(--tw-text-opacity, 1));\n}\n.text-cyan-100 {\n  --tw-text-opacity: 1;\n  color: rgb(207 250 254 / var(--tw-text-opacity, 1));\n}\n.text-cyan-400 {\n  --tw-text-opacity: 1;\n  color: rgb(34 211 238 / var(--tw-text-opacity, 1));\n}\n.text-cyan-500 {\n  --tw-text-opacity: 1;\n  color: rgb(6 182 212 / var(--tw-text-opacity, 1));\n}\n.text-cyan-600 {\n  --tw-text-opacity: 1;\n  color: rgb(8 145 178 / var(--tw-text-opacity, 1));\n}\n.text-gray-300 {\n  --tw-text-opacity: 1;\n  color: rgb(209 213 219 / var(--tw-text-opacity, 1));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity, 1));\n}\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity, 1));\n}\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity, 1));\n}\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity, 1));\n}\n.text-green-500 {\n  --tw-text-opacity: 1;\n  color: rgb(34 197 94 / var(--tw-text-opacity, 1));\n}\n.text-purple-400 {\n  --tw-text-opacity: 1;\n  color: rgb(192 132 252 / var(--tw-text-opacity, 1));\n}\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity, 1));\n}\n.text-red-600 {\n  --tw-text-opacity: 1;\n  color: rgb(220 38 38 / var(--tw-text-opacity, 1));\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity, 1));\n}\n.text-yellow-400 {\n  --tw-text-opacity: 1;\n  color: rgb(250 204 21 / var(--tw-text-opacity, 1));\n}\n.opacity-0 {\n  opacity: 0;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-30 {\n  opacity: 0.3;\n}\n.opacity-50 {\n  opacity: 0.5;\n}\n.opacity-60 {\n  opacity: 0.6;\n}\n.opacity-70 {\n  opacity: 0.7;\n}\n.opacity-80 {\n  opacity: 0.8;\n}\n.shadow-\\[0_0_15px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 15px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.shadow-\\[0_0_20px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 20px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 20px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-all {\n  transition-property: all;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-colors {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-100 {\n  transition-duration: 100ms;\n}\n.duration-200 {\n  transition-duration: 200ms;\n}\n.duration-300 {\n  transition-duration: 300ms;\n}\n.duration-500 {\n  transition-duration: 500ms;\n}\n.duration-75 {\n  transition-duration: 75ms;\n}\n.ease-out {\n  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);\n}\n\n@font-face {\n  font-family: 'Melete-Bold';\n  src: url('res:Fonts/Melete-Bold');\n}\n\n@font-face {\n  font-family: 'Melete-Medium';\n  src: url('res:Fonts/Melete-Medium');\n}\n\n@font-face {\n  font-family: 'Melete-Regular';\n  src: url('res:Fonts/Melete-Regular');\n}\n\n@font-face {\n  font-family: 'Melete-Light';\n  src: url('res:Fonts/Melete-Light');\n}\n\n@font-face {\n  font-family: 'Melete-UltraLight';\n  src: url('res:Fonts/Melete-UltraLight');\n}\n\n@font-face {\n  font-family: 'SourceHanCodeJP';\n  src: url('res:Fonts/SourceHanCodeJP');\n}\n\n/* コントローラーアイコン用フォント */\n@font-face {\n  font-family: 'kenney_input_keyboard_&_mouse';\n  src: url('res:Fonts/kenney_input_keyboard_&_mouse');\n}\n\n@font-face {\n  font-family: 'kenney_input_nintendo_switch_2';\n  src: url('res:Fonts/kenney_input_nintendo_switch_2');\n}\n\n@font-face {\n  font-family: 'kenney_input_playstation_series';\n  src: url('res:Fonts/kenney_input_playstation_series');\n}\n\n:root {\n  font-family: sans-serif;\n  font-size: 16px;\n}\n\n/* 回転のアニメーション定義 */\n@keyframes custom-spin {\n  from {\n    /* ReactUnityでは rotate 単体プロパティが安定します */\n    /* transform: rotate(...) よりも処理負荷が軽く、ReactUnityでの動作が安定しているため採用 */\n    rotate: 0deg;\n  }\n\n  to {\n    rotate: 360deg;\n  }\n}\n\n.custom-spin {\n  animation-name: custom-spin;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n\n  /* 回転の中心を要素の真ん中に固定 */\n  transform-origin: center;\n}/*$vite$:1*/";
+  __vite_style__.textContent = "*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}/*\n! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n5. Use the user's configured `sans` font-feature-settings by default.\n6. Use the user's configured `sans` font-variation-settings by default.\n7. Disable tap highlights on iOS\n*/\n\nhtml,\n:host {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n  font-feature-settings: normal; /* 5 */\n  font-variation-settings: normal; /* 6 */\n  -webkit-tap-highlight-color: transparent; /* 7 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font-family by default.\n2. Use the user's configured `mono` font-feature-settings by default.\n3. Use the user's configured `mono` font-variation-settings by default.\n4. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-feature-settings: normal; /* 2 */\n  font-variation-settings: normal; /* 3 */\n  font-size: 1em; /* 4 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-feature-settings: inherit; /* 1 */\n  font-variation-settings: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  letter-spacing: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\ninput:where([type='button']),\ninput:where([type='reset']),\ninput:where([type='submit']) {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nReset default styling for dialogs.\n*/\ndialog {\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Make elements with the HTML hidden attribute stay hidden by default */\n[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.pointer-events-auto {\n  pointer-events: auto;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.inset-0 {\n  inset: 0px;\n}\n.bottom-0 {\n  bottom: 0px;\n}\n.bottom-1 {\n  bottom: 0.25rem;\n}\n.bottom-4 {\n  bottom: 1rem;\n}\n.left-0 {\n  left: 0px;\n}\n.right-0 {\n  right: 0px;\n}\n.right-1 {\n  right: 0.25rem;\n}\n.right-12 {\n  right: 3rem;\n}\n.right-4 {\n  right: 1rem;\n}\n.right-8 {\n  right: 2rem;\n}\n.top-0 {\n  top: 0px;\n}\n.top-1 {\n  top: 0.25rem;\n}\n.top-44 {\n  top: 11rem;\n}\n.top-64 {\n  top: 16rem;\n}\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n.mb-0 {\n  margin-bottom: 0px;\n}\n.mb-1 {\n  margin-bottom: 0.25rem;\n}\n.mb-10 {\n  margin-bottom: 2.5rem;\n}\n.mb-12 {\n  margin-bottom: 3rem;\n}\n.mb-2 {\n  margin-bottom: 0.5rem;\n}\n.mb-4 {\n  margin-bottom: 1rem;\n}\n.mb-6 {\n  margin-bottom: 1.5rem;\n}\n.mb-8 {\n  margin-bottom: 2rem;\n}\n.mb-auto {\n  margin-bottom: auto;\n}\n.ml-2 {\n  margin-left: 0.5rem;\n}\n.ml-4 {\n  margin-left: 1rem;\n}\n.ml-6 {\n  margin-left: 1.5rem;\n}\n.mr-2 {\n  margin-right: 0.5rem;\n}\n.mr-4 {\n  margin-right: 1rem;\n}\n.mr-6 {\n  margin-right: 1.5rem;\n}\n.mr-8 {\n  margin-right: 2rem;\n}\n.mt-1 {\n  margin-top: 0.25rem;\n}\n.mt-2 {\n  margin-top: 0.5rem;\n}\n.mt-4 {\n  margin-top: 1rem;\n}\n.mt-8 {\n  margin-top: 2rem;\n}\n.mt-auto {\n  margin-top: auto;\n}\n.inline {\n  display: inline;\n}\n.flex {\n  display: flex;\n}\n.hidden {\n  display: none;\n}\n.h-10 {\n  height: 2.5rem;\n}\n.h-12 {\n  height: 3rem;\n}\n.h-20 {\n  height: 5rem;\n}\n.h-24 {\n  height: 6rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.h-5 {\n  height: 1.25rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-full {\n  height: 100%;\n}\n.w-0 {\n  width: 0px;\n}\n.w-1 {\n  width: 0.25rem;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/3 {\n  width: 33.333333%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-12 {\n  width: 3rem;\n}\n.w-24 {\n  width: 6rem;\n}\n.w-3 {\n  width: 0.75rem;\n}\n.w-3\\/4 {\n  width: 75%;\n}\n.w-4 {\n  width: 1rem;\n}\n.w-60 {\n  width: 15rem;\n}\n.w-64 {\n  width: 16rem;\n}\n.w-72 {\n  width: 18rem;\n}\n.w-80 {\n  width: 20rem;\n}\n.w-96 {\n  width: 24rem;\n}\n.w-\\[1px\\] {\n  width: 1px;\n}\n.w-\\[325px\\] {\n  width: 325px;\n}\n.w-\\[36rem\\] {\n  width: 36rem;\n}\n.w-\\[450px\\] {\n  width: 450px;\n}\n.w-\\[600px\\] {\n  width: 600px;\n}\n.w-\\[800px\\] {\n  width: 800px;\n}\n.w-auto {\n  width: auto;\n}\n.w-full {\n  width: 100%;\n}\n.flex-1 {\n  flex: 1 1 0%;\n}\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n.shrink-0 {\n  flex-shrink: 0;\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\n.animate-pulse {\n  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\n.resize {\n  resize: both;\n}\n.flex-row {\n  flex-direction: row;\n}\n.flex-col {\n  flex-direction: column;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-end {\n  align-items: flex-end;\n}\n.items-center {\n  align-items: center;\n}\n.items-baseline {\n  align-items: baseline;\n}\n.justify-start {\n  justify-content: flex-start;\n}\n.justify-end {\n  justify-content: flex-end;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.gap-1 {\n  gap: 0.25rem;\n}\n.gap-2 {\n  gap: 0.5rem;\n}\n.gap-4 {\n  gap: 1rem;\n}\n.overflow-hidden {\n  overflow: hidden;\n}\n.text-ellipsis {\n  text-overflow: ellipsis;\n}\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n.whitespace-pre-wrap {\n  white-space: pre-wrap;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.border {\n  border-width: 1px;\n}\n.border-2 {\n  border-width: 2px;\n}\n.border-4 {\n  border-width: 4px;\n}\n.border-8 {\n  border-width: 8px;\n}\n.border-b {\n  border-bottom-width: 1px;\n}\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n.border-l-2 {\n  border-left-width: 2px;\n}\n.border-l-4 {\n  border-left-width: 4px;\n}\n.border-r-2 {\n  border-right-width: 2px;\n}\n.border-t-2 {\n  border-top-width: 2px;\n}\n.border-\\[\\#00ffff\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(0 255 255 / var(--tw-border-opacity, 1));\n}\n.border-\\[\\#ff3333\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 51 51 / var(--tw-border-opacity, 1));\n}\n.border-cyan-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.border-cyan-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(8 145 178 / var(--tw-border-opacity, 1));\n}\n.border-cyan-900 {\n  --tw-border-opacity: 1;\n  border-color: rgb(22 78 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));\n}\n.border-gray-800 {\n  --tw-border-opacity: 1;\n  border-color: rgb(31 41 55 / var(--tw-border-opacity, 1));\n}\n.border-red-500 {\n  --tw-border-opacity: 1;\n  border-color: rgb(239 68 68 / var(--tw-border-opacity, 1));\n}\n.border-red-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(220 38 38 / var(--tw-border-opacity, 1));\n}\n.border-transparent {\n  border-color: transparent;\n}\n.border-white {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));\n}\n.border-t-cyan-400 {\n  --tw-border-opacity: 1;\n  border-top-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.bg-\\[\\#00ffff\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-\\[\\#ff3333\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 51 51 / var(--tw-bg-opacity, 1));\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(34 211 238 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(8 145 178 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(22 78 99 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-800 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));\n}\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-opacity-10 {\n  --tw-bg-opacity: 0.1;\n}\n.bg-opacity-100 {\n  --tw-bg-opacity: 1;\n}\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n.bg-opacity-80 {\n  --tw-bg-opacity: 0.8;\n}\n.p-1 {\n  padding: 0.25rem;\n}\n.p-12 {\n  padding: 3rem;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-6 {\n  padding: 1.5rem;\n}\n.p-8 {\n  padding: 2rem;\n}\n.px-1 {\n  padding-left: 0.25rem;\n  padding-right: 0.25rem;\n}\n.px-12 {\n  padding-left: 3rem;\n  padding-right: 3rem;\n}\n.px-16 {\n  padding-left: 4rem;\n  padding-right: 4rem;\n}\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n.pb-1 {\n  padding-bottom: 0.25rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pb-20 {\n  padding-bottom: 5rem;\n}\n.pl-2 {\n  padding-left: 0.5rem;\n}\n.pl-32 {\n  padding-left: 8rem;\n}\n.pl-5 {\n  padding-left: 1.25rem;\n}\n.pl-8 {\n  padding-left: 2rem;\n}\n.pr-3 {\n  padding-right: 0.75rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.pt-4 {\n  padding-top: 1rem;\n}\n.text-center {\n  text-align: center;\n}\n.text-right {\n  text-align: right;\n}\n.font-mono {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n.font-sans {\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n}\n.text-2xl {\n  font-size: 1.5rem;\n  line-height: 2rem;\n}\n.text-3xl {\n  font-size: 1.875rem;\n  line-height: 2.25rem;\n}\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\n.text-5xl {\n  font-size: 3rem;\n  line-height: 1;\n}\n.text-6xl {\n  font-size: 3.75rem;\n  line-height: 1;\n}\n.text-7xl {\n  font-size: 4.5rem;\n  line-height: 1;\n}\n.text-8xl {\n  font-size: 6rem;\n  line-height: 1;\n}\n.text-9xl {\n  font-size: 8rem;\n  line-height: 1;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.font-bold {\n  font-weight: 700;\n}\n.leading-none {\n  line-height: 1;\n}\n.leading-normal {\n  line-height: 1.5;\n}\n.tracking-tighter {\n  letter-spacing: -0.05em;\n}\n.tracking-wider {\n  letter-spacing: 0.05em;\n}\n.tracking-widest {\n  letter-spacing: 0.1em;\n}\n.text-\\[\\#00ffff\\] {\n  --tw-text-opacity: 1;\n  color: rgb(0 255 255 / var(--tw-text-opacity, 1));\n}\n.text-\\[\\#e2e8f0\\] {\n  --tw-text-opacity: 1;\n  color: rgb(226 232 240 / var(--tw-text-opacity, 1));\n}\n.text-black {\n  --tw-text-opacity: 1;\n  color: rgb(0 0 0 / var(--tw-text-opacity, 1));\n}\n.text-cyan-100 {\n  --tw-text-opacity: 1;\n  color: rgb(207 250 254 / var(--tw-text-opacity, 1));\n}\n.text-cyan-400 {\n  --tw-text-opacity: 1;\n  color: rgb(34 211 238 / var(--tw-text-opacity, 1));\n}\n.text-cyan-500 {\n  --tw-text-opacity: 1;\n  color: rgb(6 182 212 / var(--tw-text-opacity, 1));\n}\n.text-cyan-600 {\n  --tw-text-opacity: 1;\n  color: rgb(8 145 178 / var(--tw-text-opacity, 1));\n}\n.text-gray-300 {\n  --tw-text-opacity: 1;\n  color: rgb(209 213 219 / var(--tw-text-opacity, 1));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity, 1));\n}\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity, 1));\n}\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity, 1));\n}\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity, 1));\n}\n.text-green-500 {\n  --tw-text-opacity: 1;\n  color: rgb(34 197 94 / var(--tw-text-opacity, 1));\n}\n.text-purple-400 {\n  --tw-text-opacity: 1;\n  color: rgb(192 132 252 / var(--tw-text-opacity, 1));\n}\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity, 1));\n}\n.text-red-600 {\n  --tw-text-opacity: 1;\n  color: rgb(220 38 38 / var(--tw-text-opacity, 1));\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity, 1));\n}\n.text-yellow-400 {\n  --tw-text-opacity: 1;\n  color: rgb(250 204 21 / var(--tw-text-opacity, 1));\n}\n.opacity-0 {\n  opacity: 0;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-30 {\n  opacity: 0.3;\n}\n.opacity-50 {\n  opacity: 0.5;\n}\n.opacity-60 {\n  opacity: 0.6;\n}\n.opacity-70 {\n  opacity: 0.7;\n}\n.opacity-80 {\n  opacity: 0.8;\n}\n.shadow-\\[0_0_15px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 15px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.shadow-\\[0_0_20px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 20px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 20px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-all {\n  transition-property: all;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-colors {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-transform {\n  transition-property: transform;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-100 {\n  transition-duration: 100ms;\n}\n.duration-200 {\n  transition-duration: 200ms;\n}\n.duration-300 {\n  transition-duration: 300ms;\n}\n.duration-500 {\n  transition-duration: 500ms;\n}\n.duration-75 {\n  transition-duration: 75ms;\n}\n.ease-out {\n  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);\n}\n\n@font-face {\n  font-family: 'Melete-Bold';\n  src: url('res:Fonts/Melete-Bold');\n}\n\n@font-face {\n  font-family: 'Melete-Medium';\n  src: url('res:Fonts/Melete-Medium');\n}\n\n@font-face {\n  font-family: 'Melete-Regular';\n  src: url('res:Fonts/Melete-Regular');\n}\n\n@font-face {\n  font-family: 'Melete-Light';\n  src: url('res:Fonts/Melete-Light');\n}\n\n@font-face {\n  font-family: 'Melete-UltraLight';\n  src: url('res:Fonts/Melete-UltraLight');\n}\n\n@font-face {\n  font-family: 'SourceHanCodeJP';\n  src: url('res:Fonts/SourceHanCodeJP');\n}\n\n/* コントローラーアイコン用フォント */\n@font-face {\n  font-family: 'kenney_input_keyboard_&_mouse';\n  src: url('res:Fonts/kenney_input_keyboard_&_mouse');\n}\n\n@font-face {\n  font-family: 'kenney_input_nintendo_switch_2';\n  src: url('res:Fonts/kenney_input_nintendo_switch_2');\n}\n\n@font-face {\n  font-family: 'kenney_input_playstation_series';\n  src: url('res:Fonts/kenney_input_playstation_series');\n}\n\n:root {\n  font-family: sans-serif;\n  font-size: 16px;\n}\n\n/* 回転のアニメーション定義 */\n@keyframes custom-spin {\n  from {\n    /* ReactUnityでは rotate 単体プロパティが安定します */\n    /* transform: rotate(...) よりも処理負荷が軽く、ReactUnityでの動作が安定しているため採用 */\n    rotate: 0deg;\n  }\n\n  to {\n    rotate: 360deg;\n  }\n}\n\n.custom-spin {\n  animation-name: custom-spin;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n\n  /* 回転の中心を要素の真ん中に固定 */\n  transform-origin: center;\n}\n\n/* マーキー（横スクロール）アニメーション */\n@keyframes marquee {\n  0% {\n    translate: 0 0;\n  }\n\n  100% {\n    translate: -50% 0;\n  }\n}\n\n.animate-marquee {\n  animation-name: marquee;\n  animation-timing-function: linear;\n  animation-iteration-count: infinite;\n}/*$vite$:1*/";
   document.head.appendChild(__vite_style__);
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -9952,14 +9952,14 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
                 children: "▶"
               }
             ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
+            /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-1 h-full justify-center overflow-hidden relative", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
               "text",
               {
-                className: `text-3xl transition-colors duration-300 ${isPressed ? "text-black font-bold" : isSelected ? "text-white" : "text-[#e2e8f0]"}`,
-                style: { opacity: isSelected ? 1 : 0.6 },
+                className: `text-3xl transition-colors duration-300 whitespace-nowrap overflow-hidden text-ellipsis w-full ${isPressed ? "text-black font-bold" : isSelected ? "text-white" : "text-[#e2e8f0]"}`,
+                style: { opacity: isSelected ? 1 : 0.6, letterSpacing: 10 },
                 children: label
               }
-            )
+            ) })
           ] })
         ]
       }
@@ -10018,7 +10018,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
       "view",
       {
-        className: "flex-col items-start w-full mb-10 pl-32 font-sans",
+        className: "flex-col items-start w-full mb-10 pl-32 tracking-widest",
+        style: { fontFamily: "SourceHanCodeJP" },
         children: menuItems.map((item, index) => {
           const isSelected = index === selectedIndex;
           return /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -10178,7 +10179,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         };
       };
     }, [selectedIndex, isExiting, isStarting, interop, onBack, onGameStart]);
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white font-mono transition-opacity duration-300", style: { opacity }, children: [
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white transition-opacity duration-300", style: { opacity, fontFamily: "SourceHanCodeJP" }, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "STAGE SELECT", className: "text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600", children: "MISSION: INFILTRATION" })
@@ -10364,7 +10365,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       }
       return { label: "", text: "", gauge: "" };
     };
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white font-mono transition-opacity duration-300", style: { opacity }, children: [
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white transition-opacity duration-300", style: { opacity, fontFamily: "SourceHanCodeJP" }, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "RANKING", className: "text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600", children: "DATABASE: LOCAL_STORAGE" })
@@ -10387,13 +10388,16 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-3/4 pl-8 flex-col h-full", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: `mb-8 p-2 bg-black border border-cyan-900 flex-shrink-0 ${focusArea === "filter" ? "shadow-[0_0_15px_rgba(0,255,255,0.3)]" : "opacity-70"}`, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-cyan-600 mb-2", children: ">> FILTER CONFIG ----------------------- [ READY ]" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-center mb-2", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-cyan-600", children: ">> FILTER CONFIG" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-cyan-600 tracking-widest", style: { fontFamily: "SourceHanCodeJP" }, children: "[ READY  ]" })
+            ] }),
             FILTER_KEYS.map((key, idx) => {
               const display = getFilterDisplay(key);
               const isFocused = focusArea === "filter" && filterRowIndex === idx;
               return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between mb-0 items-center", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row text-3xl", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: `w-48 ${isFocused ? "text-cyan-400" : "text-gray-500"}`, children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: `w-60 ${isFocused ? "text-cyan-400" : "text-gray-500"}`, children: [
                     display.label,
                     " :"
                   ] }),
@@ -10406,24 +10410,27 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col gap-1 flex-1", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between px-2 mb-1 border-b border-gray-800 pb-1 items-end flex-shrink-0", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-end", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-cyan-600 w-36", children: "RANK" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-cyan-600 w-[30rem]", children: "SCORE" })
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600 w-24", children: "RANK" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600 w-96", children: "SCORE" })
               ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row gap-4 items-end", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-cyan-600", style: { whiteSpace: "nowrap" }, children: "SETTINGS" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-cyan-600 w-80 text-right", children: "DATE" })
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row gap-4 items-end flex-1 justify-end", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600 flex-1 text-right", style: { whiteSpace: "nowrap" }, children: "SETTINGS" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600 w-72 text-right", children: "DATE" })
               ] })
             ] }),
-            filteredScores.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-center text-gray-600 mt-10 text-4xl", children: "NO RECORDS FOUND" }) : (
+            filteredScores.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-row justify-center items-center bg-gray-900 p-8 border-l-2 border-gray-700 mt-4", children: /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-400 text-4xl tracking-widest", style: { fontFamily: "SourceHanCodeJP" }, children: "NO RECORDS FOUND" }) }) : (
               // FHD環境での表示崩れを防ぐため、最大5件までに制限して表示する
+              // 本来はスクロール機能を実装すべきですが、レイアウトの簡素化と
+              // 「トップランカーのみを表示する」というアーケードライクな仕様のため、
+              // あえて上位5件のみに絞っています。
               filteredScores.slice(0, 5).map((score, idx) => /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-center bg-gray-900 p-2 border-l-2 border-gray-700", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-6xl font-bold text-cyan-500 w-36", children: `${idx + 1}.` }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-6xl text-white w-[30rem]", children: score.score.toLocaleString() })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl font-bold text-cyan-500 w-24", children: `${idx + 1}.` }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl text-white w-96", children: score.score.toLocaleString() })
                 ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center gap-4", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-gray-500", children: `HP:${score.hp} SP:${score.sp} Auto:${score.autoFire ? "ON" : "OFF"}` }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl text-gray-500 w-80 text-right", children: score.date })
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center gap-4 flex-1 justify-end", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-gray-500 flex-1 text-right", children: `HP:${score.hp} SP:${score.sp} Auto:${score.autoFire ? "ON" : "OFF"}` }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-gray-500 w-72 text-right", children: score.date })
                 ] })
               ] }, idx))
             )
@@ -10432,7 +10439,272 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       ] })
     ] });
   };
-  const CATEGORIES = ["GAMEPLAY", "AUDIO", "SYSTEM", "STATS", "RESET"];
+  const unityLicenses = /* @__PURE__ */ JSON.parse(`[{"name":"React Unity","version":"0.21.2","licenses":"MIT","repository":"https://github.com/ReactUnity/core.git","publisher":"Gokhan Kurt","licenseText":"MIT License\\r\\n\\r\\nCopyright (c) 2020 Gökhan Kurt\\r\\n\\r\\nPermission is hereby granted, free of charge, to any person obtaining a copy\\r\\nof this software and associated documentation files (the \\"Software\\"), to deal\\r\\nin the Software without restriction, including without limitation the rights\\r\\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\\r\\ncopies of the Software, and to permit persons to whom the Software is\\r\\nfurnished to do so, subject to the following conditions:\\r\\n\\r\\nThe above copyright notice and this permission notice shall be included in all\\r\\ncopies or substantial portions of the Software.\\r\\n\\r\\nTHE SOFTWARE IS PROVIDED \\"AS IS\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\\r\\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\\r\\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\\r\\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\\r\\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\\r\\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\\r\\nSOFTWARE.\\r\\n"},{"name":"2D Animation","version":"12.0.3","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/2d.git","publisher":"Unity Technologies","licenseText":"com.unity.2d.animation copyright © 2023 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions."},{"name":"2D Aseprite Importer","version":"2.0.2","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/2d.git","publisher":"Unity Technologies","licenseText":"com.unity.2d.aseprite copyright © 2025 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"2D Common","version":"11.0.1","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/2d.git","publisher":"Unity Technologies","licenseText":"com.unity.2d.common copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions."},{"name":"2D PSD Importer","version":"11.0.2","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/2d.git","publisher":"Unity Technologies","licenseText":"com.unity.2d.psdimporter copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions."},{"name":"2D Sprite","version":"1.0.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.2d.sprite copyright © 2019 Unity Technologies\\n\\nLicensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License ).\\n\\nUnless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"2D SpriteShape","version":"12.0.2","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/2d.git","publisher":"Unity Technologies","licenseText":"com.unity.2d.spriteshape copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions."},{"name":"2D Tilemap Extras","version":"5.0.2","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/2d.git","publisher":"Unity Technologies","licenseText":"2D Tilemap Extras copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent\\nprojects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS\\nWITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and\\nconditions.\\n"},{"name":"2D Tilemap Editor","version":"1.0.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.2d.tilemap copyright © 2019 Unity Technologies ApS\\n\\nLicensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License ).\\n\\nUnless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Burst","version":"1.8.25","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/burst.git","publisher":"Unity Technologies","licenseText":"Burst copyright © 2022 Unity Technologies\\nSource code of the package is licensed under the Unity Companion License (see https://unity3d.com/legal/licenses/unity_companion_license); otherwise licensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License ).\\n\\nUnless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Unity Version Control","version":"2.9.3","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.cloud.collaborate.git","publisher":"Unity Technologies","licenseText":"Unity Version Control copyright © 2025 Unity Technologies\\n\\nLicensed under the Unity Package Distribution License (see https://unity.com/legal/licenses/unity-package-distribution-license).\\n\\nUnless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions."},{"name":"Collections","version":"2.5.7","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/dots.git","publisher":"Unity Technologies","licenseText":"com.unity.collections copyright © 2024 Unity Technologies\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Editor Coroutines","version":"1.0.1","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.editorcoroutines.git","publisher":"Unity Technologies","licenseText":"com.unity.core.editorcoroutines copyright © 2018 Unity Technologies ApS\\r\\n\\r\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License). \\r\\n\\r\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\r\\n"},{"name":"Custom NUnit","version":"2.0.5","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"Custom Nunit copyright © 2019 Unity Technologies\\n\\nLicensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License ).\\n\\nUnless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"JetBrains Rider Editor","version":"3.0.39","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.ide.rider.git","publisher":"Unity Technologies","licenseText":"JetBrains Rider Editor copyright © 2025 Unity Technologies\\n\\nMIT License\\n\\nCopyright (c) 2019 Unity Technologies Copyright (c) 2019 JetBrains s.r.o. All rights reserved.\\n\\nPermission is hereby granted, free of charge, to any person obtaining a copy\\nof this software and associated documentation files (the \\"Software\\"), to deal\\nin the Software without restriction, including without limitation the rights\\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\\ncopies of the Software, and to permit persons to whom the Software is\\nfurnished to do so, subject to the following conditions:\\n\\nThe above copyright notice and this permission notice shall be included in all\\ncopies or substantial portions of the Software.\\n\\nTHE SOFTWARE IS PROVIDED \\"AS IS\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\\nSOFTWARE.\\n"},{"name":"Visual Studio Editor","version":"2.0.27","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.ide.visualstudio.git","publisher":"Unity Technologies","licenseText":"Visual Studio Editor copyright © 2019 Unity Technologies\\nVisual Studio Editor copyright © 2019 Microsoft Corporation. All rights reserved.\\n\\nMIT License\\n\\nPermission is hereby granted, free of charge, to any person obtaining a copy\\nof this software and associated documentation files (the \\"Software\\"), to deal\\nin the Software without restriction, including without limitation the rights\\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\\ncopies of the Software, and to permit persons to whom the Software is\\nfurnished to do so, subject to the following conditions:\\n\\nThe above copyright notice and this permission notice shall be included in all\\ncopies or substantial portions of the Software.\\n\\nTHE SOFTWARE IS PROVIDED \\"AS IS\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\\nSOFTWARE.\\n"},{"name":"Input System","version":"1.14.2","licenses":"Unknown","repository":"https://github.com/Unity-Technologies/InputSystem.git","publisher":"Unity Technologies","licenseText":"com.unity.inputsystem copyright © 2024 Unity Technologies\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see [https://unity3d.com/legal/licenses/unity_companion_license](https://unity3d.com/legal/licenses/unity_companion_license)).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Mathematics","version":"1.3.2","licenses":"Unknown","repository":"https://github.com/Unity-Technologies/Unity.Mathematics.git","publisher":"Unity Technologies","licenseText":"com.unity.mathematics copyright © 2023 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions."},{"name":"Multiplayer Center","version":"1.0.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.multiplayer.center copyright © 2023 Unity Technologies\\n\\nLicensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License ).\\n\\nUnless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.”\\n\\n"},{"name":"Mono Cecil","version":"1.11.5","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.nuget.mono-cecil.git","publisher":"Unity Technologies","licenseText":"com.unity.nuget.mono-cecil copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Newtonsoft Json","version":"3.2.1","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.nuget.newtonsoft-json.git","publisher":"Unity Technologies","licenseText":"Nuget.Newtonsoft.Json copyright © 2022 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Scriptable Render Pipeline Core","version":"17.2.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.render-pipelines.core copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Universal Render Pipeline Config","version":"17.0.3","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.render-pipelines.universal-config copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Universal Render Pipeline","version":"17.2.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.render-pipelines.universal copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Unity Light Transport Library","version":"1.0.1","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.rendering.light-transport copyright © 2023 Unity Technologies\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Searcher","version":"4.9.3","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.searcher.git","publisher":"Unity Technologies","licenseText":"**Unity Companion Package License v1.0 (\\"_License_\\")**\\n\\ncom.unity.searcher copyright © 2019 Unity Technologies ApS\\n\\nUnity hereby grants to you a worldwide, non-exclusive, no-charge, and royalty-free copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute the software that is made available with this License (\\"**_Software_**\\"), subject to the following terms and conditions:\\n\\n1. *Unity Companion Use Only*. Exercise of the license granted herein is limited to exercise for the creation, use, and/or distribution of applications, software, or other content pursuant to a valid Unity development engine software license (\\"**_Engine License_**\\"). That means while use of the Software is not limited to use in the software licensed under the Engine License, the Software may not be used for any purpose other than the creation, use, and/or distribution of Engine License-dependent applications, software, or other content. No other exercise of the license granted herein is permitted.\\n\\n1. *No Modification of Engine License*. Neither this License nor any exercise of the license granted herein modifies the Engine License in any way.\\n\\n1. *Ownership & Grant Back to You*. \\n\\n    3.1. You own your content. In this License, \\"derivative works\\" means derivatives of the Software itself--works derived only from the Software by you under this License (for example, modifying the code of the Software itself to improve its efficacy); “derivative works” of the Software do not include, for example, games, apps, or content that you create using the Software. You keep all right, title, and interest to your own content.\\n\\n    3.2. Unity owns its content. While you keep all right, title, and interest to your own content per the above, as between Unity and you, Unity will own all right, title, and interest to all intellectual property rights (including patent, trademark, and copyright) in the Software and derivative works of the Software, and you hereby assign and agree to assign all such rights in those derivative works to Unity. \\n\\n    3.3. You have a license to those derivative works. Subject to this License, Unity grants to you the same worldwide, non-exclusive, no-charge, and royalty-free copyright license to derivative works of the Software you create as is granted to you for the Software under this License.\\n\\n1. *Trademarks*. You are not granted any right or license under this License to use any trademarks, service marks, trade names, products names, or branding of Unity or its affiliates (\\"**_Trademarks_**\\"). Descriptive uses of Trademarks are permitted; see, for example, Unity’s Branding Usage Guidelines at [https://unity3d.com/public-relations/brand](https://unity3d.com/public-relations/brand).\\n\\n1. *Notices & Third-Party Rights*. This License, including the copyright notice above, must be provided in all substantial portions of the Software and derivative works thereof (or, if that is impracticable, in any other location where such notices are customarily placed). Further, if the Software is accompanied by a Unity \\"third-party notices\\" or similar file, you acknowledge and agree that software identified in that file is governed by those separate license terms.\\n\\n1. *DISCLAIMER, LIMITATION OF LIABILITY*. THE SOFTWARE AND ANY DERIVATIVE WORKS THEREOF IS PROVIDED ON AN \\"AS IS\\" BASIS, AND IS PROVIDED WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND/OR NONINFRINGEMENT. IN NO EVENT SHALL ANY COPYRIGHT HOLDER OR AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES (WHETHER DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL, INCLUDING PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, LOSS OF USE, DATA, OR PROFITS, AND BUSINESS INTERRUPTION), OR OTHER LIABILITY WHATSOEVER, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM OR OUT OF, OR IN CONNECTION WITH, THE SOFTWARE OR ANY DERIVATIVE WORKS THEREOF OR THE USE OF OR OTHER DEALINGS IN SAME, EVEN WHERE ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\\n\\n1. *USE IS ACCEPTANCE and License Versions*. Your receipt and use of the Software constitutes your acceptance of this License and its terms and conditions. Software released by Unity under this License may be modified or updated and the License with it; upon any such modification or update, you will comply with the terms of the updated License for any use of any of the Software under the updated License. \\n\\n1. *Use in Compliance with Law and Termination*. Your exercise of the license granted herein will at all times be in compliance with applicable law and will not infringe any proprietary rights (including intellectual property rights); this License will terminate immediately on any breach by you of this License.\\n\\n1. *Severability*. If any provision of this License is held to be unenforceable or invalid, that provision will be enforced to the maximum extent possible and the other provisions will remain in full force and effect.\\n\\n1. *Governing Law and Venue*. This License is governed by and construed in accordance with the laws of Denmark, except for its conflict of laws rules; the United Nations Convention on Contracts for the International Sale of Goods will not apply. If you reside (or your principal place of business is) within the United States, you and Unity agree to submit to the personal and exclusive jurisdiction of and venue in the state and federal courts located in San Francisco County, California concerning any dispute arising out of this License (\\"**_Dispute_**\\"). If you reside (or your principal place of business is) outside the United States, you and Unity agree to submit to the personal and exclusive jurisdiction of and venue in the courts located in Copenhagen, Denmark concerning any Dispute."},{"name":"Shader Graph","version":"17.2.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"com.unity.shadergraph copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Performance testing API","version":"3.2.0","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.test-framework.performance.git","publisher":"Unity Technologies","licenseText":"com.unity.test-framework.performance copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Test Framework","version":"1.6.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"Test Framework copyright © 2024 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License). \\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Timeline","version":"1.8.10","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.timeline.git","publisher":"Unity Technologies","licenseText":"Timeline copyright © 2023 Unity Technologies\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Unity UI","version":"2.0.0","licenses":"Unknown","repository":"","publisher":"Unity Technologies","licenseText":"Unity UI Copyright © 2015-2020 Unity Technologies ApS (\\"**_Unity_**\\")\\n\\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\\n\\n_Unless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Vector Graphics","version":"2.0.0-preview.25","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.vectorgraphics.git","publisher":"Unity Technologies","licenseText":"com.unity.vectorgraphics copyright © 2020 Unity Technologies ApS\\n\\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\\n\\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions."},{"name":"Visual Scripting","version":"1.9.9","licenses":"Unknown","repository":"https://github.cds.internal.unity3d.com/unity/com.unity.visualscripting.git","publisher":"Unity Technologies","licenseText":"com.unity.visualscripting copyright © 2020 Unity Technologies\\n\\nLicensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License ).\\n\\nUnless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\\n"},{"name":"Melete","version":"0.200","licenses":"OFL-1.1","repository":"https://dotcolon.net/font/melete/","publisher":"DotColon","licenseText":"This Font Software is licensed under the SIL Open Font License, Version 1.1.\\r\\nThis license is copied below, and is also available with a FAQ at:\\r\\nhttp://scripts.sil.org/OFL\\r\\n\\r\\n\\r\\n-----------------------------------------------------------\\r\\nSIL OPEN FONT LICENSE Version 1.1 - 26 February 2007\\r\\n-----------------------------------------------------------\\r\\n\\r\\nPREAMBLE\\r\\nThe goals of the Open Font License (OFL) are to stimulate worldwide\\r\\ndevelopment of collaborative font projects, to support the font creation\\r\\nefforts of academic and linguistic communities, and to provide a free and\\r\\nopen framework in which fonts may be shared and improved in partnership\\r\\nwith others.\\r\\n\\r\\nThe OFL allows the licensed fonts to be used, studied, modified and\\r\\nredistributed freely as long as they are not sold by themselves. The\\r\\nfonts, including any derivative works, can be bundled, embedded, \\r\\nredistributed and/or sold with any software provided that any reserved\\r\\nnames are not used by derivative works. The fonts and derivatives,\\r\\nhowever, cannot be released under any other type of license. The\\r\\nrequirement for fonts to remain under this license does not apply\\r\\nto any document created using the fonts or their derivatives.\\r\\n\\r\\nDEFINITIONS\\r\\n\\"Font Software\\" refers to the set of files released by the Copyright\\r\\nHolder(s) under this license and clearly marked as such. This may\\r\\ninclude source files, build scripts and documentation.\\r\\n\\r\\n\\"Reserved Font Name\\" refers to any names specified as such after the\\r\\ncopyright statement(s).\\r\\n\\r\\n\\"Original Version\\" refers to the collection of Font Software components as\\r\\ndistributed by the Copyright Holder(s).\\r\\n\\r\\n\\"Modified Version\\" refers to any derivative made by adding to, deleting,\\r\\nor substituting -- in part or in whole -- any of the components of the\\r\\nOriginal Version, by changing formats or by porting the Font Software to a\\r\\nnew environment.\\r\\n\\r\\n\\"Author\\" refers to any designer, engineer, programmer, technical\\r\\nwriter or other person who contributed to the Font Software.\\r\\n\\r\\nPERMISSION & CONDITIONS\\r\\nPermission is hereby granted, free of charge, to any person obtaining\\r\\na copy of the Font Software, to use, study, copy, merge, embed, modify,\\r\\nredistribute, and sell modified and unmodified copies of the Font\\r\\nSoftware, subject to the following conditions:\\r\\n\\r\\n1) Neither the Font Software nor any of its individual components,\\r\\nin Original or Modified Versions, may be sold by itself.\\r\\n\\r\\n2) Original or Modified Versions of the Font Software may be bundled,\\r\\nredistributed and/or sold with any software, provided that each copy\\r\\ncontains the above copyright notice and this license. These can be\\r\\nincluded either as stand-alone text files, human-readable headers or\\r\\nin the appropriate machine-readable metadata fields within text or\\r\\nbinary files as long as those fields can be easily viewed by the user.\\r\\n\\r\\n3) No Modified Version of the Font Software may use the Reserved Font\\r\\nName(s) unless explicit written permission is granted by the corresponding\\r\\nCopyright Holder. This restriction only applies to the primary font name as\\r\\npresented to the users.\\r\\n\\r\\n4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font\\r\\nSoftware shall not be used to promote, endorse or advertise any\\r\\nModified Version, except to acknowledge the contribution(s) of the\\r\\nCopyright Holder(s) and the Author(s) or with their explicit written\\r\\npermission.\\r\\n\\r\\n5) The Font Software, modified or unmodified, in part or in whole,\\r\\nmust be distributed entirely under this license, and must not be\\r\\ndistributed under any other license. The requirement for fonts to\\r\\nremain under this license does not apply to any document created\\r\\nusing the Font Software.\\r\\n\\r\\nTERMINATION\\r\\nThis license becomes null and void if any of the above conditions are\\r\\nnot met.\\r\\n\\r\\nDISCLAIMER\\r\\nTHE FONT SOFTWARE IS PROVIDED \\"AS IS\\", WITHOUT WARRANTY OF ANY KIND,\\r\\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF\\r\\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT\\r\\nOF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE\\r\\nCOPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,\\r\\nINCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL\\r\\nDAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING\\r\\nFROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM\\r\\nOTHER DEALINGS IN THE FONT SOFTWARE.\\r\\n"},{"name":"Input Prompts","version":"1.4.1","licenses":"CC0 1.0 Universal","repository":"https://kenney.nl/assets/input-prompts","publisher":"Kenney","licenseText":"\\t\\r\\n\\r\\n\\tInput Prompts (1.4.1)\\r\\n\\r\\n\\tCreated/distributed by Kenney (www.kenney.nl)\\r\\n\\tCreation date: 22-11-2025\\r\\n\\r\\n\\t\\t\\t------------------------------\\r\\n\\r\\n\\tLicense: (Creative Commons Zero, CC0)\\r\\n\\thttp://creativecommons.org/publicdomain/zero/1.0/\\r\\n\\r\\n\\tYou can use this content for personal, educational, and commercial purposes.\\r\\n\\r\\n\\tSupport by crediting 'Kenney' or 'www.kenney.nl' (this is not a requirement)\\r\\n\\r\\n\\t\\t\\t------------------------------\\r\\n\\r\\n\\t• Website : www.kenney.nl\\r\\n\\t• Donate  : www.kenney.nl/donate\\r\\n\\r\\n\\t• Patreon : patreon.com/kenney\\r\\n\\t\\r\\n\\tFollow on social media for updates:\\r\\n\\r\\n\\t• Twitter:\\ttwitter.com/KenneyNL\\r\\n\\t• Instagram: \\tinstagram.com/kenney_nl\\r\\n\\t• Mastodon:\\tmastodon.gamedev.place/@kenney"},{"name":"Jint","version":"4.2.2","licenses":"BSD-2-Clause","repository":"https://github.com/sebastienros/jint","publisher":"Sebastien Ros","licenseText":"BSD 2-Clause License\\n\\nCopyright (c) 2013, Sebastien Ros\\nAll rights reserved..."}]`);
+  const webLicensesData = [
+    {
+      name: "@reactunity/renderer",
+      version: "0.21.0",
+      licenses: "MIT",
+      repository: "https://github.com/ReactUnity/renderer",
+      publisher: "Gokhan Kurt",
+      licenseText: 'MIT License\n\nCopyright (c) 2020 Gökhan Kurt\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n'
+    },
+    {
+      name: "react",
+      version: "19.2.3",
+      licenses: "MIT",
+      repository: "https://github.com/facebook/react",
+      publisher: "",
+      licenseText: 'MIT License\n\nCopyright (c) Meta Platforms, Inc. and affiliates.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n'
+    },
+    {
+      name: "react-dom",
+      version: "19.2.3",
+      licenses: "MIT",
+      repository: "https://github.com/facebook/react",
+      publisher: "",
+      licenseText: 'MIT License\n\nCopyright (c) Meta Platforms, Inc. and affiliates.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n'
+    }
+  ];
+  const webLicenses = Array.isArray(webLicensesData) ? webLicensesData : Object.entries(webLicensesData).map(([key, value]) => __spreadValues({
+    name: key
+  }, value));
+  const LicenseMenu = ({ onBack }) => {
+    var _a;
+    const globals = useGlobals();
+    const interop = globals.GameInterop;
+    const allLicenses = reactExports.useMemo(() => {
+      return [...unityLicenses, ...webLicenses].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+    }, []);
+    const [selectedIndex, setSelectedIndex] = reactExports.useState(0);
+    const [focusArea, setFocusArea] = reactExports.useState("list");
+    const [scrollPos, setScrollPos] = reactExports.useState(0);
+    const [opacity, setOpacity] = reactExports.useState(0);
+    const [isExiting, setIsExiting] = reactExports.useState(false);
+    const [isLoading, setIsLoading] = reactExports.useState(true);
+    const [contentHeight, setContentHeight] = reactExports.useState(0);
+    const [containerHeight, setContainerHeight] = reactExports.useState(0);
+    const [leftListHeight, setLeftListHeight] = reactExports.useState(0);
+    const containerRef = reactExports.useRef(null);
+    const textContentRef = reactExports.useRef(null);
+    const leftListRef = reactExports.useRef(null);
+    const currentLicense = allLicenses[selectedIndex];
+    const getHeight = (ref) => {
+      var _a2, _b, _c, _d, _e, _f;
+      if (!ref) return 0;
+      try {
+        if (((_a2 = ref.Layout) == null ? void 0 : _a2.height) > 0) return ref.Layout.height;
+        if (((_b = ref.layout) == null ? void 0 : _b.height) > 0) return ref.layout.height;
+        if (ref.scrollHeight > 0) return ref.scrollHeight;
+        if (ref.clientHeight > 0) return ref.clientHeight;
+        if (((_d = (_c = ref.Element) == null ? void 0 : _c.layout) == null ? void 0 : _d.height) > 0) return ref.Element.layout.height;
+        if (((_f = (_e = ref.RectTransform) == null ? void 0 : _e.rect) == null ? void 0 : _f.height) > 0) return ref.RectTransform.rect.height;
+      } catch (e) {
+      }
+      return 0;
+    };
+    reactExports.useEffect(() => {
+      setScrollPos(0);
+      setIsLoading(true);
+      setContentHeight(0);
+      setContainerHeight(0);
+      const startTime = Date.now();
+      const intervalId = setInterval(() => {
+        let cHeight = 0;
+        let vHeight = 0;
+        let lHeight = 0;
+        if (containerRef.current) {
+          vHeight = getHeight(containerRef.current);
+        }
+        if (textContentRef.current) {
+          cHeight = getHeight(textContentRef.current);
+        }
+        if (leftListRef.current) {
+          lHeight = getHeight(leftListRef.current);
+        }
+        if (cHeight > 0) setContentHeight(cHeight);
+        if (vHeight > 0) setContainerHeight(vHeight);
+        if (lHeight > 0) setLeftListHeight(lHeight);
+        if (cHeight > 0 && vHeight > 0) {
+          setIsLoading(false);
+          clearInterval(intervalId);
+        }
+        if (Date.now() - startTime > 2e3) {
+          clearInterval(intervalId);
+          setIsLoading(false);
+        }
+      }, 50);
+      return () => clearInterval(intervalId);
+    }, [currentLicense]);
+    reactExports.useEffect(() => {
+      if (isExiting) {
+        setOpacity(0);
+        const timer = setTimeout(onBack, 300);
+        return () => clearTimeout(timer);
+      } else {
+        const timer = setTimeout(() => setOpacity(1), 50);
+        return () => clearTimeout(timer);
+      }
+    }, [isExiting, onBack]);
+    reactExports.useEffect(() => {
+      window.onMenuInput = (event) => {
+        if (isExiting) return;
+        if (event === "cancel") {
+          interop == null ? void 0 : interop.PlaySound("cancel");
+          if (focusArea === "content") {
+            setFocusArea("list");
+          } else {
+            setIsExiting(true);
+          }
+          return;
+        }
+        if (focusArea === "list") {
+          if (event === "up") {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedIndex((prev) => (prev - 1 + allLicenses.length) % allLicenses.length);
+          }
+          if (event === "down") {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setSelectedIndex((prev) => (prev + 1) % allLicenses.length);
+          }
+          if (event === "right" || event === "submit") {
+            interop == null ? void 0 : interop.PlaySound("submit");
+            setFocusArea("content");
+          }
+        } else {
+          if (isLoading) return;
+          if (event === "up") {
+            setScrollPos((prev) => Math.max(0, prev - 50));
+          }
+          if (event === "down") {
+            setScrollPos((prev) => {
+              let cHeight = contentHeight || getHeight(textContentRef.current);
+              let vHeight = containerHeight || getHeight(containerRef.current);
+              if (cHeight <= 0) {
+                const text = (currentLicense == null ? void 0 : currentLicense.licenseText) || "";
+                const newLines = text.split("\n").length;
+                cHeight = newLines * 36 * 1.1;
+              }
+              if (vHeight <= 0) vHeight = 600;
+              const visibleHeight = vHeight;
+              if (cHeight <= visibleHeight) return 0;
+              const maxScroll = cHeight - visibleHeight;
+              return Math.min(maxScroll, prev + 50);
+            });
+          }
+          if (event === "left") {
+            interop == null ? void 0 : interop.PlaySound("cancel");
+            setFocusArea("list");
+          }
+        }
+      };
+      return () => {
+        window.onMenuInput = () => {
+        };
+      };
+    }, [focusArea, selectedIndex, allLicenses.length, isExiting, interop, contentHeight, containerHeight, isLoading]);
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white transition-opacity duration-300", style: { opacity, fontFamily: "SourceHanCodeJP" }, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "LICENSES", className: "text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600", children: "OPEN SOURCE SOFTWARE" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row w-full flex-1 overflow-hidden", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-[450px] border-r-2 border-cyan-900 pr-4 h-full flex-col flex-shrink-0", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl mb-6 text-cyan-400 font-bold tracking-widest", children: "LIBRARIES" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("view", { ref: leftListRef, className: "flex-col flex-1 overflow-hidden relative", children: /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-col", style: {
+            // アイテム高さ: h-24(96px) + mb-6(24px) = 120px
+            // スクロール位置の計算ロジック:
+            // 1. 基本位置: (selectedIndex - 2) * 120
+            //    選択中の項目がリストの「上から3番目」に来るようにスクロールさせます。
+            // 2. 上限設定: (allLicenses.length * 120) - (leftListHeight || 600)
+            //    リストの末尾が画面の下端より上にいかない（下に空白ができない）ように制限します。
+            // 3. 下限設定: Math.max(0, ...) でマイナス（上方向への行き過ぎ）を防ぎます。
+            transform: `translateY(${Math.max(0, Math.min((selectedIndex - 2) * 120, allLicenses.length * 120 - (leftListHeight || 600)))}px)`,
+            transition: "transform 0.2s ease-out"
+          }, children: allLicenses.map((l, idx) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            MenuButton,
+            {
+              label: l.name,
+              isSelected: idx === selectedIndex,
+              isPressed: false,
+              barClass: "w-full",
+              className: "h-24 mb-6 w-full flex-shrink-0",
+              style: { opacity: focusArea === "list" ? 1 : 0.5 }
+            },
+            idx
+          )) }) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: `flex-1 pl-8 flex-col h-full ${focusArea === "content" ? "opacity-100" : "opacity-70"}`, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl mb-2 text-cyan-400 font-bold tracking-widest", children: currentLicense == null ? void 0 : currentLicense.name }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row mb-6 text-gray-400 text-2xl", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: "mr-4", children: [
+              "VER: ",
+              (currentLicense == null ? void 0 : currentLicense.version) || "N/A"
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { children: [
+              "LICENSE: ",
+              currentLicense == null ? void 0 : currentLicense.licenses
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "view",
+            {
+              ref: containerRef,
+              className: "flex-1 bg-gray-900 border border-gray-700 overflow-hidden relative flex-col",
+              children: [
+                isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "absolute inset-0 bg-gray-900 items-center justify-center", style: { zIndex: 50 }, children: /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-2xl animate-pulse tracking-widest", children: "CALCULATING_LAYOUT..." }) }),
+                !isLoading && contentHeight > containerHeight && /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "absolute right-1 top-1 bottom-1 w-1 bg-gray-800", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "view",
+                  {
+                    className: "w-full bg-cyan-600",
+                    style: {
+                      // バーの高さ: (表示領域 / 全体の高さ) * 100%。
+                      // コンテンツが長いほどバーは短くなります。ただし、視認性を保つため最小10%を確保します。
+                      height: `${Math.max(10, containerHeight / contentHeight * 100)}%`,
+                      // バーの位置: (現在のスクロール量 / 全体の高さ) * 100%。
+                      // コンテンツのスクロール位置（割合）に合わせてバーを移動させます。
+                      top: `${scrollPos / contentHeight * 100}%`
+                    }
+                  }
+                ) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "view",
+                  {
+                    ref: textContentRef,
+                    style: {
+                      transform: `translateY(${scrollPos}px)`,
+                      transition: "transform 0.1s linear",
+                      flexDirection: "column",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      padding: 16,
+                      // p-4相当のパディング
+                      opacity: isLoading ? 0 : 1
+                    },
+                    children: /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-col", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "text",
+                      {
+                        className: "text-white text-2xl leading-normal whitespace-pre-wrap",
+                        style: { flexShrink: 0, alignSelf: "flex-start" },
+                        children: ((_a = currentLicense == null ? void 0 : currentLicense.licenseText) == null ? void 0 : _a.trim()) || "No license text available."
+                      }
+                    ) })
+                  }
+                )
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "mt-2 flex-row justify-end", children: focusArea === "content" ? /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-2xl animate-pulse mr-8", children: "[UP/DOWN] SCROLL" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-2xl animate-pulse", children: "[LEFT/ESC] BACK" })
+          ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-500 text-2xl", children: "[RIGHT/ENTER] VIEW DETAILS" }) })
+        ] })
+      ] })
+    ] });
+  };
+  const CATEGORIES = ["GAMEPLAY", "AUDIO", "SYSTEM", "STATS", "ABOUT", "RESET"];
   const CHAR_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._!?&@";
   const SETTINGS_MAP = {
     "GAMEPLAY": [
@@ -10452,9 +10724,19 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     "STATS": [
       { id: "total_games_played", label: "GAMES PLAYED", type: "stat", description: "Total number of games played." },
       { id: "total_play_time", label: "PLAY TIME", type: "stat", description: "Total time spent in game." },
+      { id: "total_score", label: "TOTAL SCORE", type: "stat", description: "Total score earned across all games." },
+      { id: "total_sp_used", label: "SP USED", type: "stat", description: "Total number of Spin Attacks activated." },
+      { id: "total_chain_kills", label: "CHAIN KILLS", type: "stat", description: "Total enemies defeated by chain explosions." },
+      { id: "items_collected", label: "ITEMS COLLECTED", type: "stat", description: "Total power-up items collected." },
       { id: "total_enemies_defeated", label: "ENEMIES DEFEATED", type: "stat", description: "Total number of enemies destroyed." },
       { id: "total_shots_fired", label: "SHOTS FIRED", type: "stat", description: "Total number of bullets fired." },
+      { id: "total_damage_dealt", label: "DAMAGE DEALT", type: "stat", description: "Total damage dealt to enemies." },
       { id: "total_damage_taken", label: "DAMAGE TAKEN", type: "stat", description: "Total damage received from enemies." }
+    ],
+    "ABOUT": [
+      { id: "app_version", label: "VERSION", type: "stat", description: "Current application version." },
+      { id: "developer", label: "DEVELOPER", type: "stat", description: "Developed by potatonecst." },
+      { id: "show_licenses", label: "LICENSES", type: "license", description: "View third-party software licenses." }
     ],
     "RESET": [
       { id: "reset_defaults", label: "RESET ALL", type: "button", description: "Restore all settings to default values." }
@@ -10471,6 +10753,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const [isCategoryPressed, setIsCategoryPressed] = reactExports.useState(false);
     const [isEditingName, setIsEditingName] = reactExports.useState(false);
     const [editCursor, setEditCursor] = reactExports.useState(0);
+    const [showLicenseMenu, setShowLicenseMenu] = reactExports.useState(false);
     const [values, setValues] = reactExports.useState({
       "hp": 3,
       "sp": 3,
@@ -10481,16 +10764,25 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       "vibration": true,
       "total_games_played": 0,
       "total_play_time": 0,
+      "total_score": 0,
+      "total_sp_used": 0,
+      "total_chain_kills": 0,
+      "items_collected": 0,
       "total_enemies_defeated": 0,
       "total_shots_fired": 0,
-      "total_damage_taken": 0
+      "total_damage_dealt": 0,
+      "total_damage_taken": 0,
+      "app_version": "0.0.0",
+      "developer": "potatonecst"
     });
+    const [listHeight, setListHeight] = reactExports.useState(0);
+    const listRef = reactExports.useRef(null);
     reactExports.useEffect(() => {
       if (interop && typeof interop.GetSettings === "function") {
         try {
           const json = interop.GetSettings();
           const data = JSON.parse(json);
-          setValues(data);
+          setValues((prev) => __spreadValues(__spreadValues({}, prev), data));
         } catch (e) {
           console.error("Failed to parse settings:", e);
           setValues({
@@ -10501,6 +10793,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             "bgm_vol": 80,
             "se_vol": 100,
             "vibration": true,
+            "total_score": 0,
+            "total_sp_used": 0,
+            "total_chain_kills": 0,
+            "items_collected": 0,
+            "total_damage_dealt": 0,
             "total_games_played": 0,
             "total_play_time": 0,
             "total_enemies_defeated": 0,
@@ -10519,7 +10816,18 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           "vibration": true
         });
       }
+      if (interop && typeof interop.GetAppVersion === "function") {
+        const ver = interop.GetAppVersion();
+        setValues((prev) => __spreadProps(__spreadValues({}, prev), { "app_version": ver }));
+      }
     }, [interop]);
+    reactExports.useEffect(() => {
+      var _a;
+      if (listRef.current) {
+        const h = listRef.current.clientHeight || ((_a = listRef.current.layout) == null ? void 0 : _a.height) || 0;
+        if (h > 0) setListHeight(h);
+      }
+    });
     reactExports.useEffect(() => {
       if (isExiting) {
         setOpacity(0);
@@ -10579,6 +10887,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           return prev;
         } else if (itemDef.type === "stat") {
           return prev;
+        } else if (itemDef.type === "license") {
+          return prev;
         }
         if (nextVal === currentVal) return prev;
         interop == null ? void 0 : interop.PlaySound("move");
@@ -10587,6 +10897,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       });
     }, [currentItems, updateUnity, interop]);
     reactExports.useEffect(() => {
+      if (showLicenseMenu) return;
       window.onTextInput = (char) => {
         if (!isEditingName) return;
         const upperChar = char.toUpperCase();
@@ -10603,7 +10914,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       };
       window.onMenuInput = (event) => {
         if (isExiting) return;
-        const playerName = values["player_name"];
+        const playerName = values["player_name"] || "PLAYER";
         if (isEditingName) {
           if (event === "backspace") {
             if (editCursor >= playerName.length && playerName.length < 8) {
@@ -10718,9 +11029,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
               interop == null ? void 0 : interop.PlaySound("submit");
               setIsEditingName(true);
               setEditCursor(0);
-            } else if (item.type === "button") {
+            } else if (item.type === "button" || item.type === "license") {
               if (item.id === "reset_defaults") {
                 handleReset();
+              }
+              if (item.id === "show_licenses") {
+                interop == null ? void 0 : interop.PlaySound("submit");
+                setShowLicenseMenu(true);
               }
             }
           }
@@ -10732,7 +11047,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         window.onTextInput = () => {
         };
       };
-    }, [focusArea, selectedCategoryIndex, selectedItemIndex, currentItems, isExiting, interop, changeValue, isEditingName, editCursor, values, handleReset]);
+    }, [focusArea, selectedCategoryIndex, selectedItemIndex, currentItems, isExiting, interop, changeValue, isEditingName, editCursor, values, handleReset, showLicenseMenu]);
     const renderGauge = (value, max) => {
       const total = 10;
       const filled = Math.max(0, Math.min(total, Math.round(value / max * total)));
@@ -10751,7 +11066,15 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     } else {
       currentDescription = currentCategory === "STATS" ? "View play statistics." : `Configure ${currentCategory.toLowerCase()} settings.`;
     }
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white font-mono transition-opacity duration-300", style: { opacity }, children: [
+    const ITEM_HEIGHT = 112;
+    const visibleHeight = listHeight || 600;
+    const bottomPadding = 40;
+    const maxScroll = Math.max(0, currentItems.length * ITEM_HEIGHT + bottomPadding - visibleHeight);
+    const targetScroll = Math.max(0, Math.min((selectedItemIndex - 1) * ITEM_HEIGHT, maxScroll));
+    if (showLicenseMenu) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(LicenseMenu, { onBack: () => setShowLicenseMenu(false) });
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white transition-opacity duration-300", style: { opacity, fontFamily: "SourceHanCodeJP" }, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "SETTINGS", className: "text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600", children: "SYSTEM CONFIGURATION" })
@@ -10773,66 +11096,77 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           ))
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-3/4 pl-8 flex-col h-full", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl mb-6 text-cyan-400 font-bold tracking-widest", children: currentCategory === "STATS" ? "STATISTICS" : "CONFIGURATION" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `flex-col flex-1 ${focusArea === "item" ? "opacity-100" : "opacity-60"}`, children: currentItems.map((item, idx) => {
-            var _a;
-            const isSelected = idx === selectedItemIndex;
-            const val = values[item.id];
-            let displayValue = "";
-            let displayBar = "";
-            if (item.type === "slider") {
-              const gauge = renderGauge(val, (_a = item.max) != null ? _a : 100);
-              displayBar = gauge.bar;
-              displayValue = gauge.value;
-            } else if (item.type === "toggle") {
-              displayValue = val ? "ON" : "OFF";
-            } else if (item.type === "button") {
-              displayValue = "EXECUTE";
-            } else if (item.type === "stat") {
-              if (item.id === "total_play_time") {
-                displayValue = formatTime(val || 0);
-              } else {
-                displayValue = (val || 0).toLocaleString();
-              }
-            } else {
-              displayValue = val;
-            }
-            const renderNameInput = () => {
-              const strVal = val || "";
-              return /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-row", children: Array.from({ length: 8 }).map((_, i) => {
-                const char = strVal[i] || "_";
-                const isPlaceholder = i >= strVal.length;
-                const isCursor = isEditingName && isSelected && i === editCursor;
-                return /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "text",
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl mb-6 text-cyan-400 font-bold tracking-widest", children: currentCategory === "STATS" ? "STATISTICS" : currentCategory === "ABOUT" ? "SYSTEM INFORMATION" : "CONFIGURATION" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "view",
+            {
+              ref: listRef,
+              className: `flex-col flex-1 overflow-hidden relative ${focusArea === "item" ? "opacity-100" : "opacity-60"}`,
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-col w-full transition-transform duration-200 ease-out", style: { transform: `translateY(${targetScroll}px)` }, children: currentItems.map((item, idx) => {
+                var _a;
+                const isSelected = idx === selectedItemIndex;
+                const val = values[item.id];
+                let displayValue = "";
+                let displayBar = "";
+                if (item.type === "slider") {
+                  const gauge = renderGauge(val, (_a = item.max) != null ? _a : 100);
+                  displayBar = gauge.bar;
+                  displayValue = gauge.value;
+                } else if (item.type === "toggle") {
+                  displayValue = val ? "ON" : "OFF";
+                } else if (item.type === "button") {
+                  displayValue = "EXECUTE";
+                } else if (item.type === "license") {
+                  displayValue = "VIEW >";
+                } else if (item.type === "stat") {
+                  if (typeof val === "string") {
+                    displayValue = val;
+                  } else if (item.id === "total_play_time") {
+                    displayValue = formatTime(val || 0);
+                  } else {
+                    displayValue = (val || 0).toLocaleString();
+                  }
+                } else {
+                  displayValue = val;
+                }
+                const renderNameInput = () => {
+                  const strVal = val || "";
+                  return /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-row", children: Array.from({ length: 8 }).map((_, i) => {
+                    const char = strVal[i] || "_";
+                    const isPlaceholder = i >= strVal.length;
+                    const isCursor = isEditingName && isSelected && i === editCursor;
+                    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "text",
+                      {
+                        className: `font-mono w-12 text-center text-4xl ${isCursor ? "text-black bg-cyan-400" : isPlaceholder ? "text-gray-600" : "text-yellow-400"}`,
+                        style: { fontFamily: "SourceHanCodeJP" },
+                        children: char
+                      },
+                      i
+                    );
+                  }) });
+                };
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "view",
                   {
-                    className: `font-mono w-12 text-center text-4xl ${isCursor ? "text-black bg-cyan-400" : isPlaceholder ? "text-gray-600" : "text-yellow-400"}`,
-                    style: { fontFamily: "SourceHanCodeJP" },
-                    children: char
+                    className: `flex-row justify-between items-center pl-5 pr-3 mb-4 h-24 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === "item" ? "bg-gray-800 border-cyan-400" : "border-transparent"}`,
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `text-4xl ${isSelected && focusArea === "item" ? "text-white" : "text-gray-400"}`, children: item.label }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `mr-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" && item.type !== "license" ? "opacity-100" : "opacity-0"}`, children: "◀" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `flex-row items-center ${item.type === "slider" ? "w-[36rem] justify-end" : item.type === "stat" || item.type === "license" ? "w-80 justify-end" : "w-80 justify-center"}`, children: item.type === "text" ? renderNameInput() : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                          displayBar && /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-yellow-400 text-4xl", style: { fontFamily: "SourceHanCodeJP" }, children: displayBar }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `${item.type === "button" || item.type === "stat" || item.type === "license" ? "w-auto" : "w-24 text-right"} text-yellow-400 text-4xl`, style: { fontFamily: "SourceHanCodeJP" }, children: displayValue })
+                        ] }) }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `ml-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" && item.type !== "license" ? "opacity-100" : "opacity-0"}`, children: "▶" })
+                      ] })
+                    ]
                   },
-                  i
+                  item.id
                 );
-              }) });
-            };
-            return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "view",
-              {
-                className: `flex-row justify-between items-center py-4 pl-5 pr-3 mb-4 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === "item" ? "bg-gray-800 border-cyan-400" : "border-transparent"}`,
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `text-4xl ${isSelected && focusArea === "item" ? "text-white" : "text-gray-400"}`, children: item.label }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `mr-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" ? "opacity-100" : "opacity-0"}`, children: "◀" }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `flex-row items-center ${item.type === "slider" ? "w-[36rem] justify-end" : item.type === "stat" ? "w-80 justify-end" : "w-80 justify-center"}`, children: item.type === "text" ? renderNameInput() : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-                      displayBar && /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-yellow-400 text-4xl", style: { fontFamily: "SourceHanCodeJP" }, children: displayBar }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `${item.type === "button" || item.type === "stat" ? "w-auto" : "w-24 text-right"} text-yellow-400 text-4xl`, style: { fontFamily: "SourceHanCodeJP" }, children: displayValue })
-                    ] }) }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `ml-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" ? "opacity-100" : "opacity-0"}`, children: "▶" })
-                  ] })
-                ]
-              },
-              item.id
-            );
-          }) }),
+              }) })
+            }
+          ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mt-8 p-4 border border-cyan-900 bg-black bg-opacity-80", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-3xl mb-2", children: ">> INFO_PANEL" }),
             isEditingName ? /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col", children: [
@@ -11062,27 +11396,20 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             }
           )
         ) : (
-          // 三角形（自機のモチーフ）
-          // SVGで描画に変更。回転時のちらつきを抑え、太さを調整可能にする
-          // @ts-ignore
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "svg",
+          // 三角形（自機を模したパーティクル）
+          // SVGがAmbiguousMatchExceptionを起こすため、画像で代用
+          // Assets/Resources/Sprites/Triangle.png を用意してください
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "image",
             {
-              viewBox: "0 0 100 100",
-              style: { width: "100%", height: "100%" },
-              children: [
-                "// @ts-ignore",
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "polygon",
-                  {
-                    points: "50,20 85,80 15,80",
-                    fill: "none",
-                    stroke: p.color,
-                    strokeWidth: "2",
-                    strokeLinejoin: "round"
-                  }
-                )
-              ]
+              source: "res:Sprites/Triangle",
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                // アスペクト比を維持して枠内に収める
+                unityImageTintColor: p.color
+              }
             }
           )
         )
@@ -11154,10 +11481,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             return /* @__PURE__ */ jsxRuntimeExports.jsx(
               "text",
               {
-                className: `text-2xl font-mono mb-1 transition-opacity duration-100 ${item.isAlert ? "text-red-500 font-bold" : "text-cyan-400"} ${isVisible ? "opacity-100" : "opacity-0"}`,
+                className: `text-2xl font-mono mb-1 transition-opacity duration-100 ${item.isAlert ? "text-red-500" : "text-cyan-400"} ${isVisible ? "opacity-100" : "opacity-0"}`,
                 style: {
                   fontFamily: "SourceHanCodeJP",
-                  // フォント統一
                   textShadow: "0 0 5px currentColor",
                   whiteSpace: "nowrap",
                   // 配列追加方式ではないので、flexShrinkは不要だが念のため
@@ -11299,7 +11625,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             connectionState === "idle" && /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "transition-opacity duration-300 opacity-100", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "relative flex-row items-center justify-center px-16 py-6", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "absolute left-0 top-0 bottom-0 right-0 border border-[#00ffff] bg-[#00ffff] bg-opacity-10 animate-pulse" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl text-white mr-6", children: "▶" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl text-[#00ffff] font-bold tracking-widest", style: { textShadow: "0 0 8px #00ffff", fontFamily: "SourceHanCodeJP" }, children: "PRESS ANY BUTTON" })
+              /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl text-[#00ffff] tracking-widest", style: { textShadow: "0 0 8px #00ffff", fontFamily: "SourceHanCodeJP" }, children: "PRESS ANY BUTTON" })
             ] }) }),
             connectionState === "connecting" && /* @__PURE__ */ jsxRuntimeExports.jsx(ConnectionSequence, { onComplete: handleConnectionComplete, appVersion }),
             (connectionState === "connected" || connectionState === "disconnecting" || connectionState === "exiting") && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -11314,7 +11640,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
                 onIndexChange: setLastMenuIndex
               }
             ),
-            connectionState === "exiting" && /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "absolute transition-opacity duration-300", style: { opacity: shutdownOpacity, top: "25%" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "SHUTTING DOWN...", isAlert: true, className: "text-6xl text-red-500 whitespace-nowrap" }) })
+            connectionState === "exiting" && /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "absolute transition-opacity duration-300", style: { opacity: shutdownOpacity, top: "25%" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "SHUTTING DOWN...", isAlert: true, className: "text-6xl text-red-500 whitespace-nowrap tracking-widest", style: { fontFamily: "SourceHanCodeJP" } }) })
           ] })
         ] }),
         currentScreen === "stage_select" && /* @__PURE__ */ jsxRuntimeExports.jsx(StageSelect, { onBack: () => setCurrentScreen("title"), onGameStart: handleGameStart }),
@@ -11331,7 +11657,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
             className: "absolute inset-0 items-center justify-center bg-black pointer-events-none transition-opacity duration-500",
             style: { opacity: isGameStarting ? 1 : 0, zIndex: 9998 },
             children: isGameStarting && /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "LOADING", isAlert: false, className: "text-6xl text-cyan-400 whitespace-nowrap tracking-widest" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "LOADING", isAlert: false, className: "text-6xl text-cyan-400 whitespace-nowrap tracking-widest", style: { fontFamily: "SourceHanCodeJP" } }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" })
             ] })
           }

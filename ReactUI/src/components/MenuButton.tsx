@@ -1,4 +1,3 @@
-
 interface MenuButtonProps {
     label: string;
     isSelected: boolean;
@@ -16,6 +15,7 @@ interface MenuButtonProps {
 export const MenuButton = ({ label, isSelected, isPressed, onClick, style, className, barClass, disabled }: MenuButtonProps) => {
     // 背景バーの幅を指定するクラス。指定がなければデフォルト幅(w-80)を使用。
     const barWidth = barClass || 'w-80';
+
     return (
         <view
             className={`relative w-full transition-opacity duration-300 ${className || 'h-24 mb-4'} ${disabled ? 'opacity-30' : ''}`}
@@ -38,13 +38,16 @@ export const MenuButton = ({ label, isSelected, isPressed, onClick, style, class
                 >
                     ▶
                 </text>
-                {/* ボタンのラベルテキスト。選択時は白く、非選択時は少し暗くする */}
-                <text
-                    className={`text-3xl transition-colors duration-300 ${isPressed ? 'text-black font-bold' : (isSelected ? 'text-white' : 'text-[#e2e8f0]')}`}
-                    style={{ opacity: isSelected ? 1 : 0.6 }}
-                >
-                    {label}
-                </text>
+
+                {/* テキストエリア: 残りの幅を埋める */}
+                <view className="flex-1 h-full justify-center overflow-hidden relative">
+                    <text
+                        className={`text-3xl transition-colors duration-300 whitespace-nowrap overflow-hidden text-ellipsis w-full ${isPressed ? 'text-black font-bold' : (isSelected ? 'text-white' : 'text-[#e2e8f0]')}`}
+                        style={{ opacity: isSelected ? 1 : 0.6, letterSpacing: 10 }}
+                    >
+                        {label}
+                    </text>
+                </view>
             </view>
         </view>
     );

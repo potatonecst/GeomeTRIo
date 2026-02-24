@@ -138,6 +138,8 @@ public class GameManager : MonoBehaviour
             // フレームレート設定
             // ゲームの動作速度を秒間60フレーム（60fps）に固定します。
             // これにより、PCの性能差によるゲームスピードのばらつきを抑えます。
+            // QualitySettings.vSyncCount = 0: 垂直同期（VSync）を無効化します。
+            // Unityでは、VSyncが有効だと targetFrameRate の設定が無視されてしまうため、必ず0にする必要があります。
             QualitySettings.vSyncCount = 0; // VSyncを無効化（targetFrameRateを有効にするため）
             Application.targetFrameRate = 60;
 
@@ -289,6 +291,7 @@ public class GameManager : MonoBehaviour
     public void ApplyAudioSettings()
     {
         // UIの0-100をAudioSourceの0.0-1.0に変換
+        // UnityのAudioSource.volumeプロパティは 0.0(無音) 〜 1.0(最大) のfloat値で指定する必要があります。
         float bgmVol = SettingsManager.GetBGMVolume() / 100f;
         // SEは個別にPlayOneShotで鳴らす際に音量を乗算するか、AudioSource自体の音量を変える
         // ここではAudioSource（SE用）とbgmAudioSource（BGM用）のVolumeプロパティを設定します
@@ -438,6 +441,61 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 敵にダメージを与えた時に呼び出され、総与ダメージ量を加算します。
+    /// </summary>
+    public void IncrementDamageDealt(int damage)
+    {
+        gameData.stats.totalDamageDealt += damage;
+    }
+
+    /// <summary>
+    /// 累計獲得スコアを加算します。
+    /// int型(約21億)では足りなくなる可能性があるため、long型(約922京)を使用しています。
+    /// </summary>
+    /// <param name="amount">加算するスコア量</param>
+    public void IncrementTotalScore(int amount)
+    {
+        // オーバーフロー対策
+        // long.MaxValue: 64bit整数の最大値。これを超えて加算すると、数値が一周してマイナスになってしまうため、
+        // 加算後の値が最大値を超える場合は、最大値で止める（カンストさせる）処理を入れています。
+        if (gameData.stats.totalScore > long.MaxValue - amount)
+        {
+            gameData.stats.totalScore = long.MaxValue;
+        }
+        else
+        {
+            gameData.stats.totalScore += amount;
+        }
+    }
+
+    /// <summary>
+    /// SP使用回数を加算します。
+    /// スピンアタック発動時に呼び出されます。
+    /// </summary>
+    public void IncrementSpUsed()
+    {
+        gameData.stats.totalSpUsed++;
+    }
+
+    /// <summary>
+    /// 誘爆撃破数を加算します。
+    /// 敵が誘爆（Chain Explosion）によって倒された時に呼び出されます。
+    /// </summary>
+    public void IncrementChainKills()
+    {
+        gameData.stats.totalChainKills++;
+    }
+
+    /// <summary>
+    /// アイテム取得数を加算します。
+    /// 経験値アイテムなどを取得した時に呼び出されます。
+    /// </summary>
+    public void IncrementItemsCollected()
+    {
+        gameData.stats.itemsCollected++;
+    }
+
+    /// <summary>
     /// 弾を発射した時に呼び出され、総発射数を加算します。
     /// </summary>
     public void IncrementShotsFired()
@@ -492,6 +550,9 @@ public class GameManager : MonoBehaviour
         {
             CurrentScore += points;
         }
+
+        // 累計スコアにも加算
+        IncrementTotalScore(points);
 
         // スコアエクステンド判定
         if (CurrentScore >= nextScoreExtend)
@@ -567,6 +628,7 @@ public class GameManager : MonoBehaviour
         if (CurrentSP > 0)
         {
             CurrentSP--;
+            IncrementSpUsed(); // 統計加算
             return true;
         }
         return false;
@@ -787,11 +849,8 @@ public class GameManager : MonoBehaviour
     public void ReturnToTitle()
     {
         // ランクインしていれば保存
+        // ※SaveScore内部で totalPlayTime の加算と SaveGameData が行われるため、ここでの追加保存は不要です。
         SaveScore();
-
-        // 途中終了した場合も、そこまでのプレイ時間を加算して保存する
-        gameData.stats.totalPlayTime += timeElapsed;
-        SaveGameData();
 
         // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
         // PlayCancelSound();

@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 2030348659944733276}
   m_Layer: 0
   m_Name: JammerEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138,12 +138,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JammerEnemyController
   speed: 1.5
-  hp: 3
-  scoreValue: 50
+  baseHP: 1
+  baseScore: 100
+  scoreMultiplier: 1
+  formationId: -1
+  deathEffectPrefab: {fileID: 0}
+  powerUpItemPrefab: {fileID: 0}
+  hpBarTransform: {fileID: 5463768403024243713}
   minePrefab: {fileID: 8796502046150066010, guid: 8568edc0fe4094b1cbc73bd93bcd4040, type: 3}
   pulseExplosionPrefab: {fileID: 2508030752588372928, guid: 155ec36cf91574567abe0a2a0e23274a, type: 3}
   mineInterval: 2
-  hpBarTransform: {fileID: 5463768403024243713}
+  useDifficultyScaling: 1
+  initialDelayMin: 1
 --- !u!212 &4353670175742643975
 SpriteRenderer:
   m_ObjectHideFlags: 0
