@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3086576001322900243}
   m_Layer: 6
   m_Name: Enemy
-  m_TagString: Enemy
+  m_TagString: Undefined
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -38,6 +38,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5345592678994330345
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -83,6 +84,7 @@ SpriteRenderer:
   m_SortingLayerID: -1801779665
   m_SortingLayer: 1
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 0.2, b: 0.2, a: 1}
   m_FlipX: 0
@@ -92,7 +94,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &7074864755034249832
 MonoBehaviour:
@@ -107,9 +108,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   speed: 1
-  shootingStartTime: 40
-  aimingStartTime: 60
-  fireRate: 1.5
   baseHP: 1
   baseScore: 100
   scoreMultiplier: 1
@@ -117,6 +115,14 @@ MonoBehaviour:
   deathEffectPrefab: {fileID: 639211555639795330, guid: a64fd46e83ae648d9a0cc45b4b8a94ed, type: 3}
   powerUpItemPrefab: {fileID: 5167439125495829321, guid: 00640a6d105094b9fa1d37c51e506d83, type: 3}
   hpBarTransform: {fileID: 5768910205223144465}
+  shootingStartTime: 40
+  aimingStartTime: 60
+  fireRate: 1.5
+  bulletSpeedBase: 3
+  bulletUseSpeedVariation: 0
+  bulletDecelDelay: 0.5
+  bulletMinSpeed: 5
+  bulletDecelerationRate: 10
   useFireRateScaling: 1
 --- !u!50 &6603533557860482465
 Rigidbody2D:
@@ -225,6 +231,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &464535308383162333
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -270,6 +277,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_FlipX: 0
@@ -279,5 +287,4 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
