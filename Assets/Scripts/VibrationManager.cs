@@ -52,12 +52,14 @@ public class VibrationManager : MonoBehaviour
 
         // 現在再生中の振動があり、かつ新しい振動の優先度が低い場合は、新しい振動を無視する
         // （例：被弾中の強い振動を、射撃の弱い振動で上書きしないようにする）
+        // Time.time: ゲーム開始からの経過時間（秒）。現在時刻と比較して振動中か判定します。
         if (Time.time < vibrationEndTime && priority < currentPriority)
         {
             return;
         }
 
         // 既存の停止処理があればキャンセル
+        // StopCoroutine: 実行中のコルーチンを強制停止します。
         if (currentCoroutine != null) StopCoroutine(currentCoroutine);
 
         // 振動適用

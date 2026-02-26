@@ -48,6 +48,7 @@ public class ExplosionEffect : MonoBehaviour
 
         // RandomColorモード: グラデーションの中からランダムに1色を選びます。
         // これにより、ある粒子は赤、ある粒子はシアン、といった具合に色が混ざらずに生成されます。
+        // 通常のグラデーションだと、時間経過で色が変わったりしますが、RandomColorは「生成時に色が決定」されます。
         colorGradient.mode = ParticleSystemGradientMode.RandomColor;
         main.startColor = colorGradient;
 

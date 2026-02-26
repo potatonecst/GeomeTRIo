@@ -126,6 +126,7 @@ export const Ranking = ({ onBack }: { onBack: () => void }) => {
     // これにより、無関係な再描画時の計算コストを削減できます。
     // useMemo: 計算結果をキャッシュ（保存）しておくフック。
     // フィルタリングやソートは計算コストが高いため、毎回計算するのを避けるために使用します。
+    // 特にランキングデータが増えてきた場合、描画のたびにソートを行うと動作が重くなる原因になります。
     // useMemo は「値」をメモ化します。対して useCallback は「関数」をメモ化します。
     const filteredScores = useMemo(() => {
         const stageName = STAGES[selectedStageIndex];

@@ -251,6 +251,14 @@ public class GameInterop
     }
 
     /// <summary>
+    /// セーブデータを削除します。
+    /// </summary>
+    public void DeleteSaveData()
+    {
+        GameManager.instance?.DeleteSaveData();
+    }
+
+    /// <summary>
     /// 現在の設定をファイルに保存（永続化）します。
     /// </summary>
     public void SaveSettings()

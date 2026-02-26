@@ -24,6 +24,8 @@ export const LicenseMenu = ({ onBack }: LicenseMenuProps) => {
     const interop = globals.GameInterop;
 
     // 表示するライセンスデータの統合
+    // useMemo: 計算結果をキャッシュ（メモ化）するフックです。
+    // 依存配列（[]）が空なので、コンポーネントの初回レンダリング時に1回だけ実行されます。
     const allLicenses = useMemo(() => {
         // UnityとWebのライセンスを結合し、名前の昇順（A-Z）でソートする
         // ... (スプレッド構文): 配列の中身を展開して、新しい配列に結合します。
@@ -83,6 +85,7 @@ export const LicenseMenu = ({ onBack }: LicenseMenuProps) => {
 
         // setInterval: 指定した時間（ミリ秒）ごとに処理を繰り返し実行します。
         // ここでは50msごとに高さをチェックし、レイアウト計算が完了するのを待ちます（ポーリング）。
+        // UnityのUI Toolkitはレイアウト計算が非同期で行われるため、即座には高さが取得できない場合があります。
         const startTime = Date.now();
         const intervalId = setInterval(() => {
             let cHeight = 0;

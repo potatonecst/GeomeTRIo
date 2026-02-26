@@ -108,6 +108,7 @@ public static class SettingsManager
         // PlayerPrefs.GetInt(key, defaultValue):
         // 指定したキーで保存されている整数値を取得します。
         // キーが存在しない（まだ保存されていない）場合は、第2引数のデフォルト値（ここでは80）を返します。
+        // PlayerPrefsは、Windowsならレジストリ、Macならplistファイルなどにデータを保存するUnityの簡易保存機能です。
         return PlayerPrefs.GetInt(KEY_BGM_VOLUME, 80); // デフォルト80
     }
 
@@ -162,6 +163,7 @@ public static class SettingsManager
         // PlayerPrefs.Save(): メモリ上の変更内容をディスク（ファイル）に書き込んで永続化します。
         // ディスクI/Oが発生するため、頻繁に呼び出すとパフォーマンスに影響します。
         // そのため、設定画面を閉じるタイミングなどでまとめて呼び出すのが推奨されます。
+        // ※Unity終了時にも自動で呼ばれますが、クラッシュ時などに備えて明示的に呼ぶのが安全です。
         PlayerPrefs.Save();
     }
 }

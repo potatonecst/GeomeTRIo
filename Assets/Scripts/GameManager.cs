@@ -532,6 +532,11 @@ public class GameManager : MonoBehaviour
         timeElapsed = 0;
         nextScoreExtend = scoreExtendInterval; // エクステンド目標もリセット
         SetSystemMessage("");
+
+        // スコアイベント情報もリセット（前回のゲームのイベントが残らないようにする）
+        LastScoreEventAmount = 0;
+        LastScoreEventLabel = "";
+        LastScoreEventTime = 0f;
     }
 
     /// <summary>
@@ -817,6 +822,39 @@ public class GameManager : MonoBehaviour
             //    gameData.playerName = sceneUI.playerNameInputField.text;
             //}
         }
+    }
+
+    /// <summary>
+    /// 現在のセーブデータを削除し、初期状態に戻します。
+    /// </summary>
+    public void DeleteSaveData()
+    {
+        string path = System.IO.Path.Combine(Application.persistentDataPath, CurrentSaveFileName);
+        if (System.IO.File.Exists(path))
+        {
+            System.IO.File.Delete(path);
+        }
+
+        // 追加: PlayerPrefs（設定やユーザーID）も削除して、完全に初期状態（新規ユーザー）に戻す
+        // 理由: PlayerPrefsにはユーザーIDなどの端末固有情報が保存されています。
+        // もしIDを残したままにすると、将来的にクラウドセーブを導入した際、次回起動時に「既存ユーザー」として認識され、
+        // 削除したはずのデータがクラウドから自動的に復元されてしまう（ゾンビ復元）リスクがあります。
+        // IDごと消去することで、次回は「完全な新規ユーザー」としてIDが再発行され、安全に最初から遊べるようになります。
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+
+        // TODO: クラウドセーブ対応時、ここでクラウド上のデータ削除リクエストを送信する
+        // CloudSaveManager.Instance.DeleteSave(currentUserId);
+
+        // データを初期化
+        InitializeGameData();
+        // 設定を反映（初期値に戻る）
+        ApplyAudioSettings();
+
+        // タイトル画面へリロード（演出スキップなし＝最初から）
+        // SkipTitleSequence = false にすることで、次回起動時に "Press Any Button" から始まります。
+        SkipTitleSequence = false;
+        SceneManager.LoadScene("TitleScene");
     }
 
     /// <summary>

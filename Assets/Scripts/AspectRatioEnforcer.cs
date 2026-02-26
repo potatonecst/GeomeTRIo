@@ -66,6 +66,7 @@ public class AspectRatioEnforcer : MonoBehaviour
     {
         // 現在の画面のアスペクト比
         // Screen.width / height は、ウィンドウの現在のサイズ（ピクセル）です。
+        // floatにキャストしないと整数除算になってしまうため注意が必要です。
         float windowAspect = (float)Screen.width / Screen.height;
 
         // 目標に対する現在の比率

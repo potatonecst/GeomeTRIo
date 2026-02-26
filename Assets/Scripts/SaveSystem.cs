@@ -17,9 +17,11 @@ public static class SaveSystem
         string path = Path.Combine(Application.persistentDataPath, fileName);
 
         // 2. GameDataをJSON文字列に変換 (第2引数trueで読みやすく整形)
+        // JsonUtility: Unity標準のJSONシリアライザ。高速ですが、Dictionaryなどが扱えない制限があります。
         string json = JsonUtility.ToJson(data, true);
 
         // 3. ファイルを書き込み
+        // File.WriteAllText: 指定したパスに文字列を書き込みます。ファイルがなければ作成し、あれば上書きします。
         File.WriteAllText(path, json);
 
 #if UNITY_EDITOR
@@ -38,6 +40,7 @@ public static class SaveSystem
             string json = File.ReadAllText(path);
 
             // 2. JSONをGameDataクラスのインスタンスに変換
+            // FromJson<T>: JSON文字列を解析して、指定した型（T）のオブジェクトを生成します。
             return JsonUtility.FromJson<GameData>(json);
         }
 
@@ -46,6 +49,7 @@ public static class SaveSystem
     }
 
     // 指定したファイルを削除する
+    // 今回追加された「セーブデータ削除」機能で使用されます。
     public static void DeleteSaveData(string fileName)
     {
         string path = Path.Combine(Application.persistentDataPath, fileName);

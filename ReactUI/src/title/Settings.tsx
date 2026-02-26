@@ -60,7 +60,8 @@ const SETTINGS_MAP: Record<string, SettingItemDef[]> = {
         { id: 'show_licenses', label: 'LICENSES', type: 'license', description: 'View third-party software licenses.' },
     ],
     'RESET': [
-        { id: 'reset_defaults', label: 'RESET ALL', type: 'button', description: 'Restore all settings to default values.' }
+        { id: 'reset_defaults', label: 'RESET SETTINGS', type: 'button', description: 'Restore settings to default values.' },
+        { id: 'delete_save', label: 'DELETE SAVE DATA', type: 'button', description: 'Delete all save data including stats and rankings.' }
     ]
 };
 
@@ -73,6 +74,9 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
     // 画面のフェードイン・アウト用
     const [opacity, setOpacity] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
+
+    // 削除処理中フラグ（入力ブロック用）
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // 選択状態の管理
     // useState: コンポーネントの状態を管理するフック。
@@ -94,6 +98,11 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
 
     // ライセンスメニューの表示状態
     const [showLicenseMenu, setShowLicenseMenu] = useState(false);
+
+    // 確認ダイアログの状態
+    const [showDialog, setShowDialog] = useState(false);
+    const [dialogAction, setDialogAction] = useState<'reset_defaults' | 'delete_save' | null>(null);
+    const [dialogSelection, setDialogSelection] = useState(0); // 0: NO, 1: YES
 
     // 設定値の状態管理
     // 初期値を空オブジェクトにすると、初回レンダリング時に undefined エラーになるため、デフォルト値を入れておく
@@ -187,12 +196,13 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
                 onBack();
             }, 300);
             return () => clearTimeout(timer);
-        } else {
+        } else if (!showLicenseMenu) {
             // 開始時は少し待ってから不透明にする（フェードイン）
+            // ライセンスメニューから戻った時もここでフェードインされる
             const timer = setTimeout(() => setOpacity(1), 50);
             return () => clearTimeout(timer);
         }
-    }, [isExiting, onBack]);
+    }, [isExiting, onBack, showLicenseMenu]);
 
     // 現在選択中のカテゴリ名と、そのカテゴリに含まれるアイテムリストを取得
     const currentCategory = CATEGORIES[selectedCategoryIndex];
@@ -213,8 +223,8 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
         }
     }, [interop, onSettingChange]);
 
-    // 設定をリセットする関数
-    // useCallbackでメモ化し、不要な再生成を防ぎます。
+    // 設定リセットの実行処理
+    // ダイアログでYESが選択された時に呼ばれます
     const handleReset = useCallback(() => {
         const defaults = {
             'hp': 3,
@@ -238,6 +248,30 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
 
         interop?.PlaySound('submit');
     }, [updateUnity, interop]);
+
+    // セーブデータ削除の実行処理
+    // useCallback: 関数をメモ化します。依存配列([interop])が変わらない限り、同じ関数インスタンスを再利用します。
+    const handleDeleteSave = useCallback(() => {
+        if (interop && typeof interop.DeleteSaveData === 'function') {
+            setIsDeleting(true); // 入力をブロックして、削除中の誤操作を防ぎます
+            interop.DeleteSaveData(); // C#側の削除処理を呼び出し
+            interop?.PlaySound('submit');
+
+            // 削除後はUnity側でシーンリロードが行われるため、React側ではフェードアウトだけして待機する
+            // setIsExiting(true) を呼ぶと onBack が発火してメニュー画面が一瞬映ってしまうのを防ぐ
+            // そのため、ここでは単に不透明度を0にして画面を暗くします。
+            setOpacity(0);
+        }
+    }, [interop]);
+
+    // ライセンスメニューを開く処理
+    const handleOpenLicenseMenu = useCallback(() => {
+        interop?.PlaySound('submit');
+        setOpacity(0); // フェードアウト
+        setTimeout(() => {
+            setShowLicenseMenu(true);
+        }, 300);
+    }, [interop]);
 
     // 設定値を変更する関数
     // useCallback: 関数をメモ化して再生成を防ぎます。
@@ -339,7 +373,35 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
         // (window as any): TypeScriptの型チェックを回避して、windowオブジェクトに独自のプロパティを追加するためのキャストです。
         // UnityのReactInputBridgeから、この関数が直接呼び出されます。
         (window as any).onMenuInput = (event: string) => {
-            if (isExiting) return;
+            if (isExiting || isDeleting) return; // 削除中も入力を無視
+
+            // --- ダイアログ表示中の操作 ---
+            if (showDialog) {
+                if (event === 'left' || event === 'right') {
+                    interop?.PlaySound('move');
+                    setDialogSelection(prev => prev === 0 ? 1 : 0); // 0(NO) <-> 1(YES)
+                } else if (event === 'submit') {
+                    if (dialogSelection === 1) {
+                        // YES: アクション実行
+                        if (dialogAction === 'reset_defaults') {
+                            handleReset();
+                            setShowDialog(false);
+                        } else if (dialogAction === 'delete_save') {
+                            handleDeleteSave();
+                            // 削除時はダイアログを閉じない（フェードアウトまで表示したままにして操作を防ぐ）
+                        }
+                    } else {
+                        // NO: キャンセル音
+                        interop?.PlaySound('cancel');
+                        setShowDialog(false);
+                    }
+                } else if (event === 'cancel') {
+                    interop?.PlaySound('cancel');
+                    setShowDialog(false);
+                }
+                // ダイアログ中は他の操作を受け付けない
+                return;
+            }
 
             const playerName = (values['player_name'] as string) || "PLAYER";
 
@@ -497,11 +559,18 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
                     } else if (item.type === 'button' || item.type === 'license') {
                         // ボタン項目の場合はアクションを実行
                         if (item.id === 'reset_defaults') {
-                            handleReset();
+                            interop?.PlaySound('submit');
+                            setDialogAction('reset_defaults');
+                            setDialogSelection(0); // デフォルトNO
+                            setShowDialog(true);
+                        } else if (item.id === 'delete_save') {
+                            interop?.PlaySound('submit');
+                            setDialogAction('delete_save');
+                            setDialogSelection(0); // デフォルトNO
+                            setShowDialog(true);
                         }
                         if (item.id === 'show_licenses') {
-                            interop?.PlaySound('submit');
-                            setShowLicenseMenu(true);
+                            handleOpenLicenseMenu();
                         }
                     }
                 }
@@ -511,8 +580,9 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
         // クリーンアップ関数
         // コンポーネントがアンマウントされる（画面から消える）時や、useEffectが再実行される直前に呼ばれます。
         // グローバル関数を空の関数で上書きして、古い処理が残らないようにします（メモリリーク防止）。
+        // これを忘れると、画面遷移後も古いコンポーネントの処理が動き続け、エラーの原因になります。
         return () => { (window as any).onMenuInput = () => { }; (window as any).onTextInput = () => { }; };
-    }, [focusArea, selectedCategoryIndex, selectedItemIndex, currentItems, isExiting, interop, changeValue, isEditingName, editCursor, values, handleReset, showLicenseMenu]);
+    }, [focusArea, selectedCategoryIndex, selectedItemIndex, currentItems, isExiting, isDeleting, interop, changeValue, isEditingName, editCursor, values, handleReset, handleDeleteSave, showLicenseMenu, showDialog, dialogAction, dialogSelection]);
 
     // ゲージ表示ヘルパー
     const renderGauge = (value: number, max: number) => {
@@ -578,170 +648,221 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
     }
 
     return (
-        <view className="flex-col w-full h-full p-12 text-white transition-opacity duration-300" style={{ opacity, fontFamily: 'SourceHanCodeJP' }}>
-            {/* Header */}
-            <view className="flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full">
-                {/* whitespace-nowrapを追加して、折り返しを防止 */}
-                <GlitchText text="SETTINGS" className="text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" />
-                <text className="text-3xl text-cyan-600">SYSTEM CONFIGURATION</text>
-            </view>
+        // ルート要素: p-12を削除し、relativeを追加してダイアログの基準点にする
+        // relative: 子要素が 'absolute' で配置される際の「基準点（原点）」となります。
+        // これを指定しないと、absoluteな要素は画面全体ではなく、さらに外側の基準点を探して配置されてしまいます。
+        <view className="flex-col w-full h-full text-white transition-opacity duration-300 relative" style={{ opacity, fontFamily: 'SourceHanCodeJP' }}>
 
-            <view className="flex-row w-full flex-1">
-                {/* Left Column: Categories */}
-                <view className="w-1/4 border-r-2 border-cyan-900 pr-4 h-full">
-                    <text className="text-4xl mb-6 text-cyan-400 font-bold tracking-widest">CATEGORY</text>
-                    {CATEGORIES.map((cat, idx) => (
-                        <MenuButton
-                            key={cat}
-                            label={cat}
-                            isSelected={idx === selectedCategoryIndex}
-                            // カテゴリ選択エリアにフォーカスがあり、かつ決定ボタンが押された瞬間に光らせる
-                            isPressed={isCategoryPressed && idx === selectedCategoryIndex}
-                            barClass="w-full"
-                            className="h-24 mb-6"
-                            style={{ opacity: focusArea === 'category' ? 1 : 0.4 }}
-                        />
-                    ))}
+            {/* コンテンツ用ラッパー: ここにp-12を適用して中身のレイアウトを維持 */}
+            <view className="flex-col w-full h-full p-12">
+                {/* Header */}
+                <view className="flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full">
+                    {/* whitespace-nowrapを追加して、折り返しを防止 */}
+                    <GlitchText text="SETTINGS" className="text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" />
+                    <text className="text-3xl text-cyan-600">SYSTEM CONFIGURATION</text>
                 </view>
 
-                {/* Right Column: Items */}
-                <view className="w-3/4 pl-8 flex-col h-full">
-                    <text className="text-5xl mb-6 text-cyan-400 font-bold tracking-widest">
-                        {currentCategory === 'STATS' ? 'STATISTICS' : (currentCategory === 'ABOUT' ? 'SYSTEM INFORMATION' : 'CONFIGURATION')}
-                    </text>
+                <view className="flex-row w-full flex-1">
+                    {/* Left Column: Categories */}
+                    <view className="w-1/4 border-r-2 border-cyan-900 pr-4 h-full">
+                        <text className="text-4xl mb-6 text-cyan-400 font-bold tracking-widest">CATEGORY</text>
+                        {CATEGORIES.map((cat, idx) => (
+                            <MenuButton
+                                key={cat}
+                                label={cat}
+                                isSelected={idx === selectedCategoryIndex}
+                                // カテゴリ選択エリアにフォーカスがあり、かつ決定ボタンが押された瞬間に光らせる
+                                isPressed={isCategoryPressed && idx === selectedCategoryIndex}
+                                barClass="w-full"
+                                className="h-24 mb-6"
+                                style={{ opacity: focusArea === 'category' ? 1 : 0.4 }}
+                            />
+                        ))}
+                    </view>
 
-                    {/* flex-1 で残りの高さを確保し、項目リストを表示 */}
-                    {/* gap-2 を削除し、個別のマージンで制御することでレイアウト崩れを防ぐ */}
-                    <view
-                        ref={listRef}
-                        className={`flex-col flex-1 overflow-hidden relative ${focusArea === 'item' ? 'opacity-100' : 'opacity-60'}`}
-                    >
-                        <view className="flex-col w-full transition-transform duration-200 ease-out" style={{ transform: `translateY(${targetScroll}px)` }}>
-                            {currentItems.map((item, idx) => {
-                                const isSelected = idx === selectedItemIndex;
-                                const val = values[item.id];
+                    {/* Right Column: Items */}
+                    <view className="w-3/4 pl-8 flex-col h-full">
+                        <text className="text-5xl mb-6 text-cyan-400 font-bold tracking-widest">
+                            {currentCategory === 'STATS' ? 'STATISTICS' : (currentCategory === 'ABOUT' ? 'SYSTEM INFORMATION' : 'CONFIGURATION')}
+                        </text>
 
-                                // 値の表示形式を決定
-                                let displayValue = '';
-                                let displayBar = '';
-                                if (item.type === 'slider') {
-                                    const gauge = renderGauge(val as number, item.max ?? 100);
-                                    displayBar = gauge.bar;
-                                    displayValue = gauge.value;
-                                } else if (item.type === 'toggle') {
-                                    displayValue = val ? 'ON' : 'OFF';
-                                } else if (item.type === 'button') {
-                                    displayValue = 'EXECUTE';
-                                } else if (item.type === 'license') {
-                                    displayValue = 'VIEW >';
-                                } else if (item.type === 'stat') {
-                                    // 統計情報の表示処理
-                                    if (typeof val === 'string') {
-                                        // 文字列の場合はそのまま表示 (ABOUTカテゴリ用)
-                                        displayValue = val;
-                                    } else if (item.id === 'total_play_time') {
-                                        // プレイ時間は秒数で保存されているため、HH:MM:SS形式に変換して表示
-                                        displayValue = formatTime((val as number) || 0);
+                        {/* flex-1 で残りの高さを確保し、項目リストを表示 */}
+                        {/* gap-2 を削除し、個別のマージンで制御することでレイアウト崩れを防ぐ */}
+                        <view
+                            ref={listRef}
+                            className={`flex-col flex-1 overflow-hidden relative ${focusArea === 'item' ? 'opacity-100' : 'opacity-60'}`}
+                        >
+                            <view className="flex-col w-full transition-transform duration-200 ease-out" style={{ transform: `translateY(${targetScroll}px)` }}>
+                                {currentItems.map((item, idx) => {
+                                    const isSelected = idx === selectedItemIndex;
+                                    const val = values[item.id];
+
+                                    // 値の表示形式を決定
+                                    let displayValue = '';
+                                    let displayBar = '';
+                                    if (item.type === 'slider') {
+                                        const gauge = renderGauge(val as number, item.max ?? 100);
+                                        displayBar = gauge.bar;
+                                        displayValue = gauge.value;
+                                    } else if (item.type === 'toggle') {
+                                        displayValue = val ? 'ON' : 'OFF';
+                                    } else if (item.type === 'button') {
+                                        displayValue = 'EXECUTE';
+                                    } else if (item.type === 'license') {
+                                        displayValue = 'VIEW >';
+                                    } else if (item.type === 'stat') {
+                                        // 統計情報の表示処理
+                                        if (typeof val === 'string') {
+                                            // 文字列の場合はそのまま表示 (ABOUTカテゴリ用)
+                                            displayValue = val;
+                                        } else if (item.id === 'total_play_time') {
+                                            // プレイ時間は秒数で保存されているため、HH:MM:SS形式に変換して表示
+                                            displayValue = formatTime((val as number) || 0);
+                                        } else {
+                                            // その他の数値（撃破数など）は、3桁区切りのカンマを入れて読みやすくする
+                                            // Number.toLocaleString(): 数値をロケール（地域設定）に合わせた形式の文字列に変換します。
+                                            // デフォルトでは3桁区切りのカンマが入ります（例: 1000 -> "1,000"）。
+                                            displayValue = ((val as number) || 0).toLocaleString();
+                                        }
                                     } else {
-                                        // その他の数値（撃破数など）は、3桁区切りのカンマを入れて読みやすくする
-                                        // Number.toLocaleString(): 数値をロケール（地域設定）に合わせた形式の文字列に変換します。
-                                        // デフォルトでは3桁区切りのカンマが入ります（例: 1000 -> "1,000"）。
-                                        displayValue = ((val as number) || 0).toLocaleString();
+                                        displayValue = val as string;
                                     }
-                                } else {
-                                    displayValue = val as string;
-                                }
 
-                                // 名前入力の表示用コンポーネント
-                                const renderNameInput = () => {
-                                    const strVal = (val as string) || ''; // undefined/null対策
+                                    // 名前入力の表示用コンポーネント
+                                    const renderNameInput = () => {
+                                        const strVal = (val as string) || ''; // undefined/null対策
+                                        return (
+                                            <view className="flex-row">
+                                                {Array.from({ length: 8 }).map((_, i) => {
+                                                    // 文字があればそれを、なければアンダースコアを表示
+                                                    const char = strVal[i] || '_';
+                                                    const isPlaceholder = i >= strVal.length;
+                                                    const isCursor = isEditingName && isSelected && i === editCursor;
+
+                                                    return (
+                                                        <text
+                                                            key={i}
+                                                            className={`font-mono w-12 text-center text-4xl ${isCursor ? 'text-black bg-cyan-400' : (isPlaceholder ? 'text-gray-600' : 'text-yellow-400')}`}
+                                                            style={{ fontFamily: 'SourceHanCodeJP' }}
+                                                        >
+                                                            {char}
+                                                        </text>
+                                                    );
+                                                })}
+                                            </view>
+                                        );
+                                    };
+
                                     return (
-                                        <view className="flex-row">
-                                            {Array.from({ length: 8 }).map((_, i) => {
-                                                // 文字があればそれを、なければアンダースコアを表示
-                                                const char = strVal[i] || '_';
-                                                const isPlaceholder = i >= strVal.length;
-                                                const isCursor = isEditingName && isSelected && i === editCursor;
+                                        <view
+                                            key={item.id}
+                                            // flex-shrink-0: 親の高さが足りなくても縮小させない（表示崩れ防止）
+                                            // py-4: 上下均等な余白（さらに広げる）
+                                            // mb-4: 下マージン（さらに広げる）
+                                            // pl-5: 左側のボーダー装飾と文字の間隔を広めに確保
+                                            // h-24: 高さを固定してスクロール計算を安定させる
+                                            className={`flex-row justify-between items-center pl-5 pr-3 mb-4 h-24 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === 'item' ? 'bg-gray-800 border-cyan-400' : 'border-transparent'}`}
+                                        >
+                                            <text className={`text-4xl ${isSelected && focusArea === 'item' ? 'text-white' : 'text-gray-400'}`}>{item.label}</text>
 
-                                                return (
-                                                    <text
-                                                        key={i}
-                                                        className={`font-mono w-12 text-center text-4xl ${isCursor ? 'text-black bg-cyan-400' : (isPlaceholder ? 'text-gray-600' : 'text-yellow-400')}`}
-                                                        style={{ fontFamily: 'SourceHanCodeJP' }}
-                                                    >
-                                                        {char}
-                                                    </text>
-                                                );
-                                            })}
+                                            <view className="flex-row items-center">
+                                                {/* 左右の矢印（選択中のみ表示） */}
+                                                <text className={`mr-4 text-cyan-400 text-4xl ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' && item.type !== 'license' ? 'opacity-100' : 'opacity-0'}`}>◀</text>
+
+                                                {/* 値の表示 */}
+                                                <view className={`flex-row items-center ${item.type === 'slider' ? 'w-[36rem] justify-end' : (item.type === 'stat' || item.type === 'license' ? 'w-80 justify-end' : 'w-80 justify-center')}`}>
+                                                    {item.type === 'text' ? renderNameInput() : (
+                                                        <>
+                                                            {displayBar && (
+                                                                <text className="text-yellow-400 text-4xl" style={{ fontFamily: 'SourceHanCodeJP' }}>{displayBar}</text>
+                                                            )}
+                                                            <text className={`${item.type === 'button' || item.type === 'stat' || item.type === 'license' ? 'w-auto' : 'w-24 text-right'} text-yellow-400 text-4xl`} style={{ fontFamily: 'SourceHanCodeJP' }}>
+                                                                {displayValue}
+                                                            </text>
+                                                        </>
+                                                    )}
+                                                </view>
+
+                                                <text className={`ml-4 text-cyan-400 text-4xl ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' && item.type !== 'license' ? 'opacity-100' : 'opacity-0'}`}>▶</text>
+                                            </view>
                                         </view>
                                     );
-                                };
-
-                                return (
-                                    <view
-                                        key={item.id}
-                                        // flex-shrink-0: 親の高さが足りなくても縮小させない（表示崩れ防止）
-                                        // py-4: 上下均等な余白（さらに広げる）
-                                        // mb-4: 下マージン（さらに広げる）
-                                        // pl-5: 左側のボーダー装飾と文字の間隔を広めに確保
-                                        // h-24: 高さを固定してスクロール計算を安定させる
-                                        className={`flex-row justify-between items-center pl-5 pr-3 mb-4 h-24 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === 'item' ? 'bg-gray-800 border-cyan-400' : 'border-transparent'}`}
-                                    >
-                                        <text className={`text-4xl ${isSelected && focusArea === 'item' ? 'text-white' : 'text-gray-400'}`}>{item.label}</text>
-
-                                        <view className="flex-row items-center">
-                                            {/* 左右の矢印（選択中のみ表示） */}
-                                            <text className={`mr-4 text-cyan-400 text-4xl ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' && item.type !== 'license' ? 'opacity-100' : 'opacity-0'}`}>◀</text>
-
-                                            {/* 値の表示 */}
-                                            <view className={`flex-row items-center ${item.type === 'slider' ? 'w-[36rem] justify-end' : (item.type === 'stat' || item.type === 'license' ? 'w-80 justify-end' : 'w-80 justify-center')}`}>
-                                                {item.type === 'text' ? renderNameInput() : (
-                                                    <>
-                                                        {displayBar && (
-                                                            <text className="text-yellow-400 text-4xl" style={{ fontFamily: 'SourceHanCodeJP' }}>{displayBar}</text>
-                                                        )}
-                                                        <text className={`${item.type === 'button' || item.type === 'stat' || item.type === 'license' ? 'w-auto' : 'w-24 text-right'} text-yellow-400 text-4xl`} style={{ fontFamily: 'SourceHanCodeJP' }}>
-                                                            {displayValue}
-                                                        </text>
-                                                    </>
-                                                )}
-                                            </view>
-
-                                            <text className={`ml-4 text-cyan-400 text-4xl ${isSelected && focusArea === 'item' && item.type !== 'text' && item.type !== 'button' && item.type !== 'stat' && item.type !== 'license' ? 'opacity-100' : 'opacity-0'}`}>▶</text>
-                                        </view>
-                                    </view>
-                                );
-                            })}
-                        </view>
-                    </view>
-
-                    {/* Description Terminal */}
-                    {/* absolute配置をやめ、flexレイアウトの一部として下部に配置することで重なりを防ぐ */}
-                    <view className="mt-8 p-4 border border-cyan-900 bg-black bg-opacity-80">
-                        <text className="text-cyan-600 text-3xl mb-2">&gt;&gt; INFO_PANEL</text>
-                        {isEditingName ? (
-                            <view className="flex-col">
-                                <view className="flex-row mb-2">
-                                    <text className="text-cyan-400 text-3xl">[UP/DOWN]</text>
-                                    <text className="text-gray-300 text-3xl mr-8">:CHANGE CHAR</text>
-                                    <text className="text-cyan-400 text-3xl">[LEFT/RIGHT]</text>
-                                    <text className="text-gray-300 text-3xl">:MOVE CURSOR</text>
-                                </view>
-                                <view className="flex-row">
-                                    <text className="text-cyan-400 text-3xl">[SOUTH]</text>
-                                    <text className="text-gray-300 text-3xl mr-8">:OK</text>
-                                    <text className="text-cyan-400 text-3xl">[EAST]</text>
-                                    <text className="text-gray-300 text-3xl mr-8">:CANCEL</text>
-                                    <text className="text-cyan-400 text-3xl">[WEST]</text>
-                                    <text className="text-gray-300 text-3xl">:DELETE</text>
-                                </view>
+                                })}
                             </view>
-                        ) : (
-                            <text className="text-gray-300 text-3xl">&gt;&gt; {currentDescription}</text>
-                        )}
+                        </view>
+
+                        {/* Description Terminal */}
+                        {/* absolute配置をやめ、flexレイアウトの一部として下部に配置することで重なりを防ぐ */}
+                        <view className="mt-8 p-4 border border-cyan-900 bg-black bg-opacity-80">
+                            <text className="text-cyan-600 text-3xl mb-2">&gt;&gt; INFO_PANEL</text>
+                            {isEditingName ? (
+                                <view className="flex-col">
+                                    <view className="flex-row mb-2">
+                                        <text className="text-cyan-400 text-3xl">[UP/DOWN]</text>
+                                        <text className="text-gray-300 text-3xl mr-8">:CHANGE CHAR</text>
+                                        <text className="text-cyan-400 text-3xl">[LEFT/RIGHT]</text>
+                                        <text className="text-gray-300 text-3xl">:MOVE CURSOR</text>
+                                    </view>
+                                    <view className="flex-row">
+                                        <text className="text-cyan-400 text-3xl">[SOUTH]</text>
+                                        <text className="text-gray-300 text-3xl mr-8">:OK</text>
+                                        <text className="text-cyan-400 text-3xl">[EAST]</text>
+                                        <text className="text-gray-300 text-3xl mr-8">:CANCEL</text>
+                                        <text className="text-cyan-400 text-3xl">[WEST]</text>
+                                        <text className="text-gray-300 text-3xl">:DELETE</text>
+                                    </view>
+                                </view>
+                            ) : (
+                                <text className="text-gray-300 text-3xl">&gt;&gt; {currentDescription}</text>
+                            )}
+                        </view>
                     </view>
                 </view>
             </view>
+
+            {/* Confirmation Dialog */}
+            {showDialog && (
+                // absolute: 親要素(relative)を基準に、絶対的な位置に配置します。
+                // inset-0: top:0, right:0, bottom:0, left:0 と同じ意味。親要素の四隅いっぱいに広げます。
+                // zIndex: 100: 重なり順を指定します。数値が大きいほど手前に表示されます。
+                // これにより、ヘッダーやパディングに関係なく、画面全体を覆う「暗幕」を作っています。
+                // bg-opacity-95: 背景をほぼ真っ黒にして、後ろの画面を隠蔽し、ダイアログに注目させます。
+                <view className="absolute inset-0 items-center justify-center bg-black bg-opacity-95" style={{ zIndex: 100 }}>
+                    <view className="bg-black border-2 border-red-500 p-8 w-[600px] items-center shadow-[0_0_30px_rgba(255,0,0,0.3)]">
+                        <GlitchText
+                            text="WARNING"
+                            isAlert={true}
+                            className="text-6xl text-red-500 mb-4 font-bold tracking-widest" // 間隔を詰める (mb-8 -> mb-4)
+                            style={{ fontFamily: 'SourceHanCodeJP' }}
+                        />
+                        <text className="text-white text-3xl mb-8 text-center">
+                            {dialogAction === 'delete_save'
+                                ? "ALL SAVE DATA WILL BE DELETED.\nARE YOU SURE?"
+                                : "RESET ALL SETTINGS TO DEFAULT.\nARE YOU SURE?"}
+                        </text>
+                        <view className="flex-row w-full justify-around">
+                            {/* NOボタン: 選択時はシアン背景に黒文字 */}
+                            <view className={`w-40 items-center py-2 ${dialogSelection === 0 ? 'bg-cyan-600' : 'border border-gray-600'}`}>
+                                <text
+                                    className="text-3xl"
+                                    style={{ color: dialogSelection === 0 ? '#ffffff' : '#9ca3af', fontFamily: 'SourceHanCodeJP' }}
+                                >
+                                    NO
+                                </text>
+                            </view>
+                            {/* YESボタン: 選択時は赤背景に白文字 */}
+                            <view className={`w-40 items-center py-2 ${dialogSelection === 1 ? 'bg-red-600' : 'border border-gray-600'}`}>
+                                <text
+                                    className="text-3xl"
+                                    style={{ color: dialogSelection === 1 ? '#ffffff' : '#9ca3af', fontFamily: 'SourceHanCodeJP' }}
+                                >
+                                    YES
+                                </text>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            )}
         </view>
     );
 };

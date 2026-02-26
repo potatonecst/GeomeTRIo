@@ -20,7 +20,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 (function() {
   "use strict";
   var __vite_style__ = document.createElement("style");
-  __vite_style__.textContent = "*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}/*\n! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n5. Use the user's configured `sans` font-feature-settings by default.\n6. Use the user's configured `sans` font-variation-settings by default.\n7. Disable tap highlights on iOS\n*/\n\nhtml,\n:host {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n  font-feature-settings: normal; /* 5 */\n  font-variation-settings: normal; /* 6 */\n  -webkit-tap-highlight-color: transparent; /* 7 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font-family by default.\n2. Use the user's configured `mono` font-feature-settings by default.\n3. Use the user's configured `mono` font-variation-settings by default.\n4. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-feature-settings: normal; /* 2 */\n  font-variation-settings: normal; /* 3 */\n  font-size: 1em; /* 4 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-feature-settings: inherit; /* 1 */\n  font-variation-settings: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  letter-spacing: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\ninput:where([type='button']),\ninput:where([type='reset']),\ninput:where([type='submit']) {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nReset default styling for dialogs.\n*/\ndialog {\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Make elements with the HTML hidden attribute stay hidden by default */\n[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.pointer-events-auto {\n  pointer-events: auto;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.inset-0 {\n  inset: 0px;\n}\n.bottom-0 {\n  bottom: 0px;\n}\n.bottom-1 {\n  bottom: 0.25rem;\n}\n.bottom-4 {\n  bottom: 1rem;\n}\n.left-0 {\n  left: 0px;\n}\n.right-0 {\n  right: 0px;\n}\n.right-1 {\n  right: 0.25rem;\n}\n.right-12 {\n  right: 3rem;\n}\n.right-4 {\n  right: 1rem;\n}\n.right-8 {\n  right: 2rem;\n}\n.top-0 {\n  top: 0px;\n}\n.top-1 {\n  top: 0.25rem;\n}\n.top-44 {\n  top: 11rem;\n}\n.top-64 {\n  top: 16rem;\n}\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n.mb-0 {\n  margin-bottom: 0px;\n}\n.mb-1 {\n  margin-bottom: 0.25rem;\n}\n.mb-10 {\n  margin-bottom: 2.5rem;\n}\n.mb-12 {\n  margin-bottom: 3rem;\n}\n.mb-2 {\n  margin-bottom: 0.5rem;\n}\n.mb-4 {\n  margin-bottom: 1rem;\n}\n.mb-6 {\n  margin-bottom: 1.5rem;\n}\n.mb-8 {\n  margin-bottom: 2rem;\n}\n.mb-auto {\n  margin-bottom: auto;\n}\n.ml-2 {\n  margin-left: 0.5rem;\n}\n.ml-4 {\n  margin-left: 1rem;\n}\n.ml-6 {\n  margin-left: 1.5rem;\n}\n.mr-2 {\n  margin-right: 0.5rem;\n}\n.mr-4 {\n  margin-right: 1rem;\n}\n.mr-6 {\n  margin-right: 1.5rem;\n}\n.mr-8 {\n  margin-right: 2rem;\n}\n.mt-1 {\n  margin-top: 0.25rem;\n}\n.mt-2 {\n  margin-top: 0.5rem;\n}\n.mt-4 {\n  margin-top: 1rem;\n}\n.mt-8 {\n  margin-top: 2rem;\n}\n.mt-auto {\n  margin-top: auto;\n}\n.inline {\n  display: inline;\n}\n.flex {\n  display: flex;\n}\n.hidden {\n  display: none;\n}\n.h-10 {\n  height: 2.5rem;\n}\n.h-12 {\n  height: 3rem;\n}\n.h-20 {\n  height: 5rem;\n}\n.h-24 {\n  height: 6rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.h-5 {\n  height: 1.25rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-full {\n  height: 100%;\n}\n.w-0 {\n  width: 0px;\n}\n.w-1 {\n  width: 0.25rem;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/3 {\n  width: 33.333333%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-12 {\n  width: 3rem;\n}\n.w-24 {\n  width: 6rem;\n}\n.w-3 {\n  width: 0.75rem;\n}\n.w-3\\/4 {\n  width: 75%;\n}\n.w-4 {\n  width: 1rem;\n}\n.w-60 {\n  width: 15rem;\n}\n.w-64 {\n  width: 16rem;\n}\n.w-72 {\n  width: 18rem;\n}\n.w-80 {\n  width: 20rem;\n}\n.w-96 {\n  width: 24rem;\n}\n.w-\\[1px\\] {\n  width: 1px;\n}\n.w-\\[325px\\] {\n  width: 325px;\n}\n.w-\\[36rem\\] {\n  width: 36rem;\n}\n.w-\\[450px\\] {\n  width: 450px;\n}\n.w-\\[600px\\] {\n  width: 600px;\n}\n.w-\\[800px\\] {\n  width: 800px;\n}\n.w-auto {\n  width: auto;\n}\n.w-full {\n  width: 100%;\n}\n.flex-1 {\n  flex: 1 1 0%;\n}\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n.shrink-0 {\n  flex-shrink: 0;\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\n.animate-pulse {\n  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\n.resize {\n  resize: both;\n}\n.flex-row {\n  flex-direction: row;\n}\n.flex-col {\n  flex-direction: column;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-end {\n  align-items: flex-end;\n}\n.items-center {\n  align-items: center;\n}\n.items-baseline {\n  align-items: baseline;\n}\n.justify-start {\n  justify-content: flex-start;\n}\n.justify-end {\n  justify-content: flex-end;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.gap-1 {\n  gap: 0.25rem;\n}\n.gap-2 {\n  gap: 0.5rem;\n}\n.gap-4 {\n  gap: 1rem;\n}\n.overflow-hidden {\n  overflow: hidden;\n}\n.text-ellipsis {\n  text-overflow: ellipsis;\n}\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n.whitespace-pre-wrap {\n  white-space: pre-wrap;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.border {\n  border-width: 1px;\n}\n.border-2 {\n  border-width: 2px;\n}\n.border-4 {\n  border-width: 4px;\n}\n.border-8 {\n  border-width: 8px;\n}\n.border-b {\n  border-bottom-width: 1px;\n}\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n.border-l-2 {\n  border-left-width: 2px;\n}\n.border-l-4 {\n  border-left-width: 4px;\n}\n.border-r-2 {\n  border-right-width: 2px;\n}\n.border-t-2 {\n  border-top-width: 2px;\n}\n.border-\\[\\#00ffff\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(0 255 255 / var(--tw-border-opacity, 1));\n}\n.border-\\[\\#ff3333\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 51 51 / var(--tw-border-opacity, 1));\n}\n.border-cyan-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.border-cyan-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(8 145 178 / var(--tw-border-opacity, 1));\n}\n.border-cyan-900 {\n  --tw-border-opacity: 1;\n  border-color: rgb(22 78 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));\n}\n.border-gray-800 {\n  --tw-border-opacity: 1;\n  border-color: rgb(31 41 55 / var(--tw-border-opacity, 1));\n}\n.border-red-500 {\n  --tw-border-opacity: 1;\n  border-color: rgb(239 68 68 / var(--tw-border-opacity, 1));\n}\n.border-red-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(220 38 38 / var(--tw-border-opacity, 1));\n}\n.border-transparent {\n  border-color: transparent;\n}\n.border-white {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));\n}\n.border-t-cyan-400 {\n  --tw-border-opacity: 1;\n  border-top-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.bg-\\[\\#00ffff\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-\\[\\#ff3333\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 51 51 / var(--tw-bg-opacity, 1));\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(34 211 238 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(8 145 178 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(22 78 99 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-800 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));\n}\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-opacity-10 {\n  --tw-bg-opacity: 0.1;\n}\n.bg-opacity-100 {\n  --tw-bg-opacity: 1;\n}\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n.bg-opacity-80 {\n  --tw-bg-opacity: 0.8;\n}\n.p-1 {\n  padding: 0.25rem;\n}\n.p-12 {\n  padding: 3rem;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-6 {\n  padding: 1.5rem;\n}\n.p-8 {\n  padding: 2rem;\n}\n.px-1 {\n  padding-left: 0.25rem;\n  padding-right: 0.25rem;\n}\n.px-12 {\n  padding-left: 3rem;\n  padding-right: 3rem;\n}\n.px-16 {\n  padding-left: 4rem;\n  padding-right: 4rem;\n}\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n.pb-1 {\n  padding-bottom: 0.25rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pb-20 {\n  padding-bottom: 5rem;\n}\n.pl-2 {\n  padding-left: 0.5rem;\n}\n.pl-32 {\n  padding-left: 8rem;\n}\n.pl-5 {\n  padding-left: 1.25rem;\n}\n.pl-8 {\n  padding-left: 2rem;\n}\n.pr-3 {\n  padding-right: 0.75rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.pt-4 {\n  padding-top: 1rem;\n}\n.text-center {\n  text-align: center;\n}\n.text-right {\n  text-align: right;\n}\n.font-mono {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n.font-sans {\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n}\n.text-2xl {\n  font-size: 1.5rem;\n  line-height: 2rem;\n}\n.text-3xl {\n  font-size: 1.875rem;\n  line-height: 2.25rem;\n}\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\n.text-5xl {\n  font-size: 3rem;\n  line-height: 1;\n}\n.text-6xl {\n  font-size: 3.75rem;\n  line-height: 1;\n}\n.text-7xl {\n  font-size: 4.5rem;\n  line-height: 1;\n}\n.text-8xl {\n  font-size: 6rem;\n  line-height: 1;\n}\n.text-9xl {\n  font-size: 8rem;\n  line-height: 1;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.font-bold {\n  font-weight: 700;\n}\n.leading-none {\n  line-height: 1;\n}\n.leading-normal {\n  line-height: 1.5;\n}\n.tracking-tighter {\n  letter-spacing: -0.05em;\n}\n.tracking-wider {\n  letter-spacing: 0.05em;\n}\n.tracking-widest {\n  letter-spacing: 0.1em;\n}\n.text-\\[\\#00ffff\\] {\n  --tw-text-opacity: 1;\n  color: rgb(0 255 255 / var(--tw-text-opacity, 1));\n}\n.text-\\[\\#e2e8f0\\] {\n  --tw-text-opacity: 1;\n  color: rgb(226 232 240 / var(--tw-text-opacity, 1));\n}\n.text-black {\n  --tw-text-opacity: 1;\n  color: rgb(0 0 0 / var(--tw-text-opacity, 1));\n}\n.text-cyan-100 {\n  --tw-text-opacity: 1;\n  color: rgb(207 250 254 / var(--tw-text-opacity, 1));\n}\n.text-cyan-400 {\n  --tw-text-opacity: 1;\n  color: rgb(34 211 238 / var(--tw-text-opacity, 1));\n}\n.text-cyan-500 {\n  --tw-text-opacity: 1;\n  color: rgb(6 182 212 / var(--tw-text-opacity, 1));\n}\n.text-cyan-600 {\n  --tw-text-opacity: 1;\n  color: rgb(8 145 178 / var(--tw-text-opacity, 1));\n}\n.text-gray-300 {\n  --tw-text-opacity: 1;\n  color: rgb(209 213 219 / var(--tw-text-opacity, 1));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity, 1));\n}\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity, 1));\n}\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity, 1));\n}\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity, 1));\n}\n.text-green-500 {\n  --tw-text-opacity: 1;\n  color: rgb(34 197 94 / var(--tw-text-opacity, 1));\n}\n.text-purple-400 {\n  --tw-text-opacity: 1;\n  color: rgb(192 132 252 / var(--tw-text-opacity, 1));\n}\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity, 1));\n}\n.text-red-600 {\n  --tw-text-opacity: 1;\n  color: rgb(220 38 38 / var(--tw-text-opacity, 1));\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity, 1));\n}\n.text-yellow-400 {\n  --tw-text-opacity: 1;\n  color: rgb(250 204 21 / var(--tw-text-opacity, 1));\n}\n.opacity-0 {\n  opacity: 0;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-30 {\n  opacity: 0.3;\n}\n.opacity-50 {\n  opacity: 0.5;\n}\n.opacity-60 {\n  opacity: 0.6;\n}\n.opacity-70 {\n  opacity: 0.7;\n}\n.opacity-80 {\n  opacity: 0.8;\n}\n.shadow-\\[0_0_15px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 15px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.shadow-\\[0_0_20px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 20px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 20px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-all {\n  transition-property: all;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-colors {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-transform {\n  transition-property: transform;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-100 {\n  transition-duration: 100ms;\n}\n.duration-200 {\n  transition-duration: 200ms;\n}\n.duration-300 {\n  transition-duration: 300ms;\n}\n.duration-500 {\n  transition-duration: 500ms;\n}\n.duration-75 {\n  transition-duration: 75ms;\n}\n.ease-out {\n  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);\n}\n\n@font-face {\n  font-family: 'Melete-Bold';\n  src: url('res:Fonts/Melete-Bold');\n}\n\n@font-face {\n  font-family: 'Melete-Medium';\n  src: url('res:Fonts/Melete-Medium');\n}\n\n@font-face {\n  font-family: 'Melete-Regular';\n  src: url('res:Fonts/Melete-Regular');\n}\n\n@font-face {\n  font-family: 'Melete-Light';\n  src: url('res:Fonts/Melete-Light');\n}\n\n@font-face {\n  font-family: 'Melete-UltraLight';\n  src: url('res:Fonts/Melete-UltraLight');\n}\n\n@font-face {\n  font-family: 'SourceHanCodeJP';\n  src: url('res:Fonts/SourceHanCodeJP');\n}\n\n/* コントローラーアイコン用フォント */\n@font-face {\n  font-family: 'kenney_input_keyboard_&_mouse';\n  src: url('res:Fonts/kenney_input_keyboard_&_mouse');\n}\n\n@font-face {\n  font-family: 'kenney_input_nintendo_switch_2';\n  src: url('res:Fonts/kenney_input_nintendo_switch_2');\n}\n\n@font-face {\n  font-family: 'kenney_input_playstation_series';\n  src: url('res:Fonts/kenney_input_playstation_series');\n}\n\n:root {\n  font-family: sans-serif;\n  font-size: 16px;\n}\n\n/* 回転のアニメーション定義 */\n@keyframes custom-spin {\n  from {\n    /* ReactUnityでは rotate 単体プロパティが安定します */\n    /* transform: rotate(...) よりも処理負荷が軽く、ReactUnityでの動作が安定しているため採用 */\n    rotate: 0deg;\n  }\n\n  to {\n    rotate: 360deg;\n  }\n}\n\n.custom-spin {\n  animation-name: custom-spin;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n\n  /* 回転の中心を要素の真ん中に固定 */\n  transform-origin: center;\n}\n\n/* マーキー（横スクロール）アニメーション */\n@keyframes marquee {\n  0% {\n    translate: 0 0;\n  }\n\n  100% {\n    translate: -50% 0;\n  }\n}\n\n.animate-marquee {\n  animation-name: marquee;\n  animation-timing-function: linear;\n  animation-iteration-count: infinite;\n}/*$vite$:1*/";
+  __vite_style__.textContent = "*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-gradient-from-position:  ;\n  --tw-gradient-via-position:  ;\n  --tw-gradient-to-position:  ;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n  --tw-contain-size:  ;\n  --tw-contain-layout:  ;\n  --tw-contain-paint:  ;\n  --tw-contain-style:  ;\n}/*\n! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n5. Use the user's configured `sans` font-feature-settings by default.\n6. Use the user's configured `sans` font-variation-settings by default.\n7. Disable tap highlights on iOS\n*/\n\nhtml,\n:host {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n  font-feature-settings: normal; /* 5 */\n  font-variation-settings: normal; /* 6 */\n  -webkit-tap-highlight-color: transparent; /* 7 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font-family by default.\n2. Use the user's configured `mono` font-feature-settings by default.\n3. Use the user's configured `mono` font-variation-settings by default.\n4. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-feature-settings: normal; /* 2 */\n  font-variation-settings: normal; /* 3 */\n  font-size: 1em; /* 4 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-feature-settings: inherit; /* 1 */\n  font-variation-settings: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  letter-spacing: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\ninput:where([type='button']),\ninput:where([type='reset']),\ninput:where([type='submit']) {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nReset default styling for dialogs.\n*/\ndialog {\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n/* Make elements with the HTML hidden attribute stay hidden by default */\n[hidden]:where(:not([hidden=\"until-found\"])) {\n  display: none;\n}\n.pointer-events-none {\n  pointer-events: none;\n}\n.pointer-events-auto {\n  pointer-events: auto;\n}\n.absolute {\n  position: absolute;\n}\n.relative {\n  position: relative;\n}\n.inset-0 {\n  inset: 0px;\n}\n.bottom-0 {\n  bottom: 0px;\n}\n.bottom-1 {\n  bottom: 0.25rem;\n}\n.bottom-4 {\n  bottom: 1rem;\n}\n.left-0 {\n  left: 0px;\n}\n.right-0 {\n  right: 0px;\n}\n.right-1 {\n  right: 0.25rem;\n}\n.right-12 {\n  right: 3rem;\n}\n.right-4 {\n  right: 1rem;\n}\n.right-8 {\n  right: 2rem;\n}\n.top-0 {\n  top: 0px;\n}\n.top-1 {\n  top: 0.25rem;\n}\n.top-40 {\n  top: 10rem;\n}\n.top-64 {\n  top: 16rem;\n}\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\n.mb-0 {\n  margin-bottom: 0px;\n}\n.mb-1 {\n  margin-bottom: 0.25rem;\n}\n.mb-10 {\n  margin-bottom: 2.5rem;\n}\n.mb-12 {\n  margin-bottom: 3rem;\n}\n.mb-2 {\n  margin-bottom: 0.5rem;\n}\n.mb-4 {\n  margin-bottom: 1rem;\n}\n.mb-6 {\n  margin-bottom: 1.5rem;\n}\n.mb-8 {\n  margin-bottom: 2rem;\n}\n.mb-auto {\n  margin-bottom: auto;\n}\n.ml-2 {\n  margin-left: 0.5rem;\n}\n.ml-4 {\n  margin-left: 1rem;\n}\n.ml-6 {\n  margin-left: 1.5rem;\n}\n.mr-2 {\n  margin-right: 0.5rem;\n}\n.mr-4 {\n  margin-right: 1rem;\n}\n.mr-6 {\n  margin-right: 1.5rem;\n}\n.mr-8 {\n  margin-right: 2rem;\n}\n.mt-1 {\n  margin-top: 0.25rem;\n}\n.mt-2 {\n  margin-top: 0.5rem;\n}\n.mt-4 {\n  margin-top: 1rem;\n}\n.mt-8 {\n  margin-top: 2rem;\n}\n.mt-auto {\n  margin-top: auto;\n}\n.inline {\n  display: inline;\n}\n.flex {\n  display: flex;\n}\n.hidden {\n  display: none;\n}\n.h-10 {\n  height: 2.5rem;\n}\n.h-12 {\n  height: 3rem;\n}\n.h-20 {\n  height: 5rem;\n}\n.h-24 {\n  height: 6rem;\n}\n.h-4 {\n  height: 1rem;\n}\n.h-5 {\n  height: 1.25rem;\n}\n.h-6 {\n  height: 1.5rem;\n}\n.h-full {\n  height: 100%;\n}\n.w-0 {\n  width: 0px;\n}\n.w-1 {\n  width: 0.25rem;\n}\n.w-1\\/2 {\n  width: 50%;\n}\n.w-1\\/3 {\n  width: 33.333333%;\n}\n.w-1\\/4 {\n  width: 25%;\n}\n.w-12 {\n  width: 3rem;\n}\n.w-24 {\n  width: 6rem;\n}\n.w-3 {\n  width: 0.75rem;\n}\n.w-3\\/4 {\n  width: 75%;\n}\n.w-4 {\n  width: 1rem;\n}\n.w-40 {\n  width: 10rem;\n}\n.w-60 {\n  width: 15rem;\n}\n.w-64 {\n  width: 16rem;\n}\n.w-72 {\n  width: 18rem;\n}\n.w-80 {\n  width: 20rem;\n}\n.w-96 {\n  width: 24rem;\n}\n.w-\\[1px\\] {\n  width: 1px;\n}\n.w-\\[325px\\] {\n  width: 325px;\n}\n.w-\\[36rem\\] {\n  width: 36rem;\n}\n.w-\\[450px\\] {\n  width: 450px;\n}\n.w-\\[600px\\] {\n  width: 600px;\n}\n.w-\\[800px\\] {\n  width: 800px;\n}\n.w-auto {\n  width: auto;\n}\n.w-full {\n  width: 100%;\n}\n.flex-1 {\n  flex: 1 1 0%;\n}\n.flex-shrink-0 {\n  flex-shrink: 0;\n}\n.shrink-0 {\n  flex-shrink: 0;\n}\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\n.animate-pulse {\n  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\n.resize {\n  resize: both;\n}\n.flex-row {\n  flex-direction: row;\n}\n.flex-col {\n  flex-direction: column;\n}\n.items-start {\n  align-items: flex-start;\n}\n.items-end {\n  align-items: flex-end;\n}\n.items-center {\n  align-items: center;\n}\n.items-baseline {\n  align-items: baseline;\n}\n.justify-start {\n  justify-content: flex-start;\n}\n.justify-end {\n  justify-content: flex-end;\n}\n.justify-center {\n  justify-content: center;\n}\n.justify-between {\n  justify-content: space-between;\n}\n.justify-around {\n  justify-content: space-around;\n}\n.gap-1 {\n  gap: 0.25rem;\n}\n.gap-2 {\n  gap: 0.5rem;\n}\n.gap-4 {\n  gap: 1rem;\n}\n.overflow-hidden {\n  overflow: hidden;\n}\n.text-ellipsis {\n  text-overflow: ellipsis;\n}\n.whitespace-nowrap {\n  white-space: nowrap;\n}\n.whitespace-pre-wrap {\n  white-space: pre-wrap;\n}\n.rounded-full {\n  border-radius: 9999px;\n}\n.border {\n  border-width: 1px;\n}\n.border-2 {\n  border-width: 2px;\n}\n.border-4 {\n  border-width: 4px;\n}\n.border-8 {\n  border-width: 8px;\n}\n.border-b {\n  border-bottom-width: 1px;\n}\n.border-b-2 {\n  border-bottom-width: 2px;\n}\n.border-l-2 {\n  border-left-width: 2px;\n}\n.border-l-4 {\n  border-left-width: 4px;\n}\n.border-r-2 {\n  border-right-width: 2px;\n}\n.border-t-2 {\n  border-top-width: 2px;\n}\n.border-\\[\\#00ffff\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(0 255 255 / var(--tw-border-opacity, 1));\n}\n.border-\\[\\#ff3333\\] {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 51 51 / var(--tw-border-opacity, 1));\n}\n.border-cyan-400 {\n  --tw-border-opacity: 1;\n  border-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.border-cyan-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(8 145 178 / var(--tw-border-opacity, 1));\n}\n.border-cyan-900 {\n  --tw-border-opacity: 1;\n  border-color: rgb(22 78 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(75 85 99 / var(--tw-border-opacity, 1));\n}\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));\n}\n.border-gray-800 {\n  --tw-border-opacity: 1;\n  border-color: rgb(31 41 55 / var(--tw-border-opacity, 1));\n}\n.border-red-500 {\n  --tw-border-opacity: 1;\n  border-color: rgb(239 68 68 / var(--tw-border-opacity, 1));\n}\n.border-red-600 {\n  --tw-border-opacity: 1;\n  border-color: rgb(220 38 38 / var(--tw-border-opacity, 1));\n}\n.border-transparent {\n  border-color: transparent;\n}\n.border-white {\n  --tw-border-opacity: 1;\n  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));\n}\n.border-t-cyan-400 {\n  --tw-border-opacity: 1;\n  border-top-color: rgb(34 211 238 / var(--tw-border-opacity, 1));\n}\n.bg-\\[\\#00ffff\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-\\[\\#ff3333\\] {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 51 51 / var(--tw-bg-opacity, 1));\n}\n.bg-black {\n  --tw-bg-opacity: 1;\n  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-400 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(34 211 238 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(8 145 178 / var(--tw-bg-opacity, 1));\n}\n.bg-cyan-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(22 78 99 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-800 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));\n}\n.bg-gray-900 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));\n}\n.bg-red-600 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(220 38 38 / var(--tw-bg-opacity, 1));\n}\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));\n}\n.bg-opacity-10 {\n  --tw-bg-opacity: 0.1;\n}\n.bg-opacity-100 {\n  --tw-bg-opacity: 1;\n}\n.bg-opacity-50 {\n  --tw-bg-opacity: 0.5;\n}\n.bg-opacity-80 {\n  --tw-bg-opacity: 0.8;\n}\n.bg-opacity-95 {\n  --tw-bg-opacity: 0.95;\n}\n.p-1 {\n  padding: 0.25rem;\n}\n.p-12 {\n  padding: 3rem;\n}\n.p-2 {\n  padding: 0.5rem;\n}\n.p-4 {\n  padding: 1rem;\n}\n.p-6 {\n  padding: 1.5rem;\n}\n.p-8 {\n  padding: 2rem;\n}\n.px-1 {\n  padding-left: 0.25rem;\n  padding-right: 0.25rem;\n}\n.px-12 {\n  padding-left: 3rem;\n  padding-right: 3rem;\n}\n.px-16 {\n  padding-left: 4rem;\n  padding-right: 4rem;\n}\n.px-2 {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n.py-4 {\n  padding-top: 1rem;\n  padding-bottom: 1rem;\n}\n.py-6 {\n  padding-top: 1.5rem;\n  padding-bottom: 1.5rem;\n}\n.pb-1 {\n  padding-bottom: 0.25rem;\n}\n.pb-2 {\n  padding-bottom: 0.5rem;\n}\n.pb-20 {\n  padding-bottom: 5rem;\n}\n.pl-2 {\n  padding-left: 0.5rem;\n}\n.pl-32 {\n  padding-left: 8rem;\n}\n.pl-5 {\n  padding-left: 1.25rem;\n}\n.pl-8 {\n  padding-left: 2rem;\n}\n.pr-3 {\n  padding-right: 0.75rem;\n}\n.pr-4 {\n  padding-right: 1rem;\n}\n.pt-4 {\n  padding-top: 1rem;\n}\n.text-center {\n  text-align: center;\n}\n.text-right {\n  text-align: right;\n}\n.font-mono {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n.font-sans {\n  font-family: ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n}\n.text-2xl {\n  font-size: 1.5rem;\n  line-height: 2rem;\n}\n.text-3xl {\n  font-size: 1.875rem;\n  line-height: 2.25rem;\n}\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\n.text-5xl {\n  font-size: 3rem;\n  line-height: 1;\n}\n.text-6xl {\n  font-size: 3.75rem;\n  line-height: 1;\n}\n.text-7xl {\n  font-size: 4.5rem;\n  line-height: 1;\n}\n.text-8xl {\n  font-size: 6rem;\n  line-height: 1;\n}\n.text-9xl {\n  font-size: 8rem;\n  line-height: 1;\n}\n.text-xl {\n  font-size: 1.25rem;\n  line-height: 1.75rem;\n}\n.text-xs {\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.font-bold {\n  font-weight: 700;\n}\n.leading-none {\n  line-height: 1;\n}\n.leading-normal {\n  line-height: 1.5;\n}\n.tracking-tighter {\n  letter-spacing: -0.05em;\n}\n.tracking-wider {\n  letter-spacing: 0.05em;\n}\n.tracking-widest {\n  letter-spacing: 0.1em;\n}\n.text-\\[\\#00ffff\\] {\n  --tw-text-opacity: 1;\n  color: rgb(0 255 255 / var(--tw-text-opacity, 1));\n}\n.text-\\[\\#e2e8f0\\] {\n  --tw-text-opacity: 1;\n  color: rgb(226 232 240 / var(--tw-text-opacity, 1));\n}\n.text-black {\n  --tw-text-opacity: 1;\n  color: rgb(0 0 0 / var(--tw-text-opacity, 1));\n}\n.text-cyan-100 {\n  --tw-text-opacity: 1;\n  color: rgb(207 250 254 / var(--tw-text-opacity, 1));\n}\n.text-cyan-400 {\n  --tw-text-opacity: 1;\n  color: rgb(34 211 238 / var(--tw-text-opacity, 1));\n}\n.text-cyan-500 {\n  --tw-text-opacity: 1;\n  color: rgb(6 182 212 / var(--tw-text-opacity, 1));\n}\n.text-cyan-600 {\n  --tw-text-opacity: 1;\n  color: rgb(8 145 178 / var(--tw-text-opacity, 1));\n}\n.text-gray-300 {\n  --tw-text-opacity: 1;\n  color: rgb(209 213 219 / var(--tw-text-opacity, 1));\n}\n.text-gray-400 {\n  --tw-text-opacity: 1;\n  color: rgb(156 163 175 / var(--tw-text-opacity, 1));\n}\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity, 1));\n}\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity, 1));\n}\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity, 1));\n}\n.text-green-500 {\n  --tw-text-opacity: 1;\n  color: rgb(34 197 94 / var(--tw-text-opacity, 1));\n}\n.text-purple-400 {\n  --tw-text-opacity: 1;\n  color: rgb(192 132 252 / var(--tw-text-opacity, 1));\n}\n.text-red-500 {\n  --tw-text-opacity: 1;\n  color: rgb(239 68 68 / var(--tw-text-opacity, 1));\n}\n.text-red-600 {\n  --tw-text-opacity: 1;\n  color: rgb(220 38 38 / var(--tw-text-opacity, 1));\n}\n.text-white {\n  --tw-text-opacity: 1;\n  color: rgb(255 255 255 / var(--tw-text-opacity, 1));\n}\n.text-yellow-400 {\n  --tw-text-opacity: 1;\n  color: rgb(250 204 21 / var(--tw-text-opacity, 1));\n}\n.opacity-0 {\n  opacity: 0;\n}\n.opacity-100 {\n  opacity: 1;\n}\n.opacity-30 {\n  opacity: 0.3;\n}\n.opacity-50 {\n  opacity: 0.5;\n}\n.opacity-60 {\n  opacity: 0.6;\n}\n.opacity-70 {\n  opacity: 0.7;\n}\n.opacity-80 {\n  opacity: 0.8;\n}\n.shadow-\\[0_0_15px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 15px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.shadow-\\[0_0_20px_rgba\\(0\\2c 255\\2c 255\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 20px rgba(0,255,255,0.3);\n  --tw-shadow-colored: 0 0 20px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.shadow-\\[0_0_30px_rgba\\(255\\2c 0\\2c 0\\2c 0\\.3\\)\\] {\n  --tw-shadow: 0 0 30px rgba(255,0,0,0.3);\n  --tw-shadow-colored: 0 0 30px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\n.transition {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-all {\n  transition-property: all;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-colors {\n  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-opacity {\n  transition-property: opacity;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.transition-transform {\n  transition-property: transform;\n  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);\n  transition-duration: 150ms;\n}\n.duration-100 {\n  transition-duration: 100ms;\n}\n.duration-200 {\n  transition-duration: 200ms;\n}\n.duration-300 {\n  transition-duration: 300ms;\n}\n.duration-500 {\n  transition-duration: 500ms;\n}\n.duration-75 {\n  transition-duration: 75ms;\n}\n.ease-out {\n  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);\n}\n\n@font-face {\n  font-family: 'Melete-Bold';\n  src: url('res:Fonts/Melete-Bold');\n}\n\n@font-face {\n  font-family: 'Melete-Medium';\n  src: url('res:Fonts/Melete-Medium');\n}\n\n@font-face {\n  font-family: 'Melete-Regular';\n  src: url('res:Fonts/Melete-Regular');\n}\n\n@font-face {\n  font-family: 'Melete-Light';\n  src: url('res:Fonts/Melete-Light');\n}\n\n@font-face {\n  font-family: 'Melete-UltraLight';\n  src: url('res:Fonts/Melete-UltraLight');\n}\n\n@font-face {\n  font-family: 'SourceHanCodeJP';\n  src: url('res:Fonts/SourceHanCodeJP');\n}\n\n/* コントローラーアイコン用フォント */\n@font-face {\n  font-family: 'kenney_input_keyboard_&_mouse';\n  src: url('res:Fonts/kenney_input_keyboard_&_mouse');\n}\n\n@font-face {\n  font-family: 'kenney_input_nintendo_switch_2';\n  src: url('res:Fonts/kenney_input_nintendo_switch_2');\n}\n\n@font-face {\n  font-family: 'kenney_input_playstation_series';\n  src: url('res:Fonts/kenney_input_playstation_series');\n}\n\n:root {\n  font-family: sans-serif;\n  font-size: 16px;\n}\n\n/* 回転のアニメーション定義 */\n@keyframes custom-spin {\n  from {\n    /* ReactUnityでは rotate 単体プロパティが安定します */\n    /* transform: rotate(...) よりも処理負荷が軽く、ReactUnityでの動作が安定しているため採用 */\n    rotate: 0deg;\n  }\n\n  to {\n    rotate: 360deg;\n  }\n}\n\n.custom-spin {\n  animation-name: custom-spin;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: linear;\n\n  /* 回転の中心を要素の真ん中に固定 */\n  transform-origin: center;\n}\n\n/* マーキー（横スクロール）アニメーション */\n@keyframes marquee {\n  0% {\n    translate: 0 0;\n  }\n\n  100% {\n    translate: -50% 0;\n  }\n}\n\n.animate-marquee {\n  animation-name: marquee;\n  animation-timing-function: linear;\n  animation-iteration-count: infinite;\n}/*$vite$:1*/";
   document.head.appendChild(__vite_style__);
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -10739,7 +10739,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       { id: "show_licenses", label: "LICENSES", type: "license", description: "View third-party software licenses." }
     ],
     "RESET": [
-      { id: "reset_defaults", label: "RESET ALL", type: "button", description: "Restore all settings to default values." }
+      { id: "reset_defaults", label: "RESET SETTINGS", type: "button", description: "Restore settings to default values." },
+      { id: "delete_save", label: "DELETE SAVE DATA", type: "button", description: "Delete all save data including stats and rankings." }
     ]
   };
   const Settings = ({ onBack, onSettingChange }) => {
@@ -10747,6 +10748,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const interop = globals.GameInterop;
     const [opacity, setOpacity] = reactExports.useState(0);
     const [isExiting, setIsExiting] = reactExports.useState(false);
+    const [isDeleting, setIsDeleting] = reactExports.useState(false);
     const [selectedCategoryIndex, setSelectedCategoryIndex] = reactExports.useState(0);
     const [selectedItemIndex, setSelectedItemIndex] = reactExports.useState(0);
     const [focusArea, setFocusArea] = reactExports.useState("category");
@@ -10754,6 +10756,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const [isEditingName, setIsEditingName] = reactExports.useState(false);
     const [editCursor, setEditCursor] = reactExports.useState(0);
     const [showLicenseMenu, setShowLicenseMenu] = reactExports.useState(false);
+    const [showDialog, setShowDialog] = reactExports.useState(false);
+    const [dialogAction, setDialogAction] = reactExports.useState(null);
+    const [dialogSelection, setDialogSelection] = reactExports.useState(0);
     const [values, setValues] = reactExports.useState({
       "hp": 3,
       "sp": 3,
@@ -10836,11 +10841,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           onBack();
         }, 300);
         return () => clearTimeout(timer);
-      } else {
+      } else if (!showLicenseMenu) {
         const timer = setTimeout(() => setOpacity(1), 50);
         return () => clearTimeout(timer);
       }
-    }, [isExiting, onBack]);
+    }, [isExiting, onBack, showLicenseMenu]);
     const currentCategory = CATEGORIES[selectedCategoryIndex];
     const currentItems = SETTINGS_MAP[currentCategory];
     const updateUnity = reactExports.useCallback((key, val) => {
@@ -10866,6 +10871,21 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       });
       interop == null ? void 0 : interop.PlaySound("submit");
     }, [updateUnity, interop]);
+    const handleDeleteSave = reactExports.useCallback(() => {
+      if (interop && typeof interop.DeleteSaveData === "function") {
+        setIsDeleting(true);
+        interop.DeleteSaveData();
+        interop == null ? void 0 : interop.PlaySound("submit");
+        setOpacity(0);
+      }
+    }, [interop]);
+    const handleOpenLicenseMenu = reactExports.useCallback(() => {
+      interop == null ? void 0 : interop.PlaySound("submit");
+      setOpacity(0);
+      setTimeout(() => {
+        setShowLicenseMenu(true);
+      }, 300);
+    }, [interop]);
     const changeValue = reactExports.useCallback((itemId, delta) => {
       setValues((prev) => {
         var _a, _b;
@@ -10913,7 +10933,29 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         interop == null ? void 0 : interop.PlaySound("move");
       };
       window.onMenuInput = (event) => {
-        if (isExiting) return;
+        if (isExiting || isDeleting) return;
+        if (showDialog) {
+          if (event === "left" || event === "right") {
+            interop == null ? void 0 : interop.PlaySound("move");
+            setDialogSelection((prev) => prev === 0 ? 1 : 0);
+          } else if (event === "submit") {
+            if (dialogSelection === 1) {
+              if (dialogAction === "reset_defaults") {
+                handleReset();
+                setShowDialog(false);
+              } else if (dialogAction === "delete_save") {
+                handleDeleteSave();
+              }
+            } else {
+              interop == null ? void 0 : interop.PlaySound("cancel");
+              setShowDialog(false);
+            }
+          } else if (event === "cancel") {
+            interop == null ? void 0 : interop.PlaySound("cancel");
+            setShowDialog(false);
+          }
+          return;
+        }
         const playerName = values["player_name"] || "PLAYER";
         if (isEditingName) {
           if (event === "backspace") {
@@ -11031,11 +11073,18 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
               setEditCursor(0);
             } else if (item.type === "button" || item.type === "license") {
               if (item.id === "reset_defaults") {
-                handleReset();
+                interop == null ? void 0 : interop.PlaySound("submit");
+                setDialogAction("reset_defaults");
+                setDialogSelection(0);
+                setShowDialog(true);
+              } else if (item.id === "delete_save") {
+                interop == null ? void 0 : interop.PlaySound("submit");
+                setDialogAction("delete_save");
+                setDialogSelection(0);
+                setShowDialog(true);
               }
               if (item.id === "show_licenses") {
-                interop == null ? void 0 : interop.PlaySound("submit");
-                setShowLicenseMenu(true);
+                handleOpenLicenseMenu();
               }
             }
           }
@@ -11047,7 +11096,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         window.onTextInput = () => {
         };
       };
-    }, [focusArea, selectedCategoryIndex, selectedItemIndex, currentItems, isExiting, interop, changeValue, isEditingName, editCursor, values, handleReset, showLicenseMenu]);
+    }, [focusArea, selectedCategoryIndex, selectedItemIndex, currentItems, isExiting, isDeleting, interop, changeValue, isEditingName, editCursor, values, handleReset, handleDeleteSave, showLicenseMenu, showDialog, dialogAction, dialogSelection]);
     const renderGauge = (value, max) => {
       const total = 10;
       const filled = Math.max(0, Math.min(total, Math.round(value / max * total)));
@@ -11074,124 +11123,166 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if (showLicenseMenu) {
       return /* @__PURE__ */ jsxRuntimeExports.jsx(LicenseMenu, { onBack: () => setShowLicenseMenu(false) });
     }
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12 text-white transition-opacity duration-300", style: { opacity, fontFamily: "SourceHanCodeJP" }, children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "SETTINGS", className: "text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600", children: "SYSTEM CONFIGURATION" })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row w-full flex-1", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-1/4 border-r-2 border-cyan-900 pr-4 h-full", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl mb-6 text-cyan-400 font-bold tracking-widest", children: "CATEGORY" }),
-          CATEGORIES.map((cat, idx) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-            MenuButton,
-            {
-              label: cat,
-              isSelected: idx === selectedCategoryIndex,
-              isPressed: isCategoryPressed && idx === selectedCategoryIndex,
-              barClass: "w-full",
-              className: "h-24 mb-6",
-              style: { opacity: focusArea === "category" ? 1 : 0.4 }
-            },
-            cat
-          ))
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-3/4 pl-8 flex-col h-full", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl mb-6 text-cyan-400 font-bold tracking-widest", children: currentCategory === "STATS" ? "STATISTICS" : currentCategory === "ABOUT" ? "SYSTEM INFORMATION" : "CONFIGURATION" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "view",
-            {
-              ref: listRef,
-              className: `flex-col flex-1 overflow-hidden relative ${focusArea === "item" ? "opacity-100" : "opacity-60"}`,
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-col w-full transition-transform duration-200 ease-out", style: { transform: `translateY(${targetScroll}px)` }, children: currentItems.map((item, idx) => {
-                var _a;
-                const isSelected = idx === selectedItemIndex;
-                const val = values[item.id];
-                let displayValue = "";
-                let displayBar = "";
-                if (item.type === "slider") {
-                  const gauge = renderGauge(val, (_a = item.max) != null ? _a : 100);
-                  displayBar = gauge.bar;
-                  displayValue = gauge.value;
-                } else if (item.type === "toggle") {
-                  displayValue = val ? "ON" : "OFF";
-                } else if (item.type === "button") {
-                  displayValue = "EXECUTE";
-                } else if (item.type === "license") {
-                  displayValue = "VIEW >";
-                } else if (item.type === "stat") {
-                  if (typeof val === "string") {
-                    displayValue = val;
-                  } else if (item.id === "total_play_time") {
-                    displayValue = formatTime(val || 0);
-                  } else {
-                    displayValue = (val || 0).toLocaleString();
-                  }
-                } else {
-                  displayValue = val;
-                }
-                const renderNameInput = () => {
-                  const strVal = val || "";
-                  return /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-row", children: Array.from({ length: 8 }).map((_, i) => {
-                    const char = strVal[i] || "_";
-                    const isPlaceholder = i >= strVal.length;
-                    const isCursor = isEditingName && isSelected && i === editCursor;
-                    return /* @__PURE__ */ jsxRuntimeExports.jsx(
-                      "text",
+    return (
+      // ルート要素: p-12を削除し、relativeを追加してダイアログの基準点にする
+      // relative: 子要素が 'absolute' で配置される際の「基準点（原点）」となります。
+      // これを指定しないと、absoluteな要素は画面全体ではなく、さらに外側の基準点を探して配置されてしまいます。
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full text-white transition-opacity duration-300 relative", style: { opacity, fontFamily: "SourceHanCodeJP" }, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col w-full h-full p-12", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row justify-between items-end mb-4 border-b-2 border-cyan-900 pb-2 w-full", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(GlitchText, { text: "SETTINGS", className: "text-8xl font-bold text-white tracking-tighter leading-none whitespace-nowrap" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-3xl text-cyan-600", children: "SYSTEM CONFIGURATION" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row w-full flex-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-1/4 border-r-2 border-cyan-900 pr-4 h-full", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-4xl mb-6 text-cyan-400 font-bold tracking-widest", children: "CATEGORY" }),
+              CATEGORIES.map((cat, idx) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                MenuButton,
+                {
+                  label: cat,
+                  isSelected: idx === selectedCategoryIndex,
+                  isPressed: isCategoryPressed && idx === selectedCategoryIndex,
+                  barClass: "w-full",
+                  className: "h-24 mb-6",
+                  style: { opacity: focusArea === "category" ? 1 : 0.4 }
+                },
+                cat
+              ))
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "w-3/4 pl-8 flex-col h-full", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-5xl mb-6 text-cyan-400 font-bold tracking-widest", children: currentCategory === "STATS" ? "STATISTICS" : currentCategory === "ABOUT" ? "SYSTEM INFORMATION" : "CONFIGURATION" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "view",
+                {
+                  ref: listRef,
+                  className: `flex-col flex-1 overflow-hidden relative ${focusArea === "item" ? "opacity-100" : "opacity-60"}`,
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-col w-full transition-transform duration-200 ease-out", style: { transform: `translateY(${targetScroll}px)` }, children: currentItems.map((item, idx) => {
+                    var _a;
+                    const isSelected = idx === selectedItemIndex;
+                    const val = values[item.id];
+                    let displayValue = "";
+                    let displayBar = "";
+                    if (item.type === "slider") {
+                      const gauge = renderGauge(val, (_a = item.max) != null ? _a : 100);
+                      displayBar = gauge.bar;
+                      displayValue = gauge.value;
+                    } else if (item.type === "toggle") {
+                      displayValue = val ? "ON" : "OFF";
+                    } else if (item.type === "button") {
+                      displayValue = "EXECUTE";
+                    } else if (item.type === "license") {
+                      displayValue = "VIEW >";
+                    } else if (item.type === "stat") {
+                      if (typeof val === "string") {
+                        displayValue = val;
+                      } else if (item.id === "total_play_time") {
+                        displayValue = formatTime(val || 0);
+                      } else {
+                        displayValue = (val || 0).toLocaleString();
+                      }
+                    } else {
+                      displayValue = val;
+                    }
+                    const renderNameInput = () => {
+                      const strVal = val || "";
+                      return /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "flex-row", children: Array.from({ length: 8 }).map((_, i) => {
+                        const char = strVal[i] || "_";
+                        const isPlaceholder = i >= strVal.length;
+                        const isCursor = isEditingName && isSelected && i === editCursor;
+                        return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "text",
+                          {
+                            className: `font-mono w-12 text-center text-4xl ${isCursor ? "text-black bg-cyan-400" : isPlaceholder ? "text-gray-600" : "text-yellow-400"}`,
+                            style: { fontFamily: "SourceHanCodeJP" },
+                            children: char
+                          },
+                          i
+                        );
+                      }) });
+                    };
+                    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "view",
                       {
-                        className: `font-mono w-12 text-center text-4xl ${isCursor ? "text-black bg-cyan-400" : isPlaceholder ? "text-gray-600" : "text-yellow-400"}`,
-                        style: { fontFamily: "SourceHanCodeJP" },
-                        children: char
+                        className: `flex-row justify-between items-center pl-5 pr-3 mb-4 h-24 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === "item" ? "bg-gray-800 border-cyan-400" : "border-transparent"}`,
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `text-4xl ${isSelected && focusArea === "item" ? "text-white" : "text-gray-400"}`, children: item.label }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `mr-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" && item.type !== "license" ? "opacity-100" : "opacity-0"}`, children: "◀" }),
+                            /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `flex-row items-center ${item.type === "slider" ? "w-[36rem] justify-end" : item.type === "stat" || item.type === "license" ? "w-80 justify-end" : "w-80 justify-center"}`, children: item.type === "text" ? renderNameInput() : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                              displayBar && /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-yellow-400 text-4xl", style: { fontFamily: "SourceHanCodeJP" }, children: displayBar }),
+                              /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `${item.type === "button" || item.type === "stat" || item.type === "license" ? "w-auto" : "w-24 text-right"} text-yellow-400 text-4xl`, style: { fontFamily: "SourceHanCodeJP" }, children: displayValue })
+                            ] }) }),
+                            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `ml-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" && item.type !== "license" ? "opacity-100" : "opacity-0"}`, children: "▶" })
+                          ] })
+                        ]
                       },
-                      i
+                      item.id
                     );
-                  }) });
-                };
-                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  "view",
-                  {
-                    className: `flex-row justify-between items-center pl-5 pr-3 mb-4 h-24 flex-shrink-0 border-l-4 transition-all duration-200 ${isSelected && focusArea === "item" ? "bg-gray-800 border-cyan-400" : "border-transparent"}`,
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `text-4xl ${isSelected && focusArea === "item" ? "text-white" : "text-gray-400"}`, children: item.label }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row items-center", children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `mr-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" && item.type !== "license" ? "opacity-100" : "opacity-0"}`, children: "◀" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `flex-row items-center ${item.type === "slider" ? "w-[36rem] justify-end" : item.type === "stat" || item.type === "license" ? "w-80 justify-end" : "w-80 justify-center"}`, children: item.type === "text" ? renderNameInput() : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-                          displayBar && /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-yellow-400 text-4xl", style: { fontFamily: "SourceHanCodeJP" }, children: displayBar }),
-                          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `${item.type === "button" || item.type === "stat" || item.type === "license" ? "w-auto" : "w-24 text-right"} text-yellow-400 text-4xl`, style: { fontFamily: "SourceHanCodeJP" }, children: displayValue })
-                        ] }) }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: `ml-4 text-cyan-400 text-4xl ${isSelected && focusArea === "item" && item.type !== "text" && item.type !== "button" && item.type !== "stat" && item.type !== "license" ? "opacity-100" : "opacity-0"}`, children: "▶" })
-                      ] })
-                    ]
-                  },
-                  item.id
-                );
-              }) })
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mt-8 p-4 border border-cyan-900 bg-black bg-opacity-80", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-3xl mb-2", children: ">> INFO_PANEL" }),
-            isEditingName ? /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row mb-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[UP/DOWN]" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl mr-8", children: ":CHANGE CHAR" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[LEFT/RIGHT]" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl", children: ":MOVE CURSOR" })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[SOUTH]" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl mr-8", children: ":OK" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[EAST]" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl mr-8", children: ":CANCEL" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[WEST]" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl", children: ":DELETE" })
+                  }) })
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "mt-8 p-4 border border-cyan-900 bg-black bg-opacity-80", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-600 text-3xl mb-2", children: ">> INFO_PANEL" }),
+                isEditingName ? /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-col", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row mb-2", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[UP/DOWN]" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl mr-8", children: ":CHANGE CHAR" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[LEFT/RIGHT]" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl", children: ":MOVE CURSOR" })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[SOUTH]" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl mr-8", children: ":OK" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[EAST]" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl mr-8", children: ":CANCEL" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-cyan-400 text-3xl", children: "[WEST]" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-gray-300 text-3xl", children: ":DELETE" })
+                  ] })
+                ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: "text-gray-300 text-3xl", children: [
+                  ">> ",
+                  currentDescription
+                ] })
               ] })
-            ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("text", { className: "text-gray-300 text-3xl", children: [
-              ">> ",
-              currentDescription
             ] })
           ] })
-        ] })
+        ] }),
+        showDialog && // absolute: 親要素(relative)を基準に、絶対的な位置に配置します。
+        // inset-0: top:0, right:0, bottom:0, left:0 と同じ意味。親要素の四隅いっぱいに広げます。
+        // zIndex: 100: 重なり順を指定します。数値が大きいほど手前に表示されます。
+        // これにより、ヘッダーやパディングに関係なく、画面全体を覆う「暗幕」を作っています。
+        // bg-opacity-95: 背景をほぼ真っ黒にして、後ろの画面を隠蔽し、ダイアログに注目させます。
+        /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: "absolute inset-0 items-center justify-center bg-black bg-opacity-95", style: { zIndex: 100 }, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "bg-black border-2 border-red-500 p-8 w-[600px] items-center shadow-[0_0_30px_rgba(255,0,0,0.3)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            GlitchText,
+            {
+              text: "WARNING",
+              isAlert: true,
+              className: "text-6xl text-red-500 mb-4 font-bold tracking-widest",
+              style: { fontFamily: "SourceHanCodeJP" }
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("text", { className: "text-white text-3xl mb-8 text-center", children: dialogAction === "delete_save" ? "ALL SAVE DATA WILL BE DELETED.\nARE YOU SURE?" : "RESET ALL SETTINGS TO DEFAULT.\nARE YOU SURE?" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("view", { className: "flex-row w-full justify-around", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `w-40 items-center py-2 ${dialogSelection === 0 ? "bg-cyan-600" : "border border-gray-600"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "text",
+              {
+                className: "text-3xl",
+                style: { color: dialogSelection === 0 ? "#ffffff" : "#9ca3af", fontFamily: "SourceHanCodeJP" },
+                children: "NO"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("view", { className: `w-40 items-center py-2 ${dialogSelection === 1 ? "bg-red-600" : "border border-gray-600"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "text",
+              {
+                className: "text-3xl",
+                style: { color: dialogSelection === 1 ? "#ffffff" : "#9ca3af", fontFamily: "SourceHanCodeJP" },
+                children: "YES"
+              }
+            ) })
+          ] })
+        ] }) })
       ] })
-    ] });
+    );
   };
   const TARGET_WIDTH = 1920;
   const TARGET_HEIGHT = 1080;

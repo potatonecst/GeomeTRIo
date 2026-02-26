@@ -16,15 +16,11 @@ export const ScorePopup = () => {
     // Unity側はポーリングで同じ値を返し続けるため、時刻が変わった時だけ処理する必要があります。
     // useRef: 再描画されても値を保持し続ける「箱」です。
     // useStateと違い、書き換えても再描画が発生しないため、ロジック内部の管理用変数に適しています。
+    // ここでは「画面表示には関係ないが、ロジック判定に必要な前回の値」を保持するために使っています。
     const lastEventTimeRef = useRef(0);
     const nextIdRef = useRef(0);
 
     useEffect(() => {
-        // 初回マウント時に、既に古いイベントが残っていた場合に表示しないように現在時刻で初期化
-        if (lastEventTimeRef.current === 0 && status.scoreEventTime > 0) {
-            lastEventTimeRef.current = status.scoreEventTime;
-        }
-
         // 新しいイベントが発生したかチェック (タイムスタンプで比較)
         // Unity側でイベント発生時に Time.unscaledTime を更新しているため、
         // 前回記録した時刻よりも新しい時刻であれば「新規イベント」とみなします。
@@ -69,7 +65,7 @@ export const ScorePopup = () => {
         // 画面右上（スコア表示の下あたり）に配置
         // HUDのサイドバー内(right-0)に重なるように配置
         // pointer-events-none: ゲームプレイの邪魔にならないようにクリック判定を無効化
-        <view className="absolute top-44 right-8 flex-col items-end pointer-events-none">
+        <view className="absolute top-40 right-8 flex-col items-end pointer-events-none">
             {popups.map(popup => (
                 <view
                     key={popup.id}
