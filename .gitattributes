@@ -27,4 +27,5 @@
 *.blend filter=lfs diff=lfs merge=lfs -text
 
 # Other large files
-*.asset filter=lfs diff=lfs merge=lfs -text # Unity's binary assets if large
+# Unity's binary assets if large
+*.asset filter=lfs diff=lfs merge=lfs -text
