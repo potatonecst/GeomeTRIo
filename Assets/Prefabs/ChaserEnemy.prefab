@@ -34,6 +34,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6414955780275559392
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -79,6 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_FlipX: 0
@@ -88,7 +90,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2056807075952447789
 GameObject:
@@ -128,6 +129,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5345592678994330345
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -173,16 +175,16 @@ SpriteRenderer:
   m_SortingLayerID: -1801779665
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: 2e5c8dc78ad4341e48da188a9e917023, type: 3}
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 1, g: 0.2, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.56, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!50 &6603533557860482465
 Rigidbody2D:
@@ -250,7 +252,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    newSize: {x: 2.56, y: 2.56}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -266,16 +268,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 2056807075952447789}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d2a6d47db0624ac9bb4217d7b62ee57, type: 3}
+  m_Script: {fileID: 11500000, guid: 05483ab44fa244f448f7e3f3786fbecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheseEnemyController
   speed: 1
   baseHP: 1
-  baseScore: 300
+  baseScore: 100
   scoreMultiplier: 1
-  shootingStartTime: 12
-  aimingStartTime: 12
-  fireRate: 5
+  formationId: -1
   deathEffectPrefab: {fileID: 639211555639795330, guid: a64fd46e83ae648d9a0cc45b4b8a94ed, type: 3}
   powerUpItemPrefab: {fileID: 5167439125495829321, guid: 00640a6d105094b9fa1d37c51e506d83, type: 3}
   hpBarTransform: {fileID: 7386306161486168894}
+  shootingStartTime: 12
+  aimingStartTime: 12
+  fireRate: 5
