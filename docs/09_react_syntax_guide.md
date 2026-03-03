@@ -347,3 +347,48 @@ Webの `overflow: scroll` に頼らず、`transform` を使って自前で制御
 3.  **移動の適用:** コンテンツのラッパーに `style={{ transform: \`translateY(${scrollPos}px)\` }}` を適用します。
 4.  **入力ハンドリング:** 上下キーの入力に応じて `scrollPos` を増減させます。
 5.  **範囲制限:** `Math.max(0, Math.min(maxScroll, newPos))` で、はみ出しを防ぎます。
+
+---
+
+## 17. 非同期処理 (`async` / `await`)
+
+時間のかかる処理（通信やDB操作など）を、コードの見た目上「待機」させるための構文です。
+JavaScriptの `Promise` を直感的に書くために使われます。Backendの実装（AWS Lambda）でも多用されます。
+
+### 構文
+```typescript
+// 関数に async をつける
+const fetchData = async () => {
+    // 完了するまでここで待機する (await)
+    const result = await someAsyncFunction();
+    console.log(result);
+};
+```
+
+### 解説
+*   **`async`**: 「この関数の中で `await` を使います」という宣言。戻り値は自動的に `Promise` になります。
+*   **`await`**: 「この処理が終わるまで、次の行に進まずに待ちます」という命令。
+*   **メリット**: コールバック地獄（`.then(() => { ... })` の入れ子）を防ぎ、コードを上から下へ流れるように書けます。
+
+---
+
+## 18. 例外処理 (`try` / `catch`)
+
+実行中にエラーが発生する可能性がある処理を囲み、エラー時の対応を記述する構文です。
+特に `async/await` と組み合わせて、通信エラーやJSONパースエラーなどを捕捉するのによく使われます。
+
+### 構文
+```typescript
+try {
+    // エラーが起きるかもしれない処理
+    const data = JSON.parse(brokenJson);
+    await saveData(data);
+} catch (error) {
+    // エラーが起きたらここが実行される
+    console.error("失敗しました:", error);
+}
+```
+
+### 解説
+*   **`try` ブロック**: 正常系の処理を書きます。途中でエラーが起きると、即座に中断して `catch` に飛びます。
+*   **`catch` ブロック**: エラー発生時の処理（ログ出力、代替値の返却など）を書きます。
