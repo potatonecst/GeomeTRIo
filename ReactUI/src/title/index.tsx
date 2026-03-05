@@ -13,6 +13,8 @@ import { Settings } from './Settings';
 import { useGlitch } from '../hooks/useGlitch';
 import { GlitchText } from '../components/GlitchText';
 import { AspectRatioWrapper } from '../components/AspectRatioWrapper';
+import { Toaster } from '../components/Toaster';
+import { OfflineIndicator } from '../components/OfflineIndicator';
 
 // 画面の状態を表す型定義
 // 'title': タイトル画面（ロゴ表示など）
@@ -434,6 +436,8 @@ const TitleApp = () => {
             setConnectionState('connected'); // メニュー画面から開始
         } else {
             setConnectionState('idle'); // 通常通りPress Any Buttonから開始
+            // 起動時（スキップなし）はここでリセットして、ロード可能な状態にする
+            interop?.ResetCloudLoadState();
         }
     }, [interop]);
 
@@ -447,6 +451,8 @@ const TitleApp = () => {
             (window as any).onAnyKeyPress = () => {
                 interop?.PlaySound('submit');
                 setConnectionState('connecting');
+                // ここでロード開始を要求する（メニュー画面などでは呼ばれないので安全）
+                interop?.StartCloudLoad();
             };
         } else {
             (window as any).onAnyKeyPress = () => { };
@@ -501,8 +507,10 @@ const TitleApp = () => {
         setConnectionState('disconnecting');
         setTimeout(() => {
             setConnectionState('idle');
+            // メニューから戻った時にリセットし、オフライン表示を消して再接続可能にする
+            interop?.ResetCloudLoadState();
         }, 300); // Menuのフェードアウト時間(300ms)に合わせる
-    }, []);
+    }, [interop]);
 
     // ゲーム終了処理
     // interop オブジェクトを使用していますが、interop自体が変更されない限り関数を作り直す必要はありません。
@@ -538,139 +546,146 @@ const TitleApp = () => {
     const isMenuOpen = connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting' || isGameStarting;
 
     return (
-        // 背景色を「真っ黒」から「深いネイビー（ダークスレート）」に変更して、ビネット（黒い影）を目立たせる
-        <AspectRatioWrapper onReady={handleUIReady}>
-            <view className="absolute inset-0 flex-col justify-center items-center" style={{ backgroundColor: '#0f172a', width: '100%', height: '100%' }}>
-                {/* 背景装飾: グリッド */}
-                <GridBackground />
-                {/* 背景装飾: 幾何学的なデブリ */}
-                <GeometricDebris />
+        // 背景色を一番外側に設定
+        <view className="absolute top-0 left-0 w-full h-full" style={{ backgroundColor: '#0f172a' }}>
+            <AspectRatioWrapper onReady={handleUIReady}>
+                <view className="absolute inset-0 flex-col justify-center items-center" style={{ width: '100%', height: '100%' }}>
+                    {/* 背景装飾: グリッド */}
+                    <GridBackground />
+                    {/* 背景装飾: 幾何学的なデブリ */}
+                    <GeometricDebris />
 
-                {/* タイトル画面 */}
-                {currentScreen === 'title' && (
-                    <view className="w-full h-full flex-col p-12">
-                        {/* 上半分: タイトルロゴ */}
-                        <view className="flex-1 w-full items-center justify-end pb-20">
-                            {/* グリッチエフェクト付きロゴ */}
-                            <GlitchLogo isAlert={isMenuOpen} />
-                        </view>
+                    {/* タイトル画面 */}
+                    {currentScreen === 'title' && (
+                        <view className="w-full h-full flex-col p-12">
+                            {/* 上半分: タイトルロゴ */}
+                            <view className="flex-1 w-full items-center justify-end pb-20">
+                                {/* グリッチエフェクト付きロゴ */}
+                                <GlitchLogo isAlert={isMenuOpen} />
+                            </view>
 
-                        {/* 下半分: メニュー/ボタン */}
-                        <view className="flex-1 w-full items-center justify-start">
-                            {/* 初期化中は何も表示しない（一瞬のチラつき防止） */}
-                            {connectionState === 'initializing' && null}
+                            {/* 下半分: メニュー/ボタン */}
+                            <view className="flex-1 w-full items-center justify-start">
+                                {/* 初期化中は何も表示しない（一瞬のチラつき防止） */}
+                                {connectionState === 'initializing' && null}
 
-                            {/* 待機状態: Press Any Button を表示 */}
-                            {connectionState === 'idle' && (
-                                <view className="transition-opacity duration-300 opacity-100">
-                                    {/* Press Any Button: メニュー項目と同様に三角を追加 */}
-                                    <view className="relative flex-row items-center justify-center px-16 py-6">
-                                        {/* 背景: 枠線と薄いシアンでサイバー感を出す */}
-                                        <view className="absolute left-0 top-0 bottom-0 right-0 border border-[#00ffff] bg-[#00ffff] bg-opacity-10 animate-pulse" />
+                                {/* 待機状態: Press Any Button を表示 */}
+                                {connectionState === 'idle' && (
+                                    <view className="transition-opacity duration-300 opacity-100">
+                                        {/* Press Any Button: メニュー項目と同様に三角を追加 */}
+                                        <view className="relative flex-row items-center justify-center px-16 py-6">
+                                            {/* 背景: 枠線と薄いシアンでサイバー感を出す */}
+                                            <view className="absolute left-0 top-0 bottom-0 right-0 border border-[#00ffff] bg-[#00ffff] bg-opacity-10 animate-pulse" />
 
-                                        {/* 三角（自機）: まだ侵入前なので白で表示 */}
-                                        <text className="text-5xl text-white mr-6">▶</text>
+                                            {/* 三角（自機）: まだ侵入前なので白で表示 */}
+                                            <text className="text-5xl text-white mr-6">▶</text>
 
-                                        {/* テキスト: シアンで発光感 */}
-                                        <text className="text-5xl text-[#00ffff] tracking-widest" style={{ textShadow: '0 0 8px #00ffff', fontFamily: 'SourceHanCodeJP' }}>
-                                            PRESS ANY BUTTON
-                                        </text>
+                                            {/* テキスト: シアンで発光感 */}
+                                            <text className="text-5xl text-[#00ffff] tracking-widest" style={{ textShadow: '0 0 8px #00ffff', fontFamily: 'SourceHanCodeJP' }}>
+                                                PRESS ANY BUTTON
+                                            </text>
+                                        </view>
                                     </view>
-                                </view>
-                            )}
+                                )}
 
-                            {/* 接続中: コンソールログを表示 */}
-                            {connectionState === 'connecting' && (
-                                <ConnectionSequence onComplete={handleConnectionComplete} appVersion={appVersion} />
-                            )}
+                                {/* 接続中: コンソールログを表示 */}
+                                {connectionState === 'connecting' && (
+                                    <ConnectionSequence onComplete={handleConnectionComplete} appVersion={appVersion} />
+                                )}
 
-                            {/* 接続完了: メニューを表示 */}
-                            {(connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting') && (
-                                <Menu
-                                    onNavigate={handleNavigate}
-                                    onPlay={() => console.log("Game Start!")}
-                                    onBack={handleMenuBack}
-                                    onExit={handleExit}
-                                    isExiting={connectionState === 'disconnecting' || connectionState === 'exiting'}
-                                    initialIndex={lastMenuIndex} // 記憶していた位置を渡す
-                                    onIndexChange={setLastMenuIndex} // 位置が変わったら記憶を更新
-                                />
-                            )}
+                                {/* 接続完了: メニューを表示 */}
+                                {(connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting') && (
+                                    <Menu
+                                        onNavigate={handleNavigate}
+                                        onPlay={() => console.log("Game Start!")}
+                                        onBack={handleMenuBack}
+                                        onExit={handleExit}
+                                        isExiting={connectionState === 'disconnecting' || connectionState === 'exiting'}
+                                        initialIndex={lastMenuIndex} // 記憶していた位置を渡す
+                                        onIndexChange={setLastMenuIndex} // 位置が変わったら記憶を更新
+                                    />
+                                )}
 
-                            {/* 終了メッセージ */}
-                            {connectionState === 'exiting' && (
-                                <view className="absolute transition-opacity duration-300" style={{ opacity: shutdownOpacity, top: '25%' }}>
-                                    <GlitchText text="SHUTTING DOWN..." isAlert={true} className="text-6xl text-red-500 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
-                                </view>
-                            )}
-                        </view>
-                    </view>
-                )}
-
-                {/* ステージ選択画面 */}
-                {currentScreen === 'stage_select' && (
-                    <StageSelect onBack={() => setCurrentScreen('title')} onGameStart={handleGameStart} />
-                )}
-
-                {/* ランキング画面 */}
-                {currentScreen === 'ranking' && (
-                    <Ranking onBack={() => setCurrentScreen('title')} />
-                )}
-
-                {/* 設定画面 */}
-                {currentScreen === 'settings' && (
-                    <Settings
-                        onBack={() => setCurrentScreen('title')}
-                    />
-                )}
-
-                {/* ローディング画面: 暗転の下に配置 */}
-                <view
-                    className="absolute inset-0 items-center justify-center bg-black pointer-events-none transition-opacity duration-500"
-                    style={{ opacity: isGameStarting ? 1 : 0, zIndex: 9998 }}
-                >
-                    {isGameStarting && (
-                        <view className="flex-row items-center">
-                            <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
-                            <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
+                                {/* 終了メッセージ */}
+                                {connectionState === 'exiting' && (
+                                    <view className="absolute transition-opacity duration-300" style={{ opacity: shutdownOpacity, top: '25%' }}>
+                                        <GlitchText text="SHUTTING DOWN..." isAlert={true} className="text-6xl text-red-500 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
+                                    </view>
+                                )}
+                            </view>
                         </view>
                     )}
+
+                    {/* ステージ選択画面 */}
+                    {currentScreen === 'stage_select' && (
+                        <StageSelect onBack={() => setCurrentScreen('title')} onGameStart={handleGameStart} />
+                    )}
+
+                    {/* ランキング画面 */}
+                    {currentScreen === 'ranking' && (
+                        <Ranking onBack={() => setCurrentScreen('title')} />
+                    )}
+
+                    {/* 設定画面 */}
+                    {currentScreen === 'settings' && (
+                        <Settings
+                            onBack={() => setCurrentScreen('title')}
+                        />
+                    )}
+
+                    {/* ローディング画面: 暗転の下に配置 */}
+                    <view
+                        className="absolute inset-0 items-center justify-center bg-black pointer-events-none transition-opacity duration-500"
+                        style={{ opacity: isGameStarting ? 1 : 0, zIndex: 9998 }}
+                    >
+                        {isGameStarting && (
+                            <view className="flex-row items-center">
+                                <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
+                                <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
+                            </view>
+                        )}
+                    </view>
+
+                    {/* 暗転オーバーレイ: 最前面 */}
+                    <view
+                        className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
+                        style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
+                    />
+
+                    {/* ビネット効果: 画面四隅を暗くして没入感を出す */}
+                    <view
+                        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                        style={{
+                            // 内側に影を落とすことでビネットを表現
+                            boxShadow: 'inset 0 0 200px 100px rgba(0,0,0,0.9)'
+                        }}
+                    />
+
+                    {/* 赤フラッシュ演出: 侵入検知時に一瞬表示 */}
+                    {showRedFlash && (
+                        <view className="absolute top-0 left-0 w-full h-full bg-[#ff3333] opacity-30 pointer-events-none" />
+                    )}
+
+                    {/* フッター: Copyright */}
+                    {/* 操作ガイドはコントローラーのボタン配置差異の問題により廃止しました */}
+                    {currentScreen === 'title' && (
+                        <>
+                            <view className="absolute bottom-4 w-full items-center justify-center pointer-events-none">
+                                <text className="text-gray-500 text-2xl font-sans">© 2026 potatonecst</text>
+                            </view>
+                            <view className="absolute bottom-4 right-4 pointer-events-none">
+                                <text className="text-gray-500 text-2xl font-mono">{appVersion}</text>
+                            </view>
+                        </>
+                    )}
+
+                    {/* オフラインインジケーター (左下、コピーライトの上) */}
+                    <OfflineIndicator className="absolute bottom-4 left-4" />
                 </view>
-
-                {/* 暗転オーバーレイ: 最前面 */}
-                <view
-                    className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
-                    style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
-                />
-
-                {/* ビネット効果: 画面四隅を暗くして没入感を出す */}
-                <view
-                    className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                    style={{
-                        // 内側に影を落とすことでビネットを表現
-                        boxShadow: 'inset 0 0 200px 100px rgba(0,0,0,0.9)'
-                    }}
-                />
-
-                {/* 赤フラッシュ演出: 侵入検知時に一瞬表示 */}
-                {showRedFlash && (
-                    <view className="absolute top-0 left-0 w-full h-full bg-[#ff3333] opacity-30 pointer-events-none" />
-                )}
-
-                {/* フッター: Copyright */}
-                {/* 操作ガイドはコントローラーのボタン配置差異の問題により廃止しました */}
-                {currentScreen === 'title' && (
-                    <>
-                        <view className="absolute bottom-4 w-full items-center justify-center pointer-events-none">
-                            <text className="text-gray-500 text-2xl font-sans">© 2026 potatonecst</text>
-                        </view>
-                        <view className="absolute bottom-4 right-4 pointer-events-none">
-                            <text className="text-gray-500 text-2xl font-mono">{appVersion}</text>
-                        </view>
-                    </>
-                )}
-            </view>
-        </AspectRatioWrapper>
+            </AspectRatioWrapper>
+            {/* システムメッセージ通知用トースター (AspectRatioWrapperの外に出して再マウントを防ぐ) */}
+            <Toaster />
+        </view>
     );
 };
 

@@ -8,6 +8,8 @@ import { MenuButton } from '../components/MenuButton';
 import { useGlitch } from '../hooks/useGlitch';
 import { AspectRatioWrapper } from '../components/AspectRatioWrapper';
 import { ScorePopup } from './ScorePopup';
+import { Toaster } from '../components/Toaster';
+import { OfflineIndicator } from '../components/OfflineIndicator';
 
 // ゲームオーバーパネルコンポーネント
 // 役割: ゲームオーバー時に表示され、リトライかタイトルへ戻るかを選択させる
@@ -491,48 +493,55 @@ const GameApp = () => {
     }, []);
 
     return (
-        <AspectRatioWrapper onReady={handleUIReady}>
-            <view className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
-                <PausePanel />
-                <GameOverPanel />
+        <view className="absolute top-0 left-0 w-full h-full">
+            <AspectRatioWrapper onReady={handleUIReady}>
+                <view className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
+                    <PausePanel />
+                    <GameOverPanel />
 
-                {/* Loading Screen */}
-                {isLoading && (
-                    <view className="absolute inset-0 items-center justify-center bg-black bg-opacity-80 pointer-events-none" style={{ zIndex: 9998 }}>
-                        <view className="flex-row items-center">
-                            <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
-                            <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
+                    {/* Loading Screen */}
+                    {isLoading && (
+                        <view className="absolute inset-0 items-center justify-center bg-black bg-opacity-80 pointer-events-none" style={{ zIndex: 9998 }}>
+                            <view className="flex-row items-center">
+                                <GlitchText text="LOADING" isAlert={false} className="text-6xl text-cyan-400 whitespace-nowrap tracking-widest" style={{ fontFamily: 'SourceHanCodeJP' }} />
+                                <view className="custom-spin w-12 h-12 border-8 border-cyan-900 border-t-cyan-400 rounded-full ml-6" />
+                            </view>
                         </view>
+                    )}
+
+                    {/* Blackout Overlay */}
+                    {showOverlay && (
+                        <view
+                            className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
+                            style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
+                        />
+                    )}
+
+                    {/* HUD: Blackout Overlay(9999)より手前に表示するために、この位置に配置しzIndexを指定 */}
+                    <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
+                        <HUD hudState={hudState} />
                     </view>
-                )}
+                    <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
+                        <ScorePopup />
+                    </view>
 
-                {/* Blackout Overlay */}
-                {showOverlay && (
-                    <view
-                        className="absolute top-0 left-0 w-full h-full bg-black pointer-events-none transition-opacity duration-500"
-                        style={{ opacity: isBlackout ? 1 : 0, zIndex: 9999 }}
-                    />
-                )}
+                    {/* Start Cutin */}
+                    {/* HUD(10000)よりもさらに手前に表示するために、JSXの最後に配置 */}
+                    {isCutinPlaying && (
+                        <StageStartCutin
+                            stageName={status.stageName || "STAGE START"}
+                            onComplete={handleCutinComplete}
+                            onProgress={handleCutinProgress}
+                        />
+                    )}
 
-                {/* HUD: Blackout Overlay(9999)より手前に表示するために、この位置に配置しzIndexを指定 */}
-                <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
-                    <HUD hudState={hudState} />
+                    {/* オフラインインジケーター (左上) */}
+                    <OfflineIndicator className="absolute top-4 left-4" />
                 </view>
-                <view className="absolute inset-0 pointer-events-none" style={{ zIndex: 10000 }}>
-                    <ScorePopup />
-                </view>
-
-                {/* Start Cutin */}
-                {/* HUD(10000)よりもさらに手前に表示するために、JSXの最後に配置 */}
-                {isCutinPlaying && (
-                    <StageStartCutin
-                        stageName={status.stageName || "STAGE START"}
-                        onComplete={handleCutinComplete}
-                        onProgress={handleCutinProgress}
-                    />
-                )}
-            </view>
-        </AspectRatioWrapper>
+            </AspectRatioWrapper>
+            {/* システムメッセージ通知用トースター (AspectRatioWrapperの外に出して再マウントを防ぐ) */}
+            <Toaster />
+        </view>
     );
 };
 

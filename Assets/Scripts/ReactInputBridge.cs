@@ -82,10 +82,15 @@ public class GameInterop
         public bool isGameOver;
         public bool isNewHighScore;
         public bool isPaused;
+        public bool isOffline; // 追加: オフラインモード（セーブ不可）かどうか
         public int level;
         public int currentExp;
         public int nextExp;
         public string systemMessage;
+        public string toastMessage; // 追加: トースト通知用メッセージ
+        public float toastTime;     // 追加: トースト通知の発行時刻
+        public string toastId;      // 追加: トースト通知のID
+        public float unscaledTime;  // 追加: 現在のリアルタイム経過時間（重複判定用）
         public string systemStatus;
         public string engineStatus;
         public string weaponStatus;
@@ -201,10 +206,15 @@ public class GameInterop
             isGameOver = GameManager.instance.IsGameOver,
             isNewHighScore = GameManager.instance.IsNewHighScore,
             isPaused = GameManager.instance.IsPaused,
+            isOffline = GameManager.instance.IsOfflineMode, // ロード失敗時のみオフライン扱い
             level = lvl,
             currentExp = PlayerController.instance != null ? PlayerController.instance.GetCurrentExp() : 0,
             nextExp = PlayerController.instance != null ? PlayerController.instance.GetNextLevelExp() : 1,
             systemMessage = GameManager.instance.SystemMessage,
+            toastMessage = GameManager.instance.ToastMessage,
+            toastTime = GameManager.instance.LastToastTime,
+            toastId = GameManager.instance.ToastId,
+            unscaledTime = Time.unscaledTime,
             systemStatus = sysStatus,
             engineStatus = engStatus,
             weaponStatus = wpnStatus,
@@ -214,6 +224,13 @@ public class GameInterop
             scoreEventLabel = GameManager.instance.LastScoreEventLabel,
             scoreEventTime = GameManager.instance.LastScoreEventTime
         };
+
+        // デバッグ: メッセージが設定されている場合、ログに出力して確認する
+        if (!string.IsNullOrEmpty(status.systemMessage))
+        {
+            Debug.Log($"[ReactInputBridge] GetInGameStatus returning message: {status.systemMessage}");
+        }
+
         // JSON形式の文字列に変換して返します。React側はこの文字列を受け取って解析します。
         return JsonUtility.ToJson(status);
     }
@@ -265,7 +282,8 @@ public class GameInterop
     {
         // 設定とセーブデータをディスクに書き込みます。
         SettingsManager.Save(); // PlayerPrefsの保存
-        GameManager.instance?.SaveGameData(); // GameDataの保存
+        // 設定画面でも保存メッセージを表示する（ユーザー要望により表示ありに変更）
+        GameManager.instance?.SaveGameData(true); // GameDataの保存
     }
 
 
@@ -429,6 +447,22 @@ public class GameInterop
         // GameManagerに通知し、BGM再生や黒幕（オーバーレイ）の消去を行わせます。
         // これにより、映像の表示とBGMの開始タイミングを完全に同期させます。
         GameManager.instance?.OnGameUIReady();
+    }
+
+    /// <summary>
+    /// クラウドデータのロードを開始します。
+    /// </summary>
+    public void StartCloudLoad()
+    {
+        GameManager.instance?.StartCloudLoad();
+    }
+
+    /// <summary>
+    /// クラウドロード状態をリセットします。
+    /// </summary>
+    public void ResetCloudLoadState()
+    {
+        GameManager.instance?.ResetCloudLoadState();
     }
 }
 
@@ -618,6 +652,14 @@ public class ReactInputBridge : MonoBehaviour
 
     private void OnPressAnyButton()
     {
+        // ナビゲーション操作（矢印キーやスティック）の場合は、AnyKeyとしての処理（ロード開始など）を行わない
+        // これにより、メニュー操作中に裏でロードが走るのを防ぐ
+        var navInput = _navigateAction.ReadValue<Vector2>();
+        if (navInput.sqrMagnitude > 0.1f)
+        {
+            return;
+        }
+
         Debug.Log("[ReactInputBridge] Input detected!");
         // Reactのコンテキストが初期化されているか確認
         if (_reactRenderer != null && _reactRenderer.Context != null)

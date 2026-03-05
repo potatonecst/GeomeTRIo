@@ -1,137 +1,179 @@
-// AWS SDK (Software Development Kit) のモジュールを読み込みます。
-// v3では必要な機能だけを個別にインポートできるため、アプリのサイズを小さく保てます。
+// --- モジュールのインポート ---
+// このセクションでは、このLambda関数が動作するために必要な「部品（モジュール）」を読み込んでいます。
 
-// Node.js 標準の暗号化モジュール。ハッシュ値（チェックサム）の計算に使用します。
-import { createHmac } from "crypto";
-// DynamoDBClient: AWSのデータベース「DynamoDB」と通信するための基本的なクライアントです。
-// これがAWSとの接続窓口になります。
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+// AWS Lambdaの型定義。TypeScriptで開発する際に、引数eventや戻り値の型を正確に扱うために使用します。
+// これにより、コードの入力ミスを防ぎ、エディタの補完機能が効くようになります。
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+// Node.jsに標準で組み込まれている暗号化モジュール。
+// HMAC-SHA256というアルゴリズムでチェックサム（データの指紋のようなもの）を計算するために使用します。
+import { createHmac } from 'crypto';
 
-// DynamoDBDocumentClient, PutCommand, GetCommand:
-// DynamoDBをより扱いやすくするための便利なツール群です。
-// - DynamoDBDocumentClient: データをJavaScriptのオブジェクト(JSON)としてそのまま保存・取得できるようにするラッパー（包み込む）ライブラリ。
-//   通常、DynamoDBは {"S": "文字列"} のような特殊な形式でデータを扱いますが、これを使うと普通の {"name": "文字列"} で扱えます。
-// - PutCommand: データを「置く（保存・上書き）」ための命令セット。
-// - GetCommand: データを「取得する」ための命令セット。
-import { DynamoDBDocumentClient, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
-// json-stable-stringify: オブジェクトのキーをソートしてからJSON文字列に変換するライブラリ。
-// これにより、クライアントとサーバーでキーの順序が違っても、必ず同じ文字列が生成され、チェックサムが安定します。
-import stringify from "json-stable-stringify";
+// AWS SDK for JavaScript v3 から、DynamoDBを操作するための部品をインポートします。
+// v3はモジュール化されており、必要なものだけを読み込むことで、Lambdaの起動を高速化できます。
 
-// DynamoDBクライアントの初期化
-// region: "ap-northeast-1" はAWSの「東京リージョン（データセンター）」を指定しています。
-// 物理的に近い場所を指定することで、通信速度が速くなります。
-const client = new DynamoDBClient({ region: "ap-northeast-1" });
+// DynamoDBClient: DynamoDBと通信するための基本的なクライアント。AWSへの接続設定（リージョンなど）を保持します。
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+// DynamoDBDocumentClient: JavaScriptのオブジェクトをそのままDynamoDBに保存・取得できるようにする便利なラッパー。
+// これがないと、{"data": {"S": "value"}} のようなDynamoDB特有の面倒な形式でデータを扱う必要があります。
+// PutCommand: データをテーブルに「置く」（保存または上書きする）ための命令。
+// GetCommand: データをテーブルから「取得する」ための命令。
+import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+// json-stable-stringify: オブジェクトのキーをアルファベット順にソートしてからJSON文字列に変換するライブラリ。
+// これにより、クライアント(Unity)とサーバー(Lambda)でキーの順序が異なっていても、必ず同じ文字列が生成され、
+// チェックサムの計算結果が一致するようになります。通信改竄の検知に不可欠です。
+import stringify from 'json-stable-stringify';
 
-// DocumentClientの作成
-// 先ほど作成した基本クライアント(client)を、より使いやすいDocumentClientに変換します。
-// これ以降は、この 'docClient' を使ってデータベース操作を行います。
+
+// --- 初期化処理 ---
+// このセクションでは、Lambda関数がリクエストを受け取る前に、一度だけ実行される初期設定を行っています。
+
+/**
+ * @description AWSのサービスと通信するためのクライアントを初期化します。
+ * @param {string} region - 接続先のAWSリージョン。物理的に近いリージョンを指定すると通信が速くなります。
+ *                         'ap-northeast-1' は東京リージョンを指します。
+ */
+const client = new DynamoDBClient({ region: 'ap-northeast-1' });
+
+/**
+ * @description 基本的なDynamoDBクライアントを、JavaScriptオブジェクトを直接扱えるドキュメントクライアントに変換します。
+ *              これ以降のデータベース操作は、すべてこの `docClient` を通じて行います。
+ */
 const docClient = DynamoDBDocumentClient.from(client);
 
-// テーブル名 (AWSコンソールで作成したものと合わせる)
-const TABLE_NAME = "GeomeTRIo_SaveData";
+/**
+ * @description 操作対象のDynamoDBテーブル名。AWSコンソールで作成したテーブル名と一致させる必要があります。
+ */
+const TABLE_NAME = 'GeomeTRIo_Saves';
 
-// Unityから送られてくるデータの型定義
-// C#のGameDataクラスと構造を合わせる必要はありませんが、
-// 最低限「何をしたいか(action)」「誰のデータか(userId)」「本人確認(authToken)」が必要です。
+// --- 型定義 ---
+// このセクションでは、プログラム内で使用するデータの構造を定義しています。
+
+/**
+ * @interface RequestBody
+ * @description Unityクライアントから送信されるリクエストボディの型定義。
+ * @property {'save' | 'load'} action - 実行したい操作の種類。
+ * @property {string} userId - プレイヤーを一意に識別するID。
+ * @property {string} authToken - 本人確認用の秘密のトークン。
+ * @property {any} [saveData] - 保存するゲームデータ（'save'アクション時のみ）。
+ * @property {string} [checksum] - データの改竄を検知するためのチェックサム（'save'アクション時のみ）。
+ * @property {string} [prevUpdatedAt] - クライアントが保持しているデータの最終更新日時。排他制御に使用します。
+ */
 interface RequestBody {
-    action: "save" | "load"; // "save"なら保存、"load"なら読み込み
-    userId: string;          // ユーザーを一意に識別するID (UUIDなど)
-    authToken: string;       // セキュリティ対策: 本人確認用のトークン（パスワードのようなもの）
-    saveData?: any;          // 保存時のみ使用。C#のGameDataがそのままJSONとして入る
-    checksum?: string;       // 改竄防止用のチェックサム
+    action: 'save' | 'load';
+    userId: string;
+    authToken: string;
+    saveData?: any;
+    checksum?: string;
+    prevUpdatedAt?: string;
 }
 
-// Lambda関数のエントリーポイント（入り口）
-// AWS Lambdaは、インターネットからリクエストが来ると、この 'handler' 関数を実行します。
-// async: この関数が「非同期処理（通信待ちなどが発生する）」であることを宣言します。
-// event: API Gatewayから渡されたリクエスト情報（URL、HTTPメソッド、ヘッダー、ボディなど）が全部詰まっています。
-export const handler = async (event: any) => {
-    // ログ出力: AWS CloudWatch Logsというサービスで確認できます。
-    // 何かトラブルがあった時、どんなデータが送られてきたかを確認するために重要です。
-    console.log("Event:", JSON.stringify(event, null, 2));
+
+// --- メインロジック ---
+
+/**
+ * @function handler
+ * @description AWS Lambdaのエントリーポイント（入り口）。API Gatewayからリクエストが来るとこの関数が実行されます。
+ * @param {APIGatewayProxyEvent} event - API Gatewayから渡されるリクエスト情報（HTTPヘッダー、ボディ、パスパラメータなど）。
+ * @returns {Promise<APIGatewayProxyResult>} - API Gatewayに返すレスポンス（ステータスコード、ボディなど）。
+ */
+export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    // ログ出力: AWSのCloudWatch Logsサービスで、どのようなリクエストが来たかを確認できます。
+    // デバッグやトラブルシューティングの際に非常に重要です。
+    // JSON.stringifyの第2,第3引数は、JSONを人間が読みやすい形に整形して出力するためのものです。
+    console.log('Event:', JSON.stringify(event, null, 2));
 
     try {
-        // API Gatewayからのリクエストボディをパース
-        // event.body は「JSON形式の文字列」として送られてくるため、
+        // --- リクエストボディの解析と検証 ---
+
+        // event.bodyはJSON形式の「文字列」として送られてくるため、
         // プログラムで扱える「JavaScriptのオブジェクト」に変換（パース）します。
-        const body: RequestBody = JSON.parse(event.body);
+        if (!event.body) {
+            // ボディが空の場合は、不正なリクエストとしてエラーを返します。
+            return { statusCode: 400, body: JSON.stringify({ message: 'Request body is missing.' }) };
+        }
 
-        // 分割代入 (Destructuring assignment):
-        // bodyオブジェクトの中から、action, userId, authToken, saveData という名前のプロパティを取り出し、
-        // 同名の変数に代入しています。
-        const { action, userId, authToken, saveData, checksum } = body;
+        // JSON.parseは失敗するとエラーを投げる可能性があるため、try-catchで囲んで安全に処理します。
+        let body: RequestBody;
+        try {
+            // API Gatewayのテスト機能などから送られた場合、bodyが既にオブジェクトの場合があるため、
+            // typeofで型をチェックし、文字列の場合のみパースを実行します。
+            body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+        } catch (e) {
+            // JSONの形式が正しくない場合は、400 Bad Requestエラーを返します。
+            return { statusCode: 400, body: JSON.stringify({ message: 'Invalid JSON format in request body.' }) };
+        }
 
-        // --- バリデーション（入力チェック） ---
+        // 分割代入: bodyオブジェクトから各プロパティを取り出し、同名の定数に代入します。
+        const { action, userId, authToken, saveData, checksum, prevUpdatedAt } = body;
 
-        // ユーザーIDがないと誰のデータかわからないのでエラー(400 Bad Request)を返します。
+        // 必須項目の存在チェック。これらがないと処理を続けられないため、早期にエラーを返します。
         if (!userId) {
-            return { statusCode: 400, body: JSON.stringify({ message: "Missing userId" }) };
+            return { statusCode: 400, body: JSON.stringify({ message: 'Missing required field: userId' }) };
         }
-        // トークンがないリクエストは「認証エラー(401 Unauthorized)」として拒否します。
         if (!authToken) {
-            return { statusCode: 401, body: JSON.stringify({ message: "Missing authToken" }) };
+            // 認証トークンはセキュリティの要なので、ない場合は「未認証(401)」エラーを返します。
+            return { statusCode: 401, body: JSON.stringify({ message: 'Missing required field: authToken' }) };
         }
 
-        // --- アクションによる処理の分岐 ---
+        // --- アクションに応じた処理の分岐 ---
 
-        if (action === "save") {
-            // --- 保存処理 ---
+        if (action === 'save') {
+            // --- 保存 (save) 処理 ---
 
-            // セーブデータの中身が空の場合はエラー
+            // 保存処理に必要なデータが揃っているかチェックします。
             if (!saveData) {
-                return { statusCode: 400, body: JSON.stringify({ message: "Missing saveData" }) };
+                return { statusCode: 400, body: JSON.stringify({ message: 'Missing required field for save action: saveData' }) };
             }
-            // チェックサムがない場合はエラー
             if (!checksum) {
-                return { statusCode: 400, body: JSON.stringify({ message: "Missing checksum" }) };
+                return { statusCode: 400, body: JSON.stringify({ message: 'Missing required field for save action: checksum' }) };
             }
 
-            // 現在時刻の取得
-            const now = new Date();
-
-            // TTL (Time To Live: 生存期間) の計算
-            // ゲストユーザーのデータが増え続けるのを防ぐため、1年後に自動削除されるようにします。
-            // DynamoDBのTTL機能は「秒単位のUnixタイムスタンプ（1970年1月1日からの経過秒数）」で指定する必要があります。
-            // now.getTime() はミリ秒なので 1000 で割って秒にし、そこに1年分の秒数(365日 * 24時間 * 60分 * 60秒)を足します。
-            const oneYearLater = Math.floor(now.getTime() / 1000) + (365 * 24 * 60 * 60);
-
-            // --- セキュリティチェック: 上書き権限の確認 ---
-            // いきなり保存するのではなく、まず現在のデータを取得して、トークンが正しいかチェックします。
+            // --- セキュリティチェック1: 上書き権限の確認 ---
+            // いきなりデータを保存するのではなく、まず現在のデータを取得して、トークンが正しいかチェックします。
             // これにより、他人が勝手にデータを上書きするのを防ぎます。
-
-            // GetCommand: データを取得する命令を作成
             const getCommand = new GetCommand({
                 TableName: TABLE_NAME,
-                Key: { userId: userId } // 検索キー: userId
+                Key: { userId: userId }, // 検索キー: どのユーザーのデータを取得するか
             });
-
             // docClient.send: 命令をAWSに送信し、結果が返ってくるまで待ちます(await)。
             const currentData = await docClient.send(getCommand);
 
-            // データが既に存在し(currentData.Item)、かつ保存されているトークンと送られてきたトークンが一致しない場合
-            // -> 「なりすまし」と判断してエラー(403 Forbidden)を返します。
+            // データが既に存在し(currentData.Item)、かつDBに保存されているトークンと送られてきたトークンが一致しない場合
+            // -> 「なりすまし」による上書きと判断してエラー(403 Forbidden)を返します。
             if (currentData.Item && currentData.Item.authToken !== authToken) {
                 return {
                     statusCode: 403,
-                    body: JSON.stringify({ message: "Invalid authToken. You cannot overwrite this data." })
+                    body: JSON.stringify({ message: 'Invalid authToken. You cannot overwrite this data.' }),
                 };
             }
 
-            // --- 改竄チェック: チェックサムの検証 ---
-            // サーバー側でチェックサムを計算します。
-            // 重要: JSONのキーの順序は保証されないため、クライアントとサーバーで同じ文字列を生成する必要があります。
-            // 通常の JSON.stringify では {"a":1, "b":2} と {"b":2, "a":1} が別の文字列になりますが、
-            // json-stable-stringify を使うことで、キーがアルファベット順にソートされ、必ず同じ文字列になります。
-            // これにより、データの中身が同じなら必ず同じチェックサムが生成されることが保証されます。
-            // || "" は、万が一 stringify が undefined を返した場合のフォールバック（安全策）です。
-            const dataString = stringify(saveData) || "";
+            // --- 排他制御 (Optimistic Locking) ---
+            // クライアントが知っている「最終更新日時」と、サーバー上の「最終更新日時」が異なる場合、
+            // 別の端末で更新された可能性があるため、上書きを阻止します。
+            // ※ prevUpdatedAt が送られてきた場合のみチェックします（移行期間用）。
+            if (prevUpdatedAt && currentData.Item && currentData.Item.updatedAt !== prevUpdatedAt) {
+                console.warn(`Conflict detected for user ${userId}. DB: ${currentData.Item.updatedAt}, Req: ${prevUpdatedAt}`);
+                return {
+                    statusCode: 409, // Conflict (競合)
+                    body: JSON.stringify({ message: 'Data has been updated by another device. Please reload.' }),
+                };
+            }
+
+            // --- セキュリティチェック2: データ改竄の検証 ---
+            // クライアントから送られてきたデータが、通信の途中で書き換えられていないかを確認します。
+
+            // サーバー側でチェックサムを再計算します。
+            // stringify(saveData) は、キーをソートしてJSON文字列に変換します。
+            // これにより、クライアントとサーバーで必ず同じ文字列が生成されることが保証されます。
+            // || '' は、万が一 stringify が undefined を返した場合のフォールバック（安全策）です。
+            // これがないと、undefined が crypto.createHmac に渡されてエラーになります。
+            const dataString = stringify(saveData) || '';
 
             // createHmac: ハッシュ値を計算するためのオブジェクトを作成します。
-            // 'sha256': ハッシュアルゴリズム。
-            // authToken: 秘密鍵。リクエストごとに異なるため、第三者が偽造するのが困難になります。
-            // update(dataString): ハッシュ化したいデータを渡します。
-            // digest('hex'): 計算結果を16進数の文字列として取得します。
+            // - 第1引数 'sha256': ハッシュアルゴリズムの種類。
+            // - 第2引数 authToken: 秘密鍵。リクエストごとに異なるため、第三者が偽造するのが困難になります。
+            // .update(dataString): ハッシュ化したいデータを渡します。
+            // .digest('hex'): 計算結果を16進数の文字列として取得します。
             const expectedChecksum = createHmac('sha256', authToken)
                 .update(dataString)
                 .digest('hex');
@@ -139,85 +181,94 @@ export const handler = async (event: any) => {
             // クライアントから送られてきたチェックサムと、サーバーで計算したものが一致しない場合
             // -> 通信経路でデータが書き換えられたか、不正なリクエストであると判断してエラーを返します。
             if (checksum !== expectedChecksum) {
+                console.warn(`Checksum mismatch for user ${userId}. Expected: ${expectedChecksum}, Got: ${checksum}`);
                 return {
                     statusCode: 403,
-                    body: JSON.stringify({ message: "Invalid checksum. Data may be tampered." })
+                    body: JSON.stringify({ message: 'Invalid checksum. Data may have been tampered with.' }),
                 };
             }
 
-            // --- データの保存 ---
+            // --- データの保存実行 ---
+            const now = new Date();
+            // TTL (Time To Live: 生存期間) の計算。ゲストユーザーのデータが増え続けるのを防ぎます。
+            // DynamoDBのTTL機能は「秒単位のUnixタイムスタンプ」で指定する必要があります。
+            // now.getTime() はミリ秒なので 1000 で割り、1年分の秒数(365日 * 24時間 * 60分 * 60秒)を足します。
+            const oneYearLater = Math.floor(now.getTime() / 1000) + (365 * 24 * 60 * 60);
 
-            // PutCommand: データを「置く（保存・上書き）」命令を作成します。
-            const command = new PutCommand({
+            // PutCommand: データをテーブルに「置く」（保存・上書き）命令を作成します。
+            const putCommand = new PutCommand({
                 TableName: TABLE_NAME,
-                // Item: 保存するデータの中身
                 Item: {
-                    userId: userId,          // 誰のデータか (Partition Key)
-                    authToken: authToken,    // 次回チェック用のトークンも一緒に保存
-                    data: saveData,          // ゲームデータ本体
-                    updatedAt: now.toISOString(), // 更新日時 (文字列)
-                    expiresAt: oneYearLater  // 有効期限 (TTL)
-                }
+                    userId: userId,           // パーティションキー
+                    authToken: authToken,     // 次回チェック用のトークンも一緒に保存
+                    data: saveData,           // ゲームデータ本体
+                    updatedAt: now.toISOString(), // 更新日時 (ISO 8601形式の文字列)
+                    expiresAt: oneYearLater,  // 有効期限 (TTL)
+                },
             });
 
             // AWSに保存命令を送信して、完了を待ちます。
-            await docClient.send(command);
+            await docClient.send(putCommand);
 
-            // 成功したら 200 OK を返します。
-            return { statusCode: 200, body: JSON.stringify({ message: "Save successful" }) };
+            // 成功したら 200 OK と成功メッセージを返します。
+            return { statusCode: 200, body: JSON.stringify({ message: 'Save successful' }) };
 
-        } else if (action === "load") {
-            // --- 読み込み処理 ---
+        } else if (action === 'load') {
+            // --- 読み込み (load) 処理 ---
 
             // GetCommand: データを「取得」する命令を作成します。
-            const command = new GetCommand({
+            const getCommand = new GetCommand({
                 TableName: TABLE_NAME,
-                // Key: どのデータを取得するか指定します（userIdが一致するもの）
                 Key: {
-                    userId: userId
-                }
+                    userId: userId, // どのユーザーのデータを取得するか指定
+                },
             });
 
             // AWSに取得命令を送信して、結果を待ちます。
-            const response = await docClient.send(command);
+            const response = await docClient.send(getCommand);
 
             // response.Item にデータが入っていれば、データが見つかったということです。
             if (response.Item) {
-                // --- セキュリティチェック ---
+                // --- セキュリティチェック: 読み込み権限の確認 ---
                 // 読み込み時もトークンをチェックし、他人が勝手にデータを盗み見れないようにします。
                 if (response.Item.authToken !== authToken) {
                     return {
                         statusCode: 403,
-                        body: JSON.stringify({ message: "Invalid authToken" })
+                        body: JSON.stringify({ message: 'Invalid authToken. You cannot access this data.' }),
                     };
                 }
 
+                // 成功レスポンス。保存しておいた 'data' プロパティの中身だけをクライアントに返します。
+                // authTokenなどの管理情報は返しません。
                 return {
                     statusCode: 200,
-                    // 保存しておいた 'data' の中身だけをUnityに返します。
-                    // authTokenなどの管理情報は返しません。
-                    body: JSON.stringify({ data: response.Item.data })
+                    body: JSON.stringify({
+                        data: response.Item.data,
+                        updatedAt: response.Item.updatedAt // クライアントに最終更新日時を伝える
+                    }),
                 };
             } else {
-                // データが見つからなかった場合
-                // 新規ユーザーの場合はデータがないのが普通なので、エラーではなく「データなし(null)」として 200 OK を返します。
-                // Unity側はこれを見て「あ、新規ユーザーだな」と判断します。
+                // データが見つからなかった場合（新規ユーザーなど）。
+                // エラーではなく「データなし(null)」として 200 OK を返します。
+                // Unity側はこれを見て「新規ユーザー」として処理を開始します。
                 return { statusCode: 200, body: JSON.stringify({ data: null }) };
             }
-
         } else {
-            // actionが "save" でも "load" でもない場合
-            return { statusCode: 400, body: JSON.stringify({ message: "Invalid action" }) };
+            // actionが 'save' でも 'load' でもない、未知のアクションが指定された場合。
+            return { statusCode: 400, body: JSON.stringify({ message: 'Invalid action specified.' }) };
         }
-
     } catch (error) {
-        // tryブロックの中で何か予期せぬエラー（AWSにつながらない、JSONの形式がおかしいなど）が起きた場合
-        // ここにジャンプします。
-        console.error("Error:", error);
-        // 500 Internal Server Error を返して、サーバー側で何かあったことを伝えます。
+        // tryブロックの中で何か予期せぬエラー（AWSサービスへの接続失敗、プログラムのバグなど）が起きた場合、
+        // このcatchブロックにジャンプします。
+
+        // エラー内容をCloudWatch Logsに出力します。
+        console.error('An unexpected error occurred:', error);
+
+        // 500 Internal Server Error を返して、サーバー側で問題が発生したことをクライアントに伝えます。
+        // エラーの詳細はセキュリティ上クライアントに返さず、汎用的なメッセージにします。
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: "Internal Server Error", error: String(error) })
+            body: JSON.stringify({ message: 'An internal server error occurred.' }),
         };
     }
 };

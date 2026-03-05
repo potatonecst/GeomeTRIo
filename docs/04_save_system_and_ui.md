@@ -2,15 +2,16 @@
 
 ランキングや設定を永続化（保存）する仕組みと、Singletonパターンを用いたUI更新、そしてInput Systemを用いたUIナビゲーションについて解説します。
 
-## データの保存方法：JSONシリアライズ
+## データの保存方法：クラウドセーブ (AWS Lambda + DynamoDB)
 
-このプロジェクトでは、すべてのユーザーデータ（設定、ランキング、統計）を **JSON形式** で一元管理しています。
+このプロジェクトでは、すべてのユーザーデータ（設定、ランキング、統計）を **クラウド上のデータベース (DynamoDB)** で一元管理しています。
 
 ### 変更点：PlayerPrefsの廃止とGameDataへの統合
 以前は設定値（HP、SPなど）を `PlayerPrefs` で管理していましたが、現在は `GameData` クラスに統合しました。
 これにより、以下のメリットがあります。
-1. **データの一元管理:** 設定、スコア、進行状況を1つのファイル (`.sav`) で管理できます。
+1. **データの一元管理:** 設定、スコア、進行状況を1つのオブジェクトとして管理できます。
 2. **整合性の確保:** ランキング記録時に「そのスコアを出した時の設定」を正確に保存・比較できます。
+3. **機種変更対応:** 将来的にID連携を行えば、異なる端末でもデータを引き継げます。
 
 ### データ構造 (GameData)
 `GameData` クラスは、ゲームの全永続化データを保持するルートオブジェクトです。`[System.Serializable]` 属性をつけることで、`JsonUtility` による変換を可能にしています。
@@ -48,21 +49,23 @@ public struct PlayerStats
 }
 ```
 
-### 保存処理 (JSON)
-Unity標準の `JsonUtility` を使用して、クラスのインスタンスをJSON文字列に変換し、テキストファイル (`.sav`) として保存します。
+### 保存処理 (CloudSaveManager)
+`CloudSaveManager` クラスが AWS Lambda の関数URLに対して HTTP POST リクエストを送信します。
 
 ```csharp
-public void SaveGame(GameData data)
+public void Save(string userId, string authToken, GameData data, Action<bool, string> callback)
 {
-    // 保存先のパス（OSによって異なるが、Unityが自動で適切な場所を選んでくれる）
-    string path = Application.persistentDataPath + "/savedata.sav";
-    
-    // JSONに変換してテキストファイルとして保存
-    string json = JsonUtility.ToJson(data, true);
-    File.WriteAllText(path, json);
+   // 1. GameDataをJSON文字列に変換
+    string jsonData = JsonUtility.ToJson(data);
+
+    // 2. 改竄防止用のチェックサムを計算 (HMAC-SHA256)
+    string checksum = CalculateChecksum(jsonData, authToken);
+
+    // 3. UnityWebRequestで送信
+    StartCoroutine(PostRequest(userId, authToken, jsonData, checksum, callback));
 }
 ```
-**注意:** `Application.persistentDataPath` は、Windowsなら `AppData`、Macなら `Library/Application Support` など、アプリが書き込み権限を持つ安全なフォルダを指します。
+**セキュリティ対策:** 通信にはHTTPSを使用し、さらにデータ改竄を防ぐために HMAC-SHA256 による署名（チェックサム）を付与しています。
 
 ## UIの更新: ReactUnityによるポーリング
 

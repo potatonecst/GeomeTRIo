@@ -56,6 +56,11 @@ public class GameManager : MonoBehaviour
     // UIに表示するシステムメッセージ
     public string SystemMessage { get; private set; } = "";
 
+    // トースト通知用メッセージ (画面右上用)
+    public string ToastMessage { get; private set; } = "";
+    public float LastToastTime { get; private set; } // 追加: メッセージ発行時刻
+    public string ToastId { get; private set; } = ""; // 追加: メッセージの一意なID
+
     // スコア獲得イベント（React側でのポップアップ表示用）
     public int LastScoreEventAmount { get; private set; }
     public string LastScoreEventLabel { get; private set; }
@@ -100,7 +105,8 @@ public class GameManager : MonoBehaviour
     private AudioSource lowPriorityAudioSource; // 弾などの低優先度SE用
 
     // ユーザーIDとファイル名
-    public string currentUserId = "default_player";
+    public string currentUserId;
+    private const string PREFS_USER_ID = "Game_UserId"; // ID保存用のキー
     public string CurrentSaveFileName => $"user_{currentUserId}.sav";
 
     // シーン遷移時のチラつき防止用オーバーレイ（黒い幕）
@@ -115,6 +121,15 @@ public class GameManager : MonoBehaviour
 
     // メッセージリセット用のコルーチン
     private Coroutine messageResetCoroutine;
+    private Coroutine toastMessageResetCoroutine;
+
+    // クラウドデータがロード済みかどうか（タイトル画面での重複ロード防止）
+    private bool isCloudDataLoaded = false;
+    // クラウドへの保存を許可するかどうか（ロード失敗時の上書き防止）
+    private bool canSaveToCloud = false;
+    public bool CanSaveToCloud => canSaveToCloud; // 外部公開用プロパティ
+    // オフラインモードかどうか（ロード失敗時にtrueになる）
+    public bool IsOfflineMode { get; private set; } = false;
 
     /// <summary>
     /// インスタンスの初期化とシングルトンの設定を行います。
@@ -135,6 +150,10 @@ public class GameManager : MonoBehaviour
             // これにより、BGMの継続再生やスコアの保持が可能になります。
             DontDestroyOnLoad(gameObject);
 
+            // ユーザーIDの初期化（なければ生成して保存）
+            // これにより、端末ごとに固有のIDが割り振られ、クラウド上で区別されます。
+            InitializeUserId();
+
             // フレームレート設定
             // ゲームの動作速度を秒間60フレーム（60fps）に固定します。
             // これにより、PCの性能差によるゲームスピードのばらつきを抑えます。
@@ -143,11 +162,14 @@ public class GameManager : MonoBehaviour
             QualitySettings.vSyncCount = 0; // VSyncを無効化（targetFrameRateを有効にするため）
             Application.targetFrameRate = 60;
 
-            //セーブデータをロード
-            gameData = SaveSystem.Load(CurrentSaveFileName);
-            if (gameData == null)
+            // クラウドセーブ移行のため、Awakeでは一旦デフォルト（空）のデータで初期化します。
+            // 実際のデータはタイトル画面での接続演出後にクラウドからロードします。
+            gameData = new GameData();
+
+            // CloudSaveManagerが存在しない場合は追加（保険）
+            if (GetComponent<CloudSaveManager>() == null)
             {
-                gameData = new GameData();
+                gameObject.AddComponent<CloudSaveManager>();
             }
         }
         else
@@ -266,11 +288,14 @@ public class GameManager : MonoBehaviour
         // これにより、起動時に画面が表示される前にBGMが鳴り始めてしまう「フライング再生」を防ぎます。
         string currentScene = SceneManager.GetActiveScene().name;
 
-        // ゲームプレイシーンならプレイ回数を加算して保存
-        if (currentScene == "Stage1" || currentScene == "ScoreAttack")
+        // 修正: プレイ回数の加算処理を削除
+        // OnSceneLoaded イベントで一元管理するため、ここでは行いません。
+        // これにより、エディタ実行時などの二重加算を防ぎます。
+
+        // タイトル画面に戻ってきたら、ロード済みフラグをリセットして再ロード可能にする
+        if (currentScene == "TitleScene")
         {
-            gameData.stats.totalGamesPlayed++;
-            SaveGameData();
+            // ここでの自動リセットは廃止。React側から制御する。
         }
     }
 
@@ -309,6 +334,12 @@ public class GameManager : MonoBehaviour
     {
         // BGM再生とオーバーレイ（黒幕）の消去は、React側の準備完了（OnGameUIReady）を待ってから行います。
         // そのため、ここでは処理を行いません。これにより、画面表示とBGMのタイミングが完全に同期します。
+
+        // タイトル画面に戻ってきたら、ロード済みフラグをリセットして再ロード可能にする
+        if (scene.name == "TitleScene")
+        {
+            // ここでの自動リセットは廃止。React側から制御する。
+        }
 
         // ゲームプレイシーンならプレイ回数を加算して保存
         if (scene.name == "Stage1" || scene.name == "ScoreAttack")
@@ -756,6 +787,9 @@ public class GameManager : MonoBehaviour
                 IsNewHighScore = isHigherThanHighScore;
             }
         }
+
+        // ゲームオーバー確定時に即座にスコアと統計を保存する（クラッシュ対策）
+        SaveScore();
     }
 
     /// <summary>
@@ -814,7 +848,7 @@ public class GameManager : MonoBehaviour
             gameData.stats.totalPlayTime += timeElapsed;
 
             //セーブ
-            SaveSystem.Save(CurrentSaveFileName, gameData);
+            SaveGameData();
 
             //デフォルトプレイヤーネームに設定
             //if (sceneUI.asDefaultToggle.isOn)
@@ -825,15 +859,35 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// ユーザーIDを初期化します。
+    /// 保存されたIDがあればそれを読み込み、なければ新規生成して保存します。
+    /// </summary>
+    private void InitializeUserId()
+    {
+        if (PlayerPrefs.HasKey(PREFS_USER_ID))
+        {
+            currentUserId = PlayerPrefs.GetString(PREFS_USER_ID);
+        }
+        else
+        {
+            currentUserId = System.Guid.NewGuid().ToString();
+            PlayerPrefs.SetString(PREFS_USER_ID, currentUserId);
+            PlayerPrefs.Save();
+        }
+        Debug.Log($"[GameManager] User ID: {currentUserId}");
+    }
+
+    /// <summary>
     /// 現在のセーブデータを削除し、初期状態に戻します。
     /// </summary>
     public void DeleteSaveData()
     {
-        string path = System.IO.Path.Combine(Application.persistentDataPath, CurrentSaveFileName);
-        if (System.IO.File.Exists(path))
+        // クラウド上のデータを削除
+        CloudSaveManager.Instance?.Delete(currentUserId, (success) =>
         {
-            System.IO.File.Delete(path);
-        }
+            if (success) Debug.Log("Cloud save deleted.");
+            else Debug.LogError("Failed to delete cloud save.");
+        });
 
         // 追加: PlayerPrefs（設定やユーザーID）も削除して、完全に初期状態（新規ユーザー）に戻す
         // 理由: PlayerPrefsにはユーザーIDなどの端末固有情報が保存されています。
@@ -843,8 +897,8 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
-        // TODO: クラウドセーブ対応時、ここでクラウド上のデータ削除リクエストを送信する
-        // CloudSaveManager.Instance.DeleteSave(currentUserId);
+        // 新しいIDを即座に生成（これにより、メモリ上の古いIDが更新され、新しいユーザーとして扱われます）
+        InitializeUserId();
 
         // データを初期化
         InitializeGameData();
@@ -865,9 +919,6 @@ public class GameManager : MonoBehaviour
         // 遷移開始時に振動を停止
         VibrationManager.instance?.StopAllVibrations();
 
-        // ランクインしていれば保存
-        SaveScore();
-
         // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
         // PlaySubmitSound(); 
 
@@ -886,9 +937,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ReturnToTitle()
     {
-        // ランクインしていれば保存
-        // ※SaveScore内部で totalPlayTime の加算と SaveGameData が行われるため、ここでの追加保存は不要です。
-        SaveScore();
+        // ゲームオーバー時は ShowGameOverScreen で既に保存済み。
+        // ポーズメニューからの離脱時は、スコアは保存せず破棄する（統計情報の一部は失われるが、途中退室扱いとする）。
 
         // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
         // PlayCancelSound();
@@ -1043,9 +1093,43 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 現在のゲームデータをファイルに保存します。
     /// </summary>
-    public void SaveGameData()
+    /// <param name="showMessage">HUDにメッセージを表示するかどうか</param>
+    public void SaveGameData(bool showMessage = true)
     {
-        SaveSystem.Save(CurrentSaveFileName, gameData);
+        // セーブ許可フラグが立っていない場合は保存しない（ロード失敗時の上書き防止）
+        if (!canSaveToCloud)
+        {
+            Debug.LogWarning("[GameManager] Save skipped because cloud data was not loaded successfully (Offline Mode).");
+            if (showMessage) SetToastMessage("OFFLINE: SAVE DISABLED", 2.0f);
+            return;
+        }
+
+        if (CloudSaveManager.Instance != null)
+        {
+            // セーブ直前に最終更新日時を更新 (UTC Ticks)
+            gameData.lastModified = System.DateTime.UtcNow.Ticks;
+
+            Debug.Log("[GameManager] Saving game data...");
+            if (showMessage) SetToastMessage("SAVING...", 0); // 保存中メッセージ
+
+            CloudSaveManager.Instance.Save(currentUserId, gameData, (success, error) =>
+            {
+                if (success)
+                {
+                    Debug.Log("[GameManager] Data saved successfully.");
+                    if (showMessage) SetToastMessage("DATA SAVED", 2.0f);
+                }
+                else
+                {
+                    Debug.LogError($"[GameManager] Save failed: {error}");
+                    if (showMessage) SetToastMessage($"SAVE FAILED: {error}", 3.0f);
+
+                    // セーブ失敗時もオフラインモードに移行して、以降のデータ不整合や上書きを防ぐ
+                    canSaveToCloud = false;
+                    IsOfflineMode = true;
+                }
+            });
+        }
     }
 
     /// <summary>
@@ -1061,12 +1145,13 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// HUDに表示するシステムメッセージを設定します。
+    /// HUD（画面下部）に表示するシステムメッセージを設定します。
     /// </summary>
     /// <param name="message">表示するメッセージ</param>
     /// <param name="duration">表示時間（秒）。0の場合は永続表示。</param>
     public void SetSystemMessage(string message, float duration = 0f)
     {
+        Debug.Log($"[GameManager] SetSystemMessage called: '{message}' (Duration: {duration})");
         // メッセージを更新
         SystemMessage = message;
 
@@ -1082,8 +1167,44 @@ public class GameManager : MonoBehaviour
     private IEnumerator ResetSystemMessageCoroutine(float duration)
     {
         // 指定された時間（秒）だけ待機してから、メッセージを空にします。
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSecondsRealtime(duration);
+        Debug.Log("[GameManager] ResetSystemMessageCoroutine: Clearing message.");
         SystemMessage = "";
+    }
+
+    /// <summary>
+    /// 画面右上に表示するトースト通知を設定します。
+    /// </summary>
+    /// <param name="message">表示するメッセージ</param>
+    /// <param name="duration">表示時間（秒）。</param>
+    public void SetToastMessage(string message, float duration = 3.0f)
+    {
+        Debug.Log($"[GameManager] SetToastMessage called: '{message}' (Duration: {duration})");
+
+        // 同じメッセージ内容ならIDを更新せず、タイマーだけリセット（延長）する
+        // これにより、React側での再レンダリング（チラつき）を防ぐ
+        if (ToastMessage != message)
+        {
+            ToastMessage = message;
+            ToastId = System.Guid.NewGuid().ToString(); // 新しいメッセージの場合のみID更新
+        }
+
+        LastToastTime = Time.unscaledTime; // 発行時刻を記録
+
+        // 既にメッセージ消去のタイマーが動いていたらキャンセルします
+        if (toastMessageResetCoroutine != null) StopCoroutine(toastMessageResetCoroutine);
+
+        if (duration > 0f)
+        {
+            toastMessageResetCoroutine = StartCoroutine(ResetToastMessageCoroutine(duration));
+        }
+    }
+
+    private IEnumerator ResetToastMessageCoroutine(float duration)
+    {
+        yield return new WaitForSecondsRealtime(duration);
+        ToastMessage = "";
+        ToastId = ""; // IDもクリア
     }
 
     /// <summary>
@@ -1110,5 +1231,64 @@ public class GameManager : MonoBehaviour
         // 全てのシーンにおいて、UIの準備が完了したこのタイミングでBGM再生とオーバーレイ消去を行います。
         PlayGameBGM(currentScene);
         StartCoroutine(HideOverlayCoroutine());
+    }
+
+    /// <summary>
+    /// クラウドからのデータロードを開始します。
+    /// タイトル画面でボタンが押されたタイミング（演出中）に呼び出されます。
+    /// </summary>
+    public void StartCloudLoad()
+    {
+        // 既にロードを開始している場合は何もしない
+        if (isCloudDataLoaded) return;
+        isCloudDataLoaded = true;
+
+        // ロード開始時は一旦セーブ不許可にする
+        canSaveToCloud = false;
+        IsOfflineMode = false; // ロード試行中はオフライン表示を消す
+
+        // ロード中表示 (0秒指定で、結果が出るまで表示し続ける)
+        SetToastMessage("CONNECTING...", 0);
+
+        Debug.Log("[GameManager] Starting cloud load...");
+        CloudSaveManager.Instance?.Load(currentUserId, (success, data) =>
+        {
+            if (success)
+            {
+                if (data != null)
+                {
+                    gameData = data;
+                    ApplyAudioSettings(); // ロードした設定（音量など）を反映
+                    Debug.Log("[GameManager] Cloud data loaded successfully.");
+                }
+                // ロード成功（または新規ユーザー）なのでセーブを許可
+                canSaveToCloud = true;
+                IsOfflineMode = false;
+
+                // 接続成功
+                SetToastMessage("CONNECTED", 2.0f);
+            }
+            else
+            {
+                // ロード失敗（通信エラー等）。クラウドデータを保護するためセーブを無効化
+                canSaveToCloud = false;
+                IsOfflineMode = true; // 失敗したのでオフラインモード
+                // 失敗した場合はフラグを戻し、再度ボタンを押した時にリトライできるようにする
+                isCloudDataLoaded = false;
+
+                SetToastMessage("CONNECTION FAILED", 3.0f);
+                Debug.LogError("[GameManager] Cloud load failed. Save disabled to prevent overwrite.");
+            }
+        });
+    }
+
+    /// <summary>
+    /// クラウドロード状態とオフラインモードフラグをリセットします。
+    /// React側でタイトル画面（Press Any Button）に戻った時に呼び出されます。
+    /// </summary>
+    public void ResetCloudLoadState()
+    {
+        isCloudDataLoaded = false;
+        IsOfflineMode = false;
     }
 }

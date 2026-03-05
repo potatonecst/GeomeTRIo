@@ -9,6 +9,7 @@ public class GameData
 {
     // 基本情報
     public string playerName = "PLAYER";
+    public long lastModified;
 
     // まとめる：プレイヤー設定 (初期値 HP:3, SP:3 を保証するためにコンストラクタを使用)
     public PlayerSettings settings = new PlayerSettings(3, 3);
