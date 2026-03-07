@@ -271,6 +271,26 @@ public class CloudSaveManager : MonoBehaviour
                             // GameDataに変換
                             string dataJson = JsonConvert.SerializeObject(response.data);
                             GameData loadedData = JsonConvert.DeserializeObject<GameData>(dataJson);
+
+                            // サニタイズ処理: DynamoDBの仕様(空文字->null)や、JSONデシリアライズによるnull上書きを補正します。
+                            if (loadedData != null)
+                            {
+                                // 1. playerName
+                                // クラス定義で "PLAYER" と初期化していても、JSONに "playerName": null が含まれていると
+                                // デシリアライズ時に null で上書きされてしまいます。
+                                if (loadedData.playerName == null) loadedData.playerName = "";
+
+                                // 2. リスト (ランキングデータ)
+                                // 空のリストが null として扱われる可能性があるため、nullなら空リストで初期化します。
+                                if (loadedData.stage1Scores == null) loadedData.stage1Scores = new List<ScoreRecord>();
+                                if (loadedData.scoreAttackScores == null) loadedData.scoreAttackScores = new List<ScoreRecord>();
+
+                                // 3. リスト内の文字列 (date)
+                                // 構造体内の文字列も null になる可能性があるためチェックします。
+                                SanitizeScoreList(loadedData.stage1Scores);
+                                SanitizeScoreList(loadedData.scoreAttackScores);
+                            }
+
                             callback?.Invoke(true, loadedData);
                         }
                     }
@@ -329,6 +349,20 @@ public class CloudSaveManager : MonoBehaviour
             {
                 Debug.LogError($"[CloudSave] Delete Error: {www.error}");
                 callback?.Invoke(false);
+            }
+        }
+    }
+
+    // スコアリスト内のnull文字をサニタイズするヘルパーメソッド（構造体内の文字列用）
+    private void SanitizeScoreList(List<ScoreRecord> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            var record = list[i];
+            if (record.date == null)
+            {
+                record.date = "";
+                list[i] = record;
             }
         }
     }

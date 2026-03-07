@@ -25,6 +25,15 @@ import { DynamoDBDocumentClient, PutCommand, GetCommand } from "@aws-sdk/lib-dyn
 *   **`DynamoDBClient`**: 基本的な通信クライアント。
 *   **`DynamoDBDocumentClient`**: データをJSONオブジェクトとして直感的に扱えるようにするラッパー。これを使うことで、DynamoDB特有の型記述（`{"S": "text"}`など）を意識せずに済みます。
 
+**設定オプション (MarshallOptions):**
+DynamoDBの制約（空文字禁止など）を回避するため、以下のオプションを有効にしています。
+*   **`convertEmptyValues: true`**:
+    *   DynamoDBは仕様上、空文字 (`""`) の保存を許可しない場合がある（またはSDKのバージョンによって挙動が異なる）ため、安全策として自動的に `null` に変換して保存します。
+*   **`removeUndefinedValues: true`**:
+    *   JavaScriptの `undefined` はDynamoDBでサポートされていないため、保存時にそのフィールド自体を削除（無視）します。
+*   **`convertClassInstanceToMap: true`**:
+    *   `new Class()` で生成されたインスタンスは、通常SDKによって拒否されるか正しく保存されません。このオプションにより、インスタンス内部のデータを強制的にMap型（JSONオブジェクト）として保存させます。
+
 ### 2.2 ハンドラー関数と非同期処理
 Lambdaのエントリーポイントは `handler` 関数です。`async/await` 構文を使用して、非同期なDB操作を同期的に記述しています。
 

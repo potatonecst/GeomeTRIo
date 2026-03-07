@@ -36,7 +36,13 @@ const client = new DynamoDBClient({ region: 'ap-northeast-1' });
  * @description 基本的なDynamoDBクライアントを、JavaScriptオブジェクトを直接扱えるドキュメントクライアントに変換します。
  *              これ以降のデータベース操作は、すべてこの `docClient` を通じて行います。
  */
-const docClient = DynamoDBDocumentClient.from(client);
+const docClient = DynamoDBDocumentClient.from(client, {
+    marshallOptions: {
+        convertEmptyValues: true, // 空文字("")をnullに変換して保存（DynamoDBは空文字禁止のため）
+        removeUndefinedValues: true, // undefinedのプロパティを削除（保存しない）
+        convertClassInstanceToMap: true, // クラスインスタンスをMapとして保存
+    },
+});
 
 /**
  * @description 操作対象のDynamoDBテーブル名。AWSコンソールで作成したテーブル名と一致させる必要があります。
