@@ -68,7 +68,7 @@ jobs:
         # npx serverless deploy: デプロイコマンド。
         # --stage: デプロイ先のステージ（dev/prod）を指定するオプション。
         # ${{ github.event.inputs.stage }}: 手動実行時に選択された 'stage' の値（dev または prod）がここに入ります。
-        run: npx serverless deploy --stage ${{ github.event.inputs.stage }}
+        run: pnpm serverless deploy --stage ${{ github.event.inputs.stage }}
         env:
           # SERVERLESS_ACCESS_KEY: Serverless Dashboardへの認証キー。
           # GitHub Secretsから読み込んで環境変数としてコマンドに渡します。
