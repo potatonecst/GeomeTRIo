@@ -1,16 +1,22 @@
 {
     "compilerOptions": {
-        "target": "ES2022",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
+        "target": "ES2022", // Node.js 20/24 は新しいJavaScriptに対応しているため
+        "module": "CommonJS", // Lambdaの標準的な形式
+        "lib": [
+            "ES2022"
+        ],
+        "strict": true, // 型チェックを厳格にする（バグ防止）
+        "sourceMap": true, // エラーログの行数をTSファイルと一致させる
+        "esModuleInterop": true, // 外部ライブラリの読み込みをスムーズにする
+        "skipLibCheck": true, // ライブラリの型定義エラーを無視する
         "forceConsistentCasingInFileNames": true,
+        "rootDir": "./src", // ソースコードの場所
+        "outDir": "./dist" // 手動ビルド用の出力先（自動デプロイ時は無視されます）
     },
     "include": [
         "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

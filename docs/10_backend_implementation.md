@@ -4,7 +4,7 @@
 
 ## 1. 技術スタック
 
-*   **Runtime:** Node.js (TypeScript)
+*   **Runtime:** Node.js 24 (TypeScript)
 *   **Compute:** AWS Lambda
 *   **Database:** Amazon DynamoDB
 *   **SDK:** AWS SDK for JavaScript v3
@@ -212,3 +212,33 @@ const command = new PutCommand({
 ```
 
 この設定により、`expiresAt` カラムに保存された時刻（Unix Timestamp）を過ぎると、AWS側が自動的にデータを削除してくれます。
+
+## 3. デプロイメント (Deployment)
+
+### 3.1 Serverless Framework v4
+インフラ構築（IaC）には Serverless Framework v4 を使用しています。
+`serverless.yml` に定義された設定に基づき、以下のリソースが自動生成されます。
+
+*   **Lambda Function:** Node.js 24 ランタイムで動作。
+*   **API Gateway:** HTTP API エンドポイント。
+*   **DynamoDB Table:** ステージ名付きのテーブル（例: `GeomeTRIo_Saves_dev`）。
+*   **IAM Role:** Lambdaが必要とする最小限の権限（DynamoDBへのアクセス権）。
+
+### 3.2 ステージ管理 (Stage Management)
+開発環境と本番環境を分離するため、`--stage` オプションを利用しています。
+`serverless.yml` 内で `${sls:stage}` 変数を使用し、リソース名を動的に切り替えています。
+
+*   **dev:** デフォルト。開発用テーブル `GeomeTRIo_Saves_dev` を使用。
+*   **prod:** 本番用。本番用テーブル `GeomeTRIo_Saves_prod` を使用。
+
+### 3.3 CI/CD (GitHub Actions)
+GitHub Actions を使用して、AWSへのデプロイを管理しています。
+
+*   **手動トリガー (`workflow_dispatch`):**
+    *   ワークフロー定義 (`.yml`) の `inputs` セクションで `stage` (dev/prod) を選択肢として定義しています。
+    *   これにより、GitHubのブラウザ上でデプロイ先の環境を選択して実行できます。
+*   **オプションの受け渡し:**
+    *   選択された値は `${{ github.event.inputs.stage }}` コンテキストで取得できます。
+    *   これを `npx serverless deploy --stage ${{ github.event.inputs.stage }}` のようにコマンド引数として渡すことで、指定したステージへのデプロイを実現しています。
+*   **認証:** OIDC (OpenID Connect) を使用し、アクセスキーを保持せずに安全にAWSへ接続します。
+*   **ビルド:** `esbuild` (Serverless v4 内蔵) により、TypeScriptを高速にバンドル・圧縮します。

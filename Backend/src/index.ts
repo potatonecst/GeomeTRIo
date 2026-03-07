@@ -46,7 +46,8 @@ const docClient = DynamoDBDocumentClient.from(client);
 /**
  * @description 操作対象のDynamoDBテーブル名。AWSコンソールで作成したテーブル名と一致させる必要があります。
  */
-const TABLE_NAME = 'GeomeTRIo_Saves';
+// 環境変数からテーブル名を取得します。設定されていない場合はデフォルト値を使用します。
+const TABLE_NAME = process.env.TABLE_NAME || 'GeomeTRIo_Saves';
 
 // --- 型定義 ---
 // このセクションでは、プログラム内で使用するデータの構造を定義しています。
@@ -75,9 +76,17 @@ interface RequestBody {
 
 /**
  * @function handler
- * @description AWS Lambdaのエントリーポイント（入り口）。API Gatewayからリクエストが来るとこの関数が実行されます。
- * @param {APIGatewayProxyEvent} event - API Gatewayから渡されるリクエスト情報（HTTPヘッダー、ボディ、パスパラメータなど）。
- * @returns {Promise<APIGatewayProxyResult>} - API Gatewayに返すレスポンス（ステータスコード、ボディなど）。
+ * @description AWS Lambdaのエントリーポイント（入り口）となる関数です。
+ *              API Gateway経由でHTTPリクエストが届くと、AWSがこの関数を呼び出します。
+ * 
+ * @param {APIGatewayProxyEvent} event 
+ *   API Gatewayから渡されるリクエスト情報（HTTPヘッダー、ボディ、パスパラメータなど）が詰まったオブジェクトです。
+ *   - event.body: クライアントから送信されたJSONデータ（文字列）。
+ * 
+ * @returns {Promise<APIGatewayProxyResult>}
+ *   API Gatewayに返すレスポンスオブジェクトです。
+ *   - statusCode: HTTPステータスコード（200:成功, 400:不正なリクエスト, 500:サーバーエラーなど）。
+ *   - body: クライアントに返すデータ（JSON文字列）。
  */
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // ログ出力: AWSのCloudWatch Logsサービスで、どのようなリクエストが来たかを確認できます。

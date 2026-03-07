@@ -52,6 +52,19 @@ public struct PlayerStats
 ### 保存処理 (CloudSaveManager)
 `CloudSaveManager` クラスが AWS Lambda の関数URLに対して HTTP POST リクエストを送信します。
 
+**環境による接続先の切り替え:**
+開発中と本番リリース時で接続先のAPI（およびデータベース）を自動で切り替えるため、プリプロセッサディレクティブを使用しています。
+
+```csharp
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    // 開発環境 (Dev)
+    private const string API_URL = "https://.../dev/GeomeTRIo_Backend";
+#else
+    // 本番環境 (Prod)
+    private const string API_URL = "https://.../prod/GeomeTRIo_Backend";
+#endif
+```
+
 **通常保存 (Optimistic Locking):**
 ```csharp
 public void Save(string userId, GameData data, Action<bool, string> callback = null)

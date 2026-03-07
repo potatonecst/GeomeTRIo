@@ -1,0 +1,75 @@
+name: Deploy Backend # ワークフローの名前。GitHubの「Actions」タブのリストに表示されます。
+
+# "on": このワークフローが「いつ」実行されるかを定義します。
+on:
+  workflow_dispatch: # "workflow_dispatch": 手動実行トリガー。ブラウザ上の「Run workflow」ボタンで開始します。
+    inputs: # 手動実行時にユーザーが入力・選択できるパラメータの定義です。
+      stage: # パラメータ名。「stage」という名前で値を受け取ります。
+        description: 'Deployment stage' # 入力欄に表示される説明文。
+        required: true # 入力を必須にします。
+        default: 'dev' # デフォルト値。何も選ばないと 'dev' (開発環境) になります。
+        type: choice # 入力タイプ。'choice' はドロップダウンリストになります。
+        options: # ドロップダウンの選択肢。
+          - dev # 開発環境 (Development)
+          - prod # 本番環境 (Production)
+
+# "permissions": GitHub Actionsが持つ権限の設定。AWSへの安全な接続（OIDC）に必要です。
+permissions:
+  id-token: write # AWSに対してOpenID Connectトークンを発行するために「書き込み」権限が必要です。
+  contents: read  # リポジトリのソースコードをチェックアウト（ダウンロード）するために「読み取り」権限が必要です。
+
+# "env": ワークフロー全体で使用する環境変数の定義。
+env:
+  AWS_REGION: ap-northeast-1 # デプロイ先のAWSリージョン。'ap-northeast-1' は東京リージョンを指します。
+
+# "jobs": 実行する作業（ジョブ）のまとまりを定義します。
+jobs:
+  deploy: # ジョブID。「deploy」という名前のジョブを定義します。
+    runs-on: ubuntu-latest # このジョブを実行する仮想マシンのOS。最新のUbuntu Linuxを使用します。
+    defaults: # ジョブ内の全ステップに適用されるデフォルト設定。
+      run:
+        working-directory: ./Backend # コマンドの実行場所を 'Backend' フォルダに指定します（serverless.ymlがある場所）。
+
+    # "steps": ジョブ内で順番に実行される手順（ステップ）のリスト。
+    steps:
+      - name: Checkout source code # ステップの名前。ログに表示され、何をしているか分かりやすくします。
+        # "uses": 他の人が作ったアクション（機能）を使用します。
+        # actions/checkout: リポジトリのコードを仮想マシンにダウンロードする公式アクション。
+        uses: actions/checkout@v6
+
+      - name: Enable Corepack # Node.jsのパッケージ管理ツール 'pnpm' を使うための準備。
+        # "run": シェルコマンドを実行します。
+        run: corepack enable # Corepackを有効化するコマンド。
+
+      - name: Setup Node.js # Node.js（JavaScript実行環境）をセットアップします。
+        uses: actions/setup-node@v6 # 公式のNode.jsセットアップアクション。
+        with: # アクションへの入力パラメータ。
+          node-version: '24' # 使用するNode.jsのバージョン。AWS Lambdaのランタイム(nodejs24.x)に合わせます。
+          cache: 'pnpm' # 'pnpm' の依存関係キャッシュを有効化し、2回目以降のビルドを高速化します。
+          cache-dependency-path: Backend/pnpm-lock.yaml # キャッシュのキーとなるロックファイルの場所。
+
+      - name: Install Dependencies # 必要なライブラリ（node_modules）をインストールします。
+        # --frozen-lockfile: ロックファイル(pnpm-lock.yaml)の内容を厳密に守ってインストールするオプション。
+        # CI環境では勝手にバージョンが変わらないようにこのオプションを使います。
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure AWS Credentials # AWSへの認証を行います。
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # role-to-assume: 一時的に借りるIAMロール（権限の帽子）。
+          # ${{ secrets.AWS_ROLE_ARN }}: GitHubのリポジトリ設定(Secrets)に保存したロールIDを読み込みます。
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          # aws-region: 接続先のリージョン。上で定義した環境変数を使用。
+          aws-region: ${{ env.AWS_REGION }}
+          # role-session-name: AWSの操作ログ（CloudTrail）に残るセッション名。追跡用。
+          role-session-name: GitHubActionsDeploySession
+
+      - name: Deploy to AWS Lambda # Serverless Frameworkを使ってデプロイを実行します。
+        # npx serverless deploy: デプロイコマンド。
+        # --stage: デプロイ先のステージ（dev/prod）を指定するオプション。
+        # ${{ github.event.inputs.stage }}: 手動実行時に選択された 'stage' の値（dev または prod）がここに入ります。
+        run: npx serverless deploy --stage ${{ github.event.inputs.stage }}
+        env:
+          # SERVERLESS_ACCESS_KEY: Serverless Dashboardへの認証キー。
+          # GitHub Secretsから読み込んで環境変数としてコマンドに渡します。
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}

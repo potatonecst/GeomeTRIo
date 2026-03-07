@@ -844,3 +844,26 @@ Unityプロジェクトでは、用途に応じて2つのJSONライブラリを�
 *   **特徴:** 高機能。柔軟なカスタマイズが可能。
 *   **用途:** クラウドセーブデータの保存 (`CloudSaveManager`)。
 *   **採用理由:** チェックサム計算のために「キーをアルファベット順にソートしてJSON化する」といった高度な処理が必要なため、こちらを採用しています。
+
+---
+
+## 31. プリプロセッサディレクティブ (Preprocessor Directives)
+
+コンパイル時（ビルド時）に、条件に応じてコードを含めたり除外したりするための機能です。`#` で始まります。
+
+### 構文
+```csharp
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    // 開発環境用のコード
+    private const string API_URL = "https://dev-api...";
+#else
+    // 本番環境用のコード
+    private const string API_URL = "https://prod-api...";
+#endif
+```
+
+### 解説
+*   **`#if 条件`**: 条件が真の場合のみ、次の行から `#else` または `#endif` までのコードをコンパイル対象にします。
+*   **`UNITY_EDITOR`**: Unityエディタで実行している場合に定義されるシンボル。
+*   **`DEVELOPMENT_BUILD`**: 「Development Build」オプションを有効にしてビルドした場合に定義されるシンボル。
+*   **用途:** デバッグ機能の切り替えや、開発環境と本番環境の接続先切り替えなどに使用します。

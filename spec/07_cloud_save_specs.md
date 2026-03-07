@@ -20,7 +20,7 @@ graph LR
 ## 3. データベース設計 (DynamoDB)
 
 ### テーブル定義
-*   **テーブル名:** `GeomeTRIo_SaveData`
+*   **テーブル名:** `GeomeTRIo_Saves_${stage}` (例: `GeomeTRIo_Saves_dev`, `GeomeTRIo_Saves_prod`)
 *   **パーティションキー (Partition Key):** `userId` (String)
     *   クライアント側で生成されたUUID、または連携されたアカウントIDを使用。
 *   **ソートキー (Sort Key):** なし
@@ -128,13 +128,23 @@ Lambdaからの戻り値（API Gateway経由）。
     *   Success: `200 OK`, `{"message": "Delete successful"}`
     *   Error: `403 Forbidden` (トークン不一致)
 
-### 5.4 セキュリティスコープ (Security Scope)
+## 6. 環境構成 (Environments)
+開発と本番を分離するため、以下の2つのステージを設ける。
+
+*   **Development (dev):**
+    *   用途: 開発中の機能テスト、デバッグ。
+    *   DynamoDBテーブル: `GeomeTRIo_Saves_dev`
+*   **Production (prod):**
+    *   用途: 一般ユーザー向け本番稼働。
+    *   DynamoDBテーブル: `GeomeTRIo_Saves_prod`
+
+## 7. セキュリティスコープ (Security Scope)
 *   **通信:** HTTPS + チェックサム(HMAC)で保護。
 *   **ストレージ:** AWSのセキュリティで保護。
 *   **クライアントメモリ:** **本バージョンでは保護しない（将来的な課題）。**
     *   メモリ改竄（Cheat Engine等）に対しては脆弱であるが、個人開発の規模感を考慮し、まずは通信経路の保護を優先する。
 
-## 6. 将来の拡張性 (Future Roadmap)
+## 8. 将来の拡張性 (Future Roadmap)
 
 ### 認証・認可 (Authentication)
 *   現在はクライアント生成のIDを信頼する「ゲストモード」として動作。

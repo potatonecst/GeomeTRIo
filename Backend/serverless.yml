@@ -1,0 +1,65 @@
+service: geometrio-backend # サービス名。AWS CloudFormationのスタック名（リソースのまとまり）の一部になります。
+org: potatonecst # Serverless Dashboardの組織名。デプロイ時の認証に使用されます。
+frameworkVersion: '4' # 使用するServerless Frameworkのバージョン。現在はv4を指定。
+
+# "provider": クラウドプロバイダー（AWS）に関する共通設定。
+provider:
+  name: aws # プロバイダー名。AWSを使用します。
+  runtime: nodejs24.x # Lambda関数の実行環境（ランタイム）。最新のNode.js 24を使用します。
+  region: ap-northeast-1 # デプロイ先のリージョン。'ap-northeast-1' は東京です。
+  # "stage": デプロイステージ（環境）。
+  # ${opt:stage, 'dev'}: optはOptions(引数)の略。コマンドライン引数(--stage)があればそれを使い、なければ 'dev' をデフォルトにします。
+  stage: ${opt:stage, 'dev'}
+  # "environment": Lambda関数全体で共有される環境変数。
+  environment:
+    # TABLE_NAME: Lambdaコード内で process.env.TABLE_NAME としてアクセスできます。
+    # ${sls:stage}: slsはServerlessの略。現在のステージ名（dev/prod）に自動的に置換されます。
+    # 結果例: GeomeTRIo_Saves_dev
+    TABLE_NAME: GeomeTRIo_Saves_${sls:stage}
+  # "iam": Lambda関数に付与するIAM権限（Permissions）。
+  iam:
+    role:
+      statements: # 具体的な権限のリスト。
+        - Effect: Allow # 「許可」する。
+          Action: # 許可する操作のアクション。
+            - dynamodb:PutItem    # データの作成・更新（保存）
+            - dynamodb:GetItem    # データの取得（ロード）
+            - dynamodb:DeleteItem # データの削除
+          Resource: # 操作対象のリソース。
+            # Fn::GetAtt: CloudFormationの関数。下で定義した 'SavesTable' のARN（Amazon Resource Name）を取得します。
+            # これにより、このLambdaはこの特定のテーブル以外にはアクセスできなくなります（最小権限の原則）。
+            - Fn::GetAtt: [SavesTable, Arn]
+
+# "functions": デプロイするLambda関数の定義。
+functions:
+  api: # 関数の論理名（自由につけられます）。
+    handler: src/index.handler # 実行されるプログラムのエントリーポイント。srcフォルダのindex.tsファイルのhandler関数を指定。
+    events: # 関数を起動するトリガー（イベント）。
+      - httpApi: # HTTP API (API Gateway v2) を作成してトリガーにする。
+          path: /      # URLのパス。ルートパス（/）で待ち受けます。
+          method: post # HTTPメソッド。POSTリクエストのみ受け付けます。
+
+# "build": ビルド設定（Serverless Framework v4の新機能）。
+build:
+  esbuild: # TypeScriptをJavaScriptに変換・バンドルするツール 'esbuild' の設定。
+    bundle: true # 依存ライブラリも含めて1つのファイルにまとめる。
+    minify: true # コードを圧縮（空白削除など）してファイルサイズを小さくする。
+
+# "resources": 追加で作成するAWSリソースの定義（CloudFormation構文）。
+resources:
+  Resources:
+    SavesTable: # DynamoDBテーブルのリソース定義。論理ID。
+      Type: AWS::DynamoDB::Table # リソースの種類：DynamoDBテーブル。
+      Properties: # テーブルの詳細設定。
+        TableName: GeomeTRIo_Saves_${sls:stage} # 作成される実際のテーブル名（例: GeomeTRIo_Saves_dev）。
+        AttributeDefinitions: # 【部品定義】キー（主キーやインデックス）として使用する属性のみを定義します。※普通のデータ項目は定義してはいけません。
+          - AttributeName: userId # 定義1: userIdという属性がある。
+            AttributeType: S      # 型は String (文字列)。
+        KeySchema: # 【組み立て】定義した属性をどの「役割」で使うかを指定します。
+          - AttributeName: userId # 定義1の userId を...
+            KeyType: HASH # パーティションキー（主キー）として使用する。
+            # KeyType: RANGE # ソートキー（任意）。データを並べ替えるためのサブID。今回は使いません。
+        BillingMode: PAY_PER_REQUEST # 課金モード：オンデマンド（リクエスト数に応じた従量課金）。
+        TimeToLiveSpecification: # TTL（Time To Live：有効期限）の設定。
+          AttributeName: expiresAt # この属性に入っている時刻（Unix Timestamp）を過ぎると自動削除される。
+          Enabled: true # TTLを有効化。

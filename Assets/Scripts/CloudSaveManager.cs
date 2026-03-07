@@ -17,8 +17,24 @@ public class CloudSaveManager : MonoBehaviour
 {
     public static CloudSaveManager Instance { get; private set; }
 
-    // AWS API GatewayのURL (デプロイ後に取得したURLに書き換えてください)
-    private const string API_URL = "https://YOUR_API_ID.execute-api.ap-northeast-1.amazonaws.com/default/GeomeTRIo_Backend";
+    // 開発環境用 (Dev) のURL
+    private const string API_URL_DEV = "https://YOUR_API_ID_DEV.execute-api.ap-northeast-1.amazonaws.com/default/GeomeTRIo_Backend";
+
+    // 本番環境用 (Prod) のURL
+    private const string API_URL_PROD = "https://YOUR_API_ID_PROD.execute-api.ap-northeast-1.amazonaws.com/default/GeomeTRIo_Backend";
+
+    // 現在の環境に応じて適切なURLを返すプロパティ
+    private string ApiUrl
+    {
+        get
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            return API_URL_DEV; // エディタ上や開発ビルドではDev環境を使用
+#else
+            return API_URL_PROD; // リリースビルドでは本番環境を使用
+#endif
+        }
+    }
 
     // 認証用トークンをローカル(PlayerPrefs)に保存しておくためのキー
     // セーブデータ自体は保存しませんが、本人確認用の「鍵」だけは保存します。
@@ -133,7 +149,7 @@ public class CloudSaveManager : MonoBehaviour
             // usingステートメント: ブロックを抜けた時に自動的に Dispose() を呼び出し、メモリを解放します。
             // UnityWebRequest はネイティブのリソースを使うため、確実に解放する必要があります。
             // これを忘れるとメモリリークの原因になります。
-            using (UnityWebRequest www = new UnityWebRequest(API_URL, "POST"))
+            using (UnityWebRequest www = new UnityWebRequest(ApiUrl, "POST"))
             {
                 www.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 www.downloadHandler = new DownloadHandlerBuffer();
@@ -226,7 +242,7 @@ public class CloudSaveManager : MonoBehaviour
 
         for (int attempt = 1; attempt <= MAX_RETRIES; attempt++)
         {
-            using (UnityWebRequest www = new UnityWebRequest(API_URL, "POST"))
+            using (UnityWebRequest www = new UnityWebRequest(ApiUrl, "POST"))
             {
                 www.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 www.downloadHandler = new DownloadHandlerBuffer();
@@ -296,7 +312,7 @@ public class CloudSaveManager : MonoBehaviour
         string jsonBody = JsonConvert.SerializeObject(requestBody);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
 
-        using (UnityWebRequest www = new UnityWebRequest(API_URL, "POST"))
+        using (UnityWebRequest www = new UnityWebRequest(ApiUrl, "POST"))
         {
             www.uploadHandler = new UploadHandlerRaw(bodyRaw);
             www.downloadHandler = new DownloadHandlerBuffer();

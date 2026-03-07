@@ -145,3 +145,18 @@ console.log(`Conflict detected for user ${userId}.`);
 ### 解説
 C# の `$"..."` (文字列補間) と同じ機能です。
 `"Conflict detected for user " + userId + "."` と書くよりも読みやすくなります。
+
+---
+
+## 7. 環境変数 (Environment Variables)
+
+Lambda関数の設定や、デプロイ時のステージ（dev/prod）によって変わる値を取得するために使用します。
+
+### 構文
+```typescript
+const tableName = process.env.TABLE_NAME || 'DefaultTable';
+```
+
+### 解説
+*   **`process.env`**: Node.js が持つ環境変数のオブジェクトです。
+*   **`serverless.yml` での設定**: `provider.environment` や `functions.api.environment` で定義した値がここに注入されます。
