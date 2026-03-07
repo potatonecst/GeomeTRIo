@@ -43,6 +43,18 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
         *   `"CRITICAL ERROR"`: ゲームオーバー
     *   スコアイベント:
         *   `scoreEventAmount`, `scoreEventLabel`, `scoreEventTime`: スコア獲得時のポップアップ表示用データ。
+*   **フィールド一覧:**
+    *   `score`, `hp`, `sp`, `maxHp`, `maxSp`: 基本ステータス。
+    *   `level`, `currentExp`, `nextExp`: プレイヤーレベルと経験値。
+    *   `isGameOver` (bool): ゲームオーバー状態かどうか。
+    *   `isPaused` (bool): ポーズ中かどうか。
+    *   `isOffline` (bool): オフラインモード（セーブ不可）かどうか。ロード失敗時やコンフリクト発生時に `true` になります。
+    *   `systemStatus`, `engineStatus`, `weaponStatus`: HUD表示用のステータス文字列。
+    *   `toastMessage` (string): 画面右上に表示するトースト通知のメッセージ内容（例: "DATA SAVED"）。
+    *   `toastId` (string): トースト通知の一意なID。これが変化した時にReact側で新しい通知として処理します。
+    *   `toastTime` (float): トースト通知が発行された時刻。
+    *   `scoreEventAmount`, `scoreEventLabel`, `scoreEventTime`: スコア獲得時のポップアップ表示用データ。
+    *   `timeElapsed`, `stageName`: 経過時間とステージ名。
 
 #### `void UpdateSetting(string key, string value)`
 *   **説明:** 指定した設定項目の値を更新します（メモリ上のみ）。
@@ -102,6 +114,14 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
     *   `GameManager.OnGameUIReady()` を実行します。
     *   BGMの再生を開始します。
     *   シーン遷移用の黒いオーバーレイ（暗転）を非表示にします。
+
+#### `void ReloadSaveData()`
+*   **説明:** クラウド上のセーブデータを再読み込みし、ローカルデータを上書きします。
+*   **用途:** セーブデータの競合（Conflict）発生時に、ユーザーが「クラウドデータを採用（Reload）」を選択した場合に使用します。
+
+#### `void ForceSaveData()`
+*   **説明:** ローカルのセーブデータでクラウドデータを強制的に上書き保存します。
+*   **用途:** セーブデータの競合（Conflict）発生時に、ユーザーが「ローカルデータを採用（Force Save）」を選択した場合に使用します。
 
 ---
 

@@ -3,6 +3,7 @@ import { useGlobals } from '@reactunity/renderer';
 import { MenuButton } from '../components/MenuButton';
 import { GlitchText } from '../components/GlitchText';
 import { LicenseMenu } from './LicenseMenu';
+import { SystemAlert } from '../components/SystemAlert';
 
 interface SettingsProps {
     onBack: () => void;
@@ -338,6 +339,8 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
         // ライセンスメニュー表示中は、Settings側の入力ハンドラを登録しない
         // (LicenseMenuコンポーネントが独自のハンドラを登録するため)
         if (showLicenseMenu) return;
+        // 確認ダイアログ表示中も登録しない（SystemAlert側でハンドリングする）
+        if (showDialog) return;
 
         // キーボード入力（文字）のハンドリング
         (window as any).onTextInput = (char: string) => {
@@ -374,34 +377,6 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
         // UnityのReactInputBridgeから、この関数が直接呼び出されます。
         (window as any).onMenuInput = (event: string) => {
             if (isExiting || isDeleting) return; // 削除中も入力を無視
-
-            // --- ダイアログ表示中の操作 ---
-            if (showDialog) {
-                if (event === 'left' || event === 'right') {
-                    interop?.PlaySound('move');
-                    setDialogSelection(prev => prev === 0 ? 1 : 0); // 0(NO) <-> 1(YES)
-                } else if (event === 'submit') {
-                    if (dialogSelection === 1) {
-                        // YES: アクション実行
-                        if (dialogAction === 'reset_defaults') {
-                            handleReset();
-                            setShowDialog(false);
-                        } else if (dialogAction === 'delete_save') {
-                            handleDeleteSave();
-                            // 削除時はダイアログを閉じない（フェードアウトまで表示したままにして操作を防ぐ）
-                        }
-                    } else {
-                        // NO: キャンセル音
-                        interop?.PlaySound('cancel');
-                        setShowDialog(false);
-                    }
-                } else if (event === 'cancel') {
-                    interop?.PlaySound('cancel');
-                    setShowDialog(false);
-                }
-                // ダイアログ中は他の操作を受け付けない
-                return;
-            }
 
             const playerName = (values['player_name'] as string) || "PLAYER";
 
@@ -821,48 +796,28 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
             </view>
 
             {/* Confirmation Dialog */}
-            {showDialog && (
-                // absolute: 親要素(relative)を基準に、絶対的な位置に配置します。
-                // inset-0: top:0, right:0, bottom:0, left:0 と同じ意味。親要素の四隅いっぱいに広げます。
-                // zIndex: 100: 重なり順を指定します。数値が大きいほど手前に表示されます。
-                // これにより、ヘッダーやパディングに関係なく、画面全体を覆う「暗幕」を作っています。
-                // bg-opacity-95: 背景をほぼ真っ黒にして、後ろの画面を隠蔽し、ダイアログに注目させます。
-                <view className="absolute inset-0 items-center justify-center bg-black bg-opacity-95" style={{ zIndex: 100 }}>
-                    <view className="bg-black border-2 border-red-500 p-8 w-[600px] items-center shadow-[0_0_30px_rgba(255,0,0,0.3)]">
-                        <GlitchText
-                            text="WARNING"
-                            isAlert={true}
-                            className="text-6xl text-red-500 mb-4 font-bold tracking-widest" // 間隔を詰める (mb-8 -> mb-4)
-                            style={{ fontFamily: 'SourceHanCodeJP' }}
-                        />
-                        <text className="text-white text-3xl mb-8 text-center">
-                            {dialogAction === 'delete_save'
-                                ? "ALL SAVE DATA WILL BE DELETED.\nARE YOU SURE?"
-                                : "RESET ALL SETTINGS TO DEFAULT.\nARE YOU SURE?"}
-                        </text>
-                        <view className="flex-row w-full justify-around">
-                            {/* NOボタン: 選択時はシアン背景に黒文字 */}
-                            <view className={`w-40 items-center py-2 ${dialogSelection === 0 ? 'bg-cyan-600' : 'border border-gray-600'}`}>
-                                <text
-                                    className="text-3xl"
-                                    style={{ color: dialogSelection === 0 ? '#ffffff' : '#9ca3af', fontFamily: 'SourceHanCodeJP' }}
-                                >
-                                    NO
-                                </text>
-                            </view>
-                            {/* YESボタン: 選択時は赤背景に白文字 */}
-                            <view className={`w-40 items-center py-2 ${dialogSelection === 1 ? 'bg-red-600' : 'border border-gray-600'}`}>
-                                <text
-                                    className="text-3xl"
-                                    style={{ color: dialogSelection === 1 ? '#ffffff' : '#9ca3af', fontFamily: 'SourceHanCodeJP' }}
-                                >
-                                    YES
-                                </text>
-                            </view>
-                        </view>
-                    </view>
-                </view>
-            )}
+            <SystemAlert
+                isOpen={showDialog}
+                title="WARNING"
+                message={dialogAction === 'delete_save'
+                    ? "ALL SAVE DATA WILL BE DELETED.\nARE YOU SURE?"
+                    : "RESET ALL SETTINGS TO DEFAULT.\nARE YOU SURE?"}
+                confirmLabel="YES"
+                cancelLabel="NO"
+                onConfirm={() => {
+                    if (dialogAction === 'reset_defaults') {
+                        handleReset();
+                        setShowDialog(false);
+                    } else if (dialogAction === 'delete_save') {
+                        handleDeleteSave();
+                        setShowDialog(false);
+                    }
+                }}
+                onCancel={() => {
+                    interop?.PlaySound('cancel');
+                    setShowDialog(false);
+                }}
+            />
         </view>
     );
 };

@@ -29,6 +29,8 @@ public class GameInterop
         {
             // JsonUtility.ToJson(object):
             // 渡されたオブジェクトのパブリックフィールドを読み取り、JSON形式の文字列に変換（シリアライズ）して返します。
+            // Unity標準の軽量なJSONシリアライザです。
+            // 例: { "playerName": "Player1", "score": 100 } のような文字列になります。
             return JsonUtility.ToJson(GameManager.instance.Data);
         }
         return "{}";
@@ -82,14 +84,29 @@ public class GameInterop
         public bool isGameOver;
         public bool isNewHighScore;
         public bool isPaused;
-        public bool isOffline; // 追加: オフラインモード（セーブ不可）かどうか
+        /// <summary>
+        /// オフラインモード（セーブ不可）かどうか。
+        /// React側の OfflineIndicator コンポーネントがこれを監視し、trueの場合に "OFFLINE" 表示を行います。
+        /// </summary>
+        public bool isOffline;
         public int level;
         public int currentExp;
         public int nextExp;
         public string systemMessage;
-        public string toastMessage; // 追加: トースト通知用メッセージ
-        public float toastTime;     // 追加: トースト通知の発行時刻
-        public string toastId;      // 追加: トースト通知のID
+        /// <summary>
+        /// トースト通知用メッセージ（例: "DATA SAVED", "CONNECTING..."）。
+        /// React側の Toaster コンポーネントで画面右上に表示されます。
+        /// </summary>
+        public string toastMessage;
+        /// <summary>
+        /// トースト通知の発行時刻（Time.unscaledTime）。
+        /// </summary>
+        public float toastTime;
+        /// <summary>
+        /// トースト通知の一意なID。
+        /// React側はこのIDの変化を検知して、新しい通知としてアニメーションを開始します。
+        /// </summary>
+        public string toastId;
         public float unscaledTime;  // 追加: 現在のリアルタイム経過時間（重複判定用）
         public string systemStatus;
         public string engineStatus;
@@ -119,6 +136,7 @@ public class GameInterop
         // 統計情報はセーブデータ（GameData）に含まれているため、GameManagerから取得します。
         // GameManagerが存在しない場合（エディタでの単体テスト時など）は、空のデータを使用します。
         // ? : (三項演算子): if-else文の短縮形です。「条件 ? 真の場合 : 偽の場合」と書きます。
+        // ここでは「GameManager.instance が null でないなら stats を使い、null なら new PlayerStats() を使う」という意味です。
         var stats = GameManager.instance != null ? GameManager.instance.Data.stats : new PlayerStats();
 
         var settings = new SettingsData
@@ -206,11 +224,15 @@ public class GameInterop
             isGameOver = GameManager.instance.IsGameOver,
             isNewHighScore = GameManager.instance.IsNewHighScore,
             isPaused = GameManager.instance.IsPaused,
-            isOffline = GameManager.instance.IsOfflineMode, // ロード失敗時のみオフライン扱い
+            // オフラインモードの状態を渡します。
+            // クラウドロードに失敗した場合や、セーブ時にコンフリクトが発生して解決されていない場合に true になります。
+            isOffline = GameManager.instance.IsOfflineMode,
             level = lvl,
             currentExp = PlayerController.instance != null ? PlayerController.instance.GetCurrentExp() : 0,
             nextExp = PlayerController.instance != null ? PlayerController.instance.GetNextLevelExp() : 1,
             systemMessage = GameManager.instance.SystemMessage,
+            // トースト通知の情報を渡します。
+            // GameManager.SetToastMessage() で設定された内容がここに反映されます。
             toastMessage = GameManager.instance.ToastMessage,
             toastTime = GameManager.instance.LastToastTime,
             toastId = GameManager.instance.ToastId,
@@ -246,6 +268,7 @@ public class GameInterop
         switch (key)
         {
             // int.Parse(string): 文字列を整数(int)に変換します。変換できない場合は例外が発生します。
+            // 例: "100" -> 100
             // bool.Parse(string): 文字列("True"/"False")を真偽値(bool)に変換します。
             // React側からは全ての値が文字列として送られてくるため、適切な型に変換して保存します。
             case "hp": SettingsManager.SetInitialHP(int.Parse(value)); break;
@@ -340,6 +363,7 @@ public class GameInterop
             // スコアをリセットして新しいゲームを開始
             GameManager.instance.ResetScore();
             // GameManagerのコルーチンを使って遷移（遅延と演出を含む）
+            // LoadSceneWithTransition: 暗転やローディング表示を伴うシーン遷移を開始します。
             GameManager.instance.LoadSceneWithTransition(stageName);
         }
         else
@@ -411,6 +435,7 @@ public class GameInterop
             // UI Toolkit (UIDocument) の場合
             // Screen.width (物理ピクセル) ではなく、パネルの論理サイズを取得して返す必要があります。
             // これにより、Canvas ScalerやPanel Settingsによるスケーリング後の正しい描画領域サイズが得られます。
+            // GetComponent<T>(): 指定した型のコンポーネントを取得するUnityのメソッドです。
             var uiDoc = _reactRenderer.GetComponent<UIDocument>();
             if (uiDoc != null && uiDoc.rootVisualElement != null)
             {
@@ -463,6 +488,30 @@ public class GameInterop
     public void ResetCloudLoadState()
     {
         GameManager.instance?.ResetCloudLoadState();
+    }
+
+    /// <summary>
+    /// コンフリクト解決：クラウドのデータでローカルを上書き（再ロード）
+    /// React側の SystemAlert で "OVERWRITE LOCAL" が選ばれた時に呼ばれます。
+    /// </summary>
+    public void ReloadSaveData()
+    {
+        UnityEngine.Debug.Log("[GameInterop] ReloadSaveData requested.");
+        // GameManagerの解決処理（クラウドからの再ロード）を呼び出します。
+        // ?. (Null条件演算子): GameManager.instance が null でない場合のみメソッドを実行します。
+        GameManager.instance?.ResolveConflict_Reload();
+    }
+
+    /// <summary>
+    /// コンフリクト解決：ローカルのデータでクラウドを強制上書き
+    /// React側の SystemAlert で "FORCE SAVE" が選ばれた時に呼ばれます。
+    /// </summary>
+    public void ForceSaveData()
+    {
+        UnityEngine.Debug.Log("[GameInterop] ForceSaveData requested.");
+        // GameManagerの解決処理（強制上書き保存）を呼び出します。
+        // ?. (Null条件演算子): GameManager.instance が null でない場合のみメソッドを実行します。
+        GameManager.instance?.ResolveConflict_ForceSave();
     }
 }
 
@@ -527,6 +576,7 @@ public class ReactInputBridge : MonoBehaviour
         // InputActionを初期化
         // type: Button は「押した/離した」を検知するのに適しています
         // InputAction: Input Systemにおける「入力の単位」です。
+        // ここでは「何かキーが押された」というアクションを定義しています。
         // ボタン押し、軸入力などの定義と、それに対するバインディング（キー割り当て）を管理します。
         _pressAnyKeyAction = new InputAction(type: InputActionType.Button);
         // バインディングを個別に追加（カンマ区切りはコンストラクタでは機能しません）
@@ -534,6 +584,8 @@ public class ReactInputBridge : MonoBehaviour
         _pressAnyKeyAction.AddBinding("<Gamepad>/<Button>");
         // 入力があった瞬間に実行する処理を登録
         // performedイベント: 入力が確定した瞬間に発火します
+        // += : イベントハンドラを追加します。
+        // _ => OnPressAnyButton() : 引数を無視して OnPressAnyButton メソッドを呼ぶラムダ式です。
         _pressAnyKeyAction.performed += _ => OnPressAnyButton();
 
         // --- ナビゲーション操作 (上下左右) ---
@@ -597,6 +649,7 @@ public class ReactInputBridge : MonoBehaviour
             {
                 // React側のグローバル変数 'GameInterop' に、C#の GameInterop クラスのインスタンスを登録します。
                 // これにより、React側から `interop.GetGameData()` のようにC#のメソッドを呼べるようになります。
+                // Globals: ReactUnityにおける、C#とJSで共有される変数の辞書です。
                 _reactRenderer.Context.Globals["GameInterop"] = new GameInterop(_reactRenderer);
             }
         }
@@ -610,6 +663,7 @@ public class ReactInputBridge : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
+        // Enable(): Input Systemのアクションを有効化し、入力を監視できる状態にします。
         _pressAnyKeyAction.Enable();
         _navigateAction.Enable();
         _submitAction.Enable();
@@ -628,6 +682,7 @@ public class ReactInputBridge : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
+        // Disable(): Input Systemのアクションを無効化し、監視を停止します。
         _pressAnyKeyAction.Disable();
         _navigateAction.Disable();
         _submitAction.Disable();
@@ -641,6 +696,7 @@ public class ReactInputBridge : MonoBehaviour
 
     private void OnDestroy()
     {
+        // Dispose(): メモリリークを防ぐため、確保したリソース（InputAction）を解放します。
         _pressAnyKeyAction?.Dispose();
         _navigateAction?.Dispose();
         _submitAction?.Dispose();
@@ -654,6 +710,7 @@ public class ReactInputBridge : MonoBehaviour
     {
         // ナビゲーション操作（矢印キーやスティック）の場合は、AnyKeyとしての処理（ロード開始など）を行わない
         // これにより、メニュー操作中に裏でロードが走るのを防ぐ
+        // ReadValue<Vector2>(): 現在の入力値をベクトルとして読み取ります。
         var navInput = _navigateAction.ReadValue<Vector2>();
         if (navInput.sqrMagnitude > 0.1f)
         {
@@ -720,6 +777,7 @@ public class ReactInputBridge : MonoBehaviour
 
         // 入力はあるが、待機時間中の場合は無視
         // Time.unscaledTime: ゲームのポーズ中(Time.timeScale=0)でもメニュー操作ができるように、実際の経過時間を使用します。
+        // Time.time だとポーズ中に時間が止まってしまい、操作不能になるためです。
         if (Time.unscaledTime < _nextNavigateTime) return;
 
         // 方向判定とイベント送信
@@ -787,6 +845,21 @@ public class ReactInputBridge : MonoBehaviour
         if (_reactRenderer != null && _reactRenderer.Context != null)
         {
             _reactRenderer.Context.Script.ExecuteScript("if (typeof onLoadingRequest === 'function') onLoadingRequest();");
+        }
+    }
+
+    /// <summary>
+    /// React側にセーブデータの競合（コンフリクト）が発生したことを通知します。
+    /// GameManagerで競合エラー(409)を検知した際に呼ばれます。
+    /// </summary>
+    public void TriggerSaveConflict()
+    {
+        if (_reactRenderer != null && _reactRenderer.Context != null)
+        {
+            // ExecuteScript: C#からJavaScriptのコードを実行します。
+            // React側で定義されているグローバル関数 'onSaveConflict' を呼び出し、警告ダイアログを表示させます。
+            // JSコード: "if (typeof onSaveConflict === 'function') onSaveConflict();"
+            _reactRenderer.Context.Script.ExecuteScript("if (typeof onSaveConflict === 'function') onSaveConflict();");
         }
     }
 }

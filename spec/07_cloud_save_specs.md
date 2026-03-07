@@ -56,7 +56,8 @@ JSON形式で送信する。
   "userId": "string (UUID)",
   "authToken": "string (Random Token)",
   "checksum": "string (SHA256 Hash)", // save時のみ必須
-  "saveData": { ... } // save時のみ必須
+  "saveData": { ... }, // save時のみ必須
+  "prevUpdatedAt": "string (ISO 8601)" // save時のみ (排他制御用)
 }
 ```
 
@@ -82,19 +83,24 @@ Lambdaからの戻り値（API Gateway経由）。
 ## 5. アクション詳細
 
 ### 5.1 SAVE (保存)
-*   **Request:** `action: "save"`, `userId`, `authToken`, `saveData`, `checksum`
+ *   **Request:** `action: "save"`, `userId`, `authToken`, `saveData`, `checksum`, `prevUpdatedAt`
 *   **処理:**
     1.  `userId`, `authToken`, `saveData`, `checksum` の存在チェック。
     2.  **認証チェック:**
         *   DBにデータが存在する場合、保存されている `authToken` とリクエストの `authToken` が一致するか確認。
         *   不一致なら `403 Forbidden` を返す（なりすまし防止）。
-    3.  **改竄チェック (Checksum Verification):**
+    3.  **整合性チェック (Optimistic Locking):**
+        *   リクエストに `prevUpdatedAt` が含まれる場合、DB上の `updatedAt` と比較する。
+        *   不一致なら `409 Conflict` を返す（他端末での更新検知）。
+    4.  **改竄チェック (Checksum Verification):**
         *   サーバー側で、受け取った `saveData` とDBの `authToken` からチェックサムを再計算する。
+        *   ※計算時はJSONのキーをアルファベット順にソート（正規化）する。
         *   リクエストの `checksum` と一致しない場合、`403 Forbidden` を返す。
-    4.  現在時刻から `updatedAt` と `expiresAt` (現在時刻 + 1年) を生成。
-    5.  DynamoDBに `PutItem` (上書き保存)。
+    5.  現在時刻から `updatedAt` と `expiresAt` (現在時刻 + 1年) を生成。
+    6.  DynamoDBに `PutItem` (上書き保存)。
 *   **Response:**
     *   Success: `200 OK`, `{"message": "Save successful"}`
+    *   Error: `409 Conflict` (データ競合)
     *   Error: `403 Forbidden` (トークン不一致、またはチェックサム不一致)
 
 ### 5.2 LOAD (読み込み)

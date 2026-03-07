@@ -52,20 +52,34 @@ public struct PlayerStats
 ### 保存処理 (CloudSaveManager)
 `CloudSaveManager` クラスが AWS Lambda の関数URLに対して HTTP POST リクエストを送信します。
 
+**通常保存 (Optimistic Locking):**
 ```csharp
-public void Save(string userId, string authToken, GameData data, Action<bool, string> callback)
+public void Save(string userId, GameData data, Action<bool, string> callback = null)
 {
-   // 1. GameDataをJSON文字列に変換
-    string jsonData = JsonUtility.ToJson(data);
-
-    // 2. 改竄防止用のチェックサムを計算 (HMAC-SHA256)
-    string checksum = CalculateChecksum(jsonData, authToken);
-
-    // 3. UnityWebRequestで送信
-    StartCoroutine(PostRequest(userId, authToken, jsonData, checksum, callback));
+    // 内部で保持している最終更新日時(_lastUpdatedAt)と共に送信し、排他制御を行います。
+    // ※トークン取得やチェックサム計算は SaveCoroutine 内部で行われます。
+    StartCoroutine(SaveCoroutine(userId, data, _lastUpdatedAt, callback));
 }
 ```
-**セキュリティ対策:** 通信にはHTTPSを使用し、さらにデータ改竄を防ぐために HMAC-SHA256 による署名（チェックサム）を付与しています。
+
+**強制保存 (Force Save):**
+競合発生時にユーザーが「強制上書き」を選択した場合に使用します。 
+```csharp
+public void ForceSave(string userId, GameData data, Action<bool, string> callback = null)
+{
+    string authToken = GetAuthToken();
+    string jsonData = JsonUtility.ToJson(data);
+    string checksum = CalculateChecksum(jsonData, authToken);
+
+    // prevUpdatedAt に null を渡すことで、サーバー側の整合性チェックをスキップさせます。
+    StartCoroutine(SaveCoroutine(userId, authToken, jsonData, checksum, null, callback));
+}
+```
+**セキュリティ対策:**
+1. **通信経路:** HTTPSを使用。
+2. **改竄防止:** HMAC-SHA256 による署名（チェックサム）を付与し、通信途中のデータ書き換えを検知。
+3. **整合性維持:** updatedAt を用いた楽観的ロックにより、古いデータによる意図しない上書き（先祖返り）を防止。
+4. **JSON正規化:** チェックサム計算時、JSONのキー順序が異なるとハッシュ値が変わってしまうため、キーをアルファベット順にソート（正規化）してから計算しています。
 
 ## UIの更新: ReactUnityによるポーリング
 

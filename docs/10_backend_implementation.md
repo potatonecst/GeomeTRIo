@@ -44,8 +44,99 @@ export const handler = async (event: any) => {
 4.  **セキュリティチェック:**
     *   **認証:** `authToken` がDB上の値と一致するか確認します。
     *   **改竄検知:** 送られてきたデータからハッシュ値を再計算し、`checksum` と一致するか確認します。
+    *   **整合性チェック:** `save` アクションの場合、`prevUpdatedAt` が現在のDB上の `updatedAt` と一致するか確認します（楽観的ロック）。
 5.  **DB操作:** `PutCommand` や `GetCommand` を作成し、`docClient.send()` で実行します。
 6.  **レスポンス:** 結果をJSON文字列として返します。
+
+### 2.3.1 エラーハンドリング (Error Handling)
+この関数は、予期せぬエラーが発生してもサーバー全体が停止しないように、また、クライアントに適切なフィードバックを返せるように設計されています。
+
+1.  **リクエスト検証エラー (`4xx`系):**
+    *   クライアントからのリクエスト内容に不備がある場合に返されます。
+    *   **`400 Bad Request`**: `userId` がない、JSONの形式が不正など、リクエストそのものが間違っている場合。
+    *   **`401 Unauthorized`**: `authToken` がない場合。
+    *   **`403 Forbidden`**: `authToken` や `checksum` が不正で、アクセス権限がないと判断された場合。
+    *   **`409 Conflict`**: データが他の端末で更新されており、競合が発生した場合。
+
+2.  **サーバー内部エラー (`5xx`系):**
+    *   `try-catch` ブロック全体で予期せぬエラーを捕捉します。
+    *   **`500 Internal Server Error`**: プログラムのバグ、AWSサービスの一時的な障害など、サーバー側で問題が発生した場合。
+    *   この場合、エラーの詳細はクライアントには返さず、AWS CloudWatchにログとして記録されます。これにより、セキュリティを確保しつつ、開発者は後から原因を調査できます。
+
+```typescript
+// index.ts のエラーハンドリング構造
+export const handler = async (event) => {
+    try {
+        // 正常系の処理...
+        // if (エラー条件) return { statusCode: 400, ... };
+    } catch (error) {
+        // 予期せぬエラーはここでキャッチ
+        console.error(error);
+        return { statusCode: 500, ... };
+    }
+};
+```
+
+### 2.3.2 処理フロー図 (Process Flow Diagram)
+
+```mermaid
+sequenceDiagram
+    participant Client as Unity Client
+    participant Lambda as AWS Lambda
+    participant DB as DynamoDB
+
+    Client->>Lambda: POST Request (action, userId, authToken...)
+    
+    Note over Lambda: 1. Parse & Validate
+    
+    break Invalid Request
+        opt Invalid JSON / Missing Fields
+            Lambda-->>Client: 400 Bad Request
+        end
+        opt Missing AuthToken
+            Lambda-->>Client: 401 Unauthorized
+        end
+    end
+
+    alt Action == "save"
+        Note over Lambda: 2. Save Flow
+        Lambda->>DB: GetItem (userId)
+        Note right of DB: Check Auth & Conflict
+        DB-->>Lambda: Current Data
+        
+        alt AuthToken Mismatch
+            Lambda-->>Client: 403 Forbidden
+        else prevUpdatedAt Mismatch (Optimistic Lock)
+            Lambda-->>Client: 409 Conflict
+        else Checksum Mismatch
+            Lambda-->>Client: 403 Forbidden
+        else Valid Request
+            Lambda->>DB: PutItem (New Data + TTL)
+            DB-->>Lambda: Success
+            Lambda-->>Client: 200 OK
+        end
+
+    else Action == "load"
+        Note over Lambda: 3. Load Flow
+        Lambda->>DB: GetItem (userId)
+        DB-->>Lambda: Data
+        
+        alt Data Exists & AuthToken Mismatch
+            Lambda-->>Client: 403 Forbidden
+        else Success
+            Lambda-->>Client: 200 OK (Data or Null)
+        end
+        
+    else Unknown Action
+        Lambda-->>Client: 400 Bad Request
+    end
+
+    Note over Lambda: Global Error Handler
+    opt Exception / Crash
+        Lambda-->>Client: 500 Internal Server Error
+    end
+```
+
 
 ### 2.4 セキュリティ対策 (Security Measures)
 
@@ -95,7 +186,16 @@ if (checksum !== expectedChecksum) {
 }
 ```
 
-### 2.5 TTL (Time To Live) の実装
+### 2.5 データ整合性 (Data Consistency)
+複数端末での同時プレイや、通信環境の悪化による「先祖返り（古いデータによる上書き）」を防ぐため、**楽観的ロック (Optimistic Locking)** を採用しています。
+
+1. **Load時:** クライアントにデータと共に `updatedAt` (最終更新日時) を返します。
+2. **Save時:** クライアントは保存リクエストに `prevUpdatedAt` を含めます。
+3. **検証:** サーバーは `prevUpdatedAt` がDB上の現在の `updatedAt` と一致するか確認します。
+   - 不一致の場合、**`409 Conflict`** エラーを返し、保存を拒否します。
+   - クライアントはこのエラーを受け取ると、ユーザーに「リロード」か「強制上書き」の選択を求めます。
+
+### 2.6 TTL (Time To Live) の実装
 データが増え続けるのを防ぐため、DynamoDBのTTL機能を利用して「1年後に自動削除」されるように設定しています。
 
 ```typescript

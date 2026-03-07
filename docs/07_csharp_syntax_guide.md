@@ -731,3 +731,116 @@ Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
 Instantiate(bulletPrefab, transform.position, rotation);
 ```
+
+---
+
+## 27. using ステートメント (IDisposable)
+
+ファイル操作やネットワーク通信など、使い終わったら必ず「片付け（リソースの解放）」が必要なオブジェクトを扱うための構文です。
+
+### 構文
+```csharp
+using (UnityWebRequest www = new UnityWebRequest(url))
+{
+    yield return www.SendWebRequest();
+    // ...
+}
+```
+### 解説
+*   **役割:** `{ }` のブロックを抜けるときに、自動的に `Dispose()` メソッド（片付け処理）を呼んでくれます。
+*   **メリット:** 途中でエラー（例外）が発生しても、確実に片付けが行われるため、メモリリークやファイルロックの放置を防げます。
+*   **CloudSaveManagerでの利用:** `UnityWebRequest` は通信後にメモリを解放する必要があるため、`using` を使って安全に管理しています。
+
+---
+
+## 28. Action / Func デリゲートとコールバック (Action/Func Delegates and Callbacks)
+
+メソッドを引数として渡し、「処理が終わったらこれを実行してね」と依頼するパターンです。非同期処理（通信など）でよく使われます。
+
+### Action (戻り値なし)
+戻り値がない（`void`）メソッドを格納できる型です。ジェネリクス `< >` を使うことで、引数の型を指定できます。「メソッドを入れる箱」のようなイメージです。
+
+*   `Action`: 引数なし。
+*   `Action<T>`: 引数1つ(`T`)。
+*   `Action<T1, T2>`: 引数2つ(`T1`, `T2`)。
+
+### Func (戻り値あり)
+戻り値があるメソッドを格納できる型です。**最後の型パラメータが常に戻り値**になります。
+
+*   `Func<R>`: 引数なし、戻り値 `R`。
+*   `Func<T, R>`: 引数 `T`、戻り値 `R`。
+*   `Func<T1, T2, R>`: 引数 `T1`, `T2`、戻り値 `R`。
+
+**戻り値を複数にしたい場合:**
+C#のメソッドは戻り値を1つしか持てませんが、**タプル (Tuple)** を使うことで擬似的に複数を返せます。
+*   `Func<int, (bool, string)>`: `int` を受け取り、`bool` と `string` のセットを返す。
+
+### メソッドと関数、ラムダ式の違い
+*   **関数 (Function):** 処理のまとまりの総称。
+*   **メソッド (Method):** クラスの中に定義された関数のこと。C#ではすべての関数がクラスに属するため、基本的に**「メソッド」**と呼びます。
+*   **ラムダ式 / 匿名関数 (Lambda / Anonymous Function):** `(a, b) => { ... }` のように、名前をつけずにその場で定義するメソッドのこと。
+
+`Action` の箱には、「名前付きのメソッド」も「ラムダ式（名無しメソッド）」も、どちらも入れることができます。
+
+### コード例 (CloudSaveManagerでの利用)
+```csharp
+// 定義側: 処理が終わったら callback を呼ぶ
+// Action<bool, string> は「boolとstringを受け取るメソッド」を要求します
+public void Save(Action<bool, string> callback)
+{
+    // ... 通信処理 (数秒かかる) ...
+    bool isSuccess = true;
+    string errorMsg = null;
+    
+    // 完了通知（電話をかける）。ここで渡されたメソッドが実行されます。
+    callback(isSuccess, errorMsg);
+}
+
+// 呼び出し側: ラムダ式で「終わった後の処理」を渡す
+saveManager.Save((success, error) => 
+{
+    // ここは通信が終わった後に実行されます
+    if (success) Debug.Log("保存成功！");
+    else Debug.LogError($"失敗: {error}");
+});
+```
+
+---
+
+## 29. UnityWebRequest と通信の仕組み
+
+サーバーとデータを送受信するためのクラスです。`CloudSaveManager` で使用されています。
+
+### 変数名 `www` について
+コード内で `UnityWebRequest www = ...` と書かれている `www` は、単なる変数名です。
+Unityの古い通信クラス（`WWW`クラス）の名残で、慣習的に `www` や `req` という名前がよく使われます。
+
+### 通信の流れ (SendWebRequest)
+```csharp
+// 1. 通信開始 & 待機
+yield return www.SendWebRequest();
+
+// 2. 完了後の処理
+if (www.result == UnityWebRequest.Result.Success) { ... }
+```
+
+* **`SendWebRequest()`:** サーバーへの送信を開始します。
+* **`yield return`:** 「通信が終わるまで、このメソッドの実行をここで一時停止する」という命令です。
+  * これにより、通信待ちの間もゲーム画面は止まらず（フリーズせず）に動きます。
+  * 通信が完了（成功または失敗）すると、自動的に次の行から処理が再開されます。
+
+---
+
+## 30. JsonUtility vs Newtonsoft.Json
+
+Unityプロジェクトでは、用途に応じて2つのJSONライブラリを使い分けています。
+
+### JsonUtility (Unity標準)
+*   **特徴:** 高速、メモリ効率が良い。Unityのオブジェクト（Vector3など）との親和性が高い。
+*   **用途:** ゲーム内データのやり取り（Reactへのステータス送信など）、パフォーマンスが重要な箇所。
+*   **制限:** 複雑な構造や、プロパティ（getter/setter）のシリアライズが苦手。
+
+### Newtonsoft.Json (Json.NET)
+*   **特徴:** 高機能。柔軟なカスタマイズが可能。
+*   **用途:** クラウドセーブデータの保存 (`CloudSaveManager`)。
+*   **採用理由:** チェックサム計算のために「キーをアルファベット順にソートしてJSON化する」といった高度な処理が必要なため、こちらを採用しています。

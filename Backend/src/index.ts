@@ -4,6 +4,7 @@
 // AWS Lambdaの型定義。TypeScriptで開発する際に、引数eventや戻り値の型を正確に扱うために使用します。
 // これにより、コードの入力ミスを防ぎ、エディタの補完機能が効くようになります。
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+
 // Node.jsに標準で組み込まれている暗号化モジュール。
 // HMAC-SHA256というアルゴリズムでチェックサム（データの指紋のようなもの）を計算するために使用します。
 import { createHmac } from 'crypto';
@@ -13,11 +14,13 @@ import { createHmac } from 'crypto';
 
 // DynamoDBClient: DynamoDBと通信するための基本的なクライアント。AWSへの接続設定（リージョンなど）を保持します。
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+
 // DynamoDBDocumentClient: JavaScriptのオブジェクトをそのままDynamoDBに保存・取得できるようにする便利なラッパー。
 // これがないと、{"data": {"S": "value"}} のようなDynamoDB特有の面倒な形式でデータを扱う必要があります。
 // PutCommand: データをテーブルに「置く」（保存または上書きする）ための命令。
 // GetCommand: データをテーブルから「取得する」ための命令。
 import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+
 // json-stable-stringify: オブジェクトのキーをアルファベット順にソートしてからJSON文字列に変換するライブラリ。
 // これにより、クライアント(Unity)とサーバー(Lambda)でキーの順序が異なっていても、必ず同じ文字列が生成され、
 // チェックサムの計算結果が一致するようになります。通信改竄の検知に不可欠です。

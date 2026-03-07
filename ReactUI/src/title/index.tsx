@@ -14,6 +14,7 @@ import { useGlitch } from '../hooks/useGlitch';
 import { GlitchText } from '../components/GlitchText';
 import { AspectRatioWrapper } from '../components/AspectRatioWrapper';
 import { Toaster } from '../components/Toaster';
+import { SystemAlert } from '../components/SystemAlert';
 import { OfflineIndicator } from '../components/OfflineIndicator';
 
 // 画面の状態を表す型定義
@@ -400,6 +401,9 @@ const TitleApp = () => {
     // 終了メッセージの表示制御用
     const [shutdownOpacity, setShutdownOpacity] = useState(0);
 
+    // コンフリクト警告の表示制御用
+    const [showConflictAlert, setShowConflictAlert] = useState(false);
+
     // バージョン情報 (デフォルト値はフォールバック用)
     const [appVersion, setAppVersion] = useState("ver. 0.3.0");
 
@@ -463,6 +467,12 @@ const TitleApp = () => {
             setIsBlackout(true);
         };
 
+        // 4. セーブデータ競合の検知 (C#から呼ばれる)
+        (window as any).onSaveConflict = () => {
+            // interop?.PlaySound('alert'); // 警告音があれば鳴らす
+            setShowConflictAlert(true);
+        };
+
         // 2. メニュー操作の検知 (Menuコンポーネント等で処理するためにグローバル関数を空定義しておく)
         // 実際の処理は Menu.tsx などの各コンポーネントの useEffect で上書きされるが、エラー防止のために初期化しておく
         if (!((window as any).onMenuInput)) {
@@ -474,6 +484,7 @@ const TitleApp = () => {
         return () => {
             (window as any).onAnyKeyPress = () => { };
             (window as any).onFadeOutRequest = () => { };
+            (window as any).onSaveConflict = () => { };
         };
     }, [currentScreen, connectionState, interop]); // 依存配列も interop に変更
 
@@ -544,6 +555,28 @@ const TitleApp = () => {
 
     // メニューが開いているかどうかの判定（フッター表示などで使用）
     const isMenuOpen = connectionState === 'connected' || connectionState === 'disconnecting' || connectionState === 'exiting' || isGameStarting;
+
+    // コンフリクト解決ハンドラ
+    const handleResolveConflict = useCallback((overwriteLocal: boolean) => {
+        setShowConflictAlert(false);
+        if (overwriteLocal) {
+            // ローカルを上書き（クラウドのデータをロード）
+            console.log("Resolve: Overwrite Local");
+            interop?.PlaySound('submit');
+            // C#側にリロードを要求
+            if (interop && typeof interop.ReloadSaveData === 'function') {
+                interop.ReloadSaveData();
+            }
+        } else {
+            // 強制保存（クラウドを上書き）
+            console.log("Resolve: Force Save");
+            interop?.PlaySound('submit');
+            // C#側に強制保存を要求
+            if (interop && typeof interop.ForceSaveData === 'function') {
+                interop.ForceSaveData();
+            }
+        }
+    }, [interop]);
 
     return (
         // 背景色を一番外側に設定
@@ -680,7 +713,18 @@ const TitleApp = () => {
                     )}
 
                     {/* オフラインインジケーター (左下、コピーライトの上) */}
-                    <OfflineIndicator className="absolute bottom-4 left-4" />
+                    <OfflineIndicator className="absolute bottom-2 left-4" />
+
+                    {/* コンフリクト警告 (最前面) */}
+                    <SystemAlert
+                        isOpen={showConflictAlert}
+                        title="SYSTEM ALERT"
+                        message={"DATA CONFLICT DETECTED.\nCLOUD DATA IS NEWER."}
+                        confirmLabel="OVERWRITE LOCAL"
+                        cancelLabel="FORCE SAVE"
+                        onConfirm={() => handleResolveConflict(true)}
+                        onCancel={() => handleResolveConflict(false)}
+                    />
                 </view>
             </AspectRatioWrapper>
             {/* システムメッセージ通知用トースター (AspectRatioWrapperの外に出して再マウントを防ぐ) */}

@@ -57,9 +57,15 @@ public class GameManager : MonoBehaviour
     public string SystemMessage { get; private set; } = "";
 
     // トースト通知用メッセージ (画面右上用)
+    // React側の Toaster コンポーネントに表示されるメッセージです。
+    // セーブ完了("DATA SAVED")や接続中("CONNECTING...")などのシステム状態をユーザーに伝えます。
     public string ToastMessage { get; private set; } = "";
-    public float LastToastTime { get; private set; } // 追加: メッセージ発行時刻
-    public string ToastId { get; private set; } = ""; // 追加: メッセージの一意なID
+    // メッセージ発行時刻。React側での表示タイミング制御に使用される可能性があります。
+    public float LastToastTime { get; private set; }
+    // メッセージの一意なID (GUID)。
+    // React側は、メッセージの内容が同じでもこのIDが変われば「新しい通知」として扱い、
+    // アニメーションを再生し直す（リトリガーする）ことができます。
+    public string ToastId { get; private set; } = "";
 
     // スコア獲得イベント（React側でのポップアップ表示用）
     public int LastScoreEventAmount { get; private set; }
@@ -129,6 +135,7 @@ public class GameManager : MonoBehaviour
     private bool canSaveToCloud = false;
     public bool CanSaveToCloud => canSaveToCloud; // 外部公開用プロパティ
     // オフラインモードかどうか（ロード失敗時にtrueになる）
+    // trueの場合、React側の OfflineIndicator が表示され、セーブ処理がスキップされます。
     public bool IsOfflineMode { get; private set; } = false;
 
     /// <summary>
@@ -226,6 +233,7 @@ public class GameManager : MonoBehaviour
 
         // Canvasコンポーネントを追加（UIの描画に必要）
         // RenderMode.ScreenSpaceOverlay: カメラの位置に関係なく、常に画面の最前面に表示する設定です。
+        // UIをカメラに追従させるのではなく、画面に貼り付けるイメージです。
         Canvas canvas = overlayCanvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 32767; // 最前面に表示
@@ -390,6 +398,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     // IEnumerator: コルーチンとして動作させるための戻り値の型です。
     // コルーチンとは、処理を途中で中断（yield）し、次のフレームや指定時間後に再開できる特別な関数です。
+    // 非同期処理（ロード待ちなど）を同期コードのように書くことができます。
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
     {
         // 振動が残らないように、シーン遷移前に強制停止します。
@@ -577,6 +586,7 @@ public class GameManager : MonoBehaviour
     public void AddScore(int points)
     {
         // オーバーフロー対策: 加算するとintの最大値(約21億)を超える場合は、最大値で止める
+        // int.MaxValue: 2,147,483,647
         // longにキャストして計算することで、溢れた分を正しく判定できるようにする
         if ((long)CurrentScore + points > int.MaxValue)
         {
@@ -1112,6 +1122,10 @@ public class GameManager : MonoBehaviour
             Debug.Log("[GameManager] Saving game data...");
             if (showMessage) SetToastMessage("SAVING...", 0); // 保存中メッセージ
 
+            // CloudSaveManager.Instance.Save を呼び出して保存を実行します。
+            // 引数のラムダ式 (success, error) => { ... } は、通信完了後に呼ばれます。
+            // success (bool): 保存が成功したかどうか (true/false)。
+            // error (string): 失敗時のエラーメッセージ。成功時は null。 ※ここは「時間」ではなく「エラー内容」が入ります。
             CloudSaveManager.Instance.Save(currentUserId, gameData, (success, error) =>
             {
                 if (success)
@@ -1121,6 +1135,15 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    // エラー内容が "Conflict"（競合）だった場合の特別処理
+                    if (error == "Conflict")
+                    {
+                        // コンフリクト発生時、React側に通知してダイアログを表示
+                        // ReactInputBridge経由で、React側の window.onSaveConflict() を呼び出します。
+                        ReactInputBridge.Instance?.TriggerSaveConflict();
+                        return;
+                    }
+
                     Debug.LogError($"[GameManager] Save failed: {error}");
                     if (showMessage) SetToastMessage($"SAVE FAILED: {error}", 3.0f);
 
@@ -1174,9 +1197,10 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// 画面右上に表示するトースト通知を設定します。
+    /// React側の Toaster コンポーネントがこれを検知して表示します。
     /// </summary>
-    /// <param name="message">表示するメッセージ</param>
-    /// <param name="duration">表示時間（秒）。</param>
+    /// <param name="message">表示するメッセージ（例: "SAVING..."）</param>
+    /// <param name="duration">表示時間（秒）。0を指定すると、次のメッセージで上書きされるまで永続表示されます。</param>
     public void SetToastMessage(string message, float duration = 3.0f)
     {
         Debug.Log($"[GameManager] SetToastMessage called: '{message}' (Duration: {duration})");
@@ -1186,7 +1210,9 @@ public class GameManager : MonoBehaviour
         if (ToastMessage != message)
         {
             ToastMessage = message;
-            ToastId = System.Guid.NewGuid().ToString(); // 新しいメッセージの場合のみID更新
+            // 新しいメッセージの場合のみIDを更新します。
+            // React側は toastId の変化を検知して、フェードインアニメーションを開始します。
+            ToastId = System.Guid.NewGuid().ToString();
         }
 
         LastToastTime = Time.unscaledTime; // 発行時刻を記録
@@ -1290,5 +1316,76 @@ public class GameManager : MonoBehaviour
     {
         isCloudDataLoaded = false;
         IsOfflineMode = false;
+    }
+
+    /// <summary>
+    /// コンフリクト解決：クラウドからデータを読み込み直してローカルを更新する
+    /// ユーザーが「クラウドのデータを採用（Reload）」を選んだ時に呼ばれます。
+    /// </summary>
+    public void ResolveConflict_Reload()
+    {
+        Debug.Log("[GameManager] Resolving conflict: Reloading from cloud...");
+        SetToastMessage("RELOADING...", 0);
+
+        // CloudSaveManagerを使って最新データを取得します。
+        CloudSaveManager.Instance.Load(currentUserId, (success, data) =>
+        {
+            if (success && data != null)
+            {
+                Debug.Log("Reload successful. Restarting scene...");
+                gameData = data; // データを更新
+                ApplyAudioSettings();
+
+                // シーンをリロードしてデータを反映
+                // メモリ上のデータだけ書き換えても、既に生成された敵やスコア表示には反映されないため、
+                // ゲームを再起動（リスタート）して整合性を保ちます。
+                RestartGame();
+                SetToastMessage("DATA RELOADED", 2.0f);
+            }
+            else
+            {
+                Debug.LogError("Reload failed.");
+                SetToastMessage("RELOAD FAILED", 3.0f);
+            }
+        });
+    }
+
+    /// <summary>
+    /// コンフリクト解決：現在のローカルデータでクラウドを強制的に上書きする
+    /// ユーザーが「ローカルのデータを採用（Force Save）」を選んだ時に呼ばれます。
+    /// </summary>
+    public void ResolveConflict_ForceSave()
+    {
+        Debug.Log("[GameManager] Resolving conflict: Force saving...");
+        // ForceSaveメソッドを使って強制保存（prevUpdatedAtを無視）
+        // ここではSaveGameDataを使わず直接呼ぶ（SaveGameDataは通常保存用）
+        if (CloudSaveManager.Instance != null)
+        {
+            // DateTime.UtcNow.Ticks: 現在時刻を「ティック数（1万分の1ミリ秒単位）」で取得します。
+            // 最終更新日時を更新してから保存します。
+            gameData.lastModified = System.DateTime.UtcNow.Ticks;
+            SetToastMessage("SAVING (FORCED)...", 0);
+
+            // ForceSaveを呼び出し、サーバー側の整合性チェックをスキップさせます。
+            // コールバック引数:
+            // success (bool): 強制保存が成功したか。
+            // error (string): 失敗時のエラーメッセージ。
+            CloudSaveManager.Instance.ForceSave(currentUserId, gameData, (success, error) =>
+            {
+                if (success)
+                {
+                    Debug.Log("Force save successful.");
+                    SetToastMessage("DATA SAVED", 2.0f);
+                }
+                else
+                {
+                    Debug.LogError($"Force save failed: {error}");
+                    SetToastMessage($"SAVE FAILED: {error}", 3.0f);
+                    // 失敗時はオフラインモードへ
+                    canSaveToCloud = false;
+                    IsOfflineMode = true;
+                }
+            });
+        }
     }
 }
