@@ -18,7 +18,7 @@ public class CloudSaveManager : MonoBehaviour
     public static CloudSaveManager Instance { get; private set; }
 
     // 開発環境用 (Dev) のURL
-    private const string API_URL_DEV = "https://YOUR_API_ID_DEV.execute-api.ap-northeast-1.amazonaws.com/default/GeomeTRIo_Backend";
+    private const string API_URL_DEV = "https://yas8jqkch9.execute-api.ap-northeast-1.amazonaws.com/";
 
     // 本番環境用 (Prod) のURL
     private const string API_URL_PROD = "https://YOUR_API_ID_PROD.execute-api.ap-northeast-1.amazonaws.com/default/GeomeTRIo_Backend";
@@ -130,9 +130,9 @@ public class CloudSaveManager : MonoBehaviour
             action = "save",
             userId = userId,
             authToken = authToken,
-            // JsonConvert.DeserializeObject: JSON文字列を一度オブジェクトに戻して埋め込みます。
-            // これにより、二重エンコード（JSONの中にJSON文字列が入る状態）を防ぎ、きれいなJSON構造にします。
-            saveData = JsonConvert.DeserializeObject(jsonSaveData), // オブジェクトとして埋め込む
+            // 変更: オブジェクトに戻さず、JSON文字列のまま送信する
+            // これにより、サーバー側での再シリアライズによる差異（浮動小数点の表記など）を防ぎ、チェックサム検証を確実に成功させます。
+            saveData = jsonSaveData,
             checksum = checksum,
             // ここで前回の更新日時を送信します。サーバーはこれを見て「データが古くないか」を判断します。
             prevUpdatedAt = prevUpdatedAt

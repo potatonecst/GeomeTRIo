@@ -21,11 +21,6 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 // GetCommand: データをテーブルから「取得する」ための命令。
 import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 
-// json-stable-stringify: オブジェクトのキーをアルファベット順にソートしてからJSON文字列に変換するライブラリ。
-// これにより、クライアント(Unity)とサーバー(Lambda)でキーの順序が異なっていても、必ず同じ文字列が生成され、
-// チェックサムの計算結果が一致するようになります。通信改竄の検知に不可欠です。
-import stringify from 'json-stable-stringify';
-
 
 // --- 初期化処理 ---
 // このセクションでは、Lambda関数がリクエストを受け取る前に、一度だけ実行される初期設定を行っています。
@@ -66,7 +61,7 @@ interface RequestBody {
     action: 'save' | 'load';
     userId: string;
     authToken: string;
-    saveData?: any;
+    saveData?: string; // 変更: JSON文字列として受け取る
     checksum?: string;
     prevUpdatedAt?: string;
 }
@@ -175,11 +170,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             // クライアントから送られてきたデータが、通信の途中で書き換えられていないかを確認します。
 
             // サーバー側でチェックサムを再計算します。
-            // stringify(saveData) は、キーをソートしてJSON文字列に変換します。
-            // これにより、クライアントとサーバーで必ず同じ文字列が生成されることが保証されます。
-            // || '' は、万が一 stringify が undefined を返した場合のフォールバック（安全策）です。
-            // これがないと、undefined が crypto.createHmac に渡されてエラーになります。
-            const dataString = stringify(saveData) || '';
+            // 変更: saveDataは既にJSON文字列として送られてくるため、そのまま使用します。
+            // サーバー側での再stringifyは不要（というか、すると形式が変わるリスクがある）です。
+            const dataString = saveData || '';
 
             // createHmac: ハッシュ値を計算するためのオブジェクトを作成します。
             // - 第1引数 'sha256': ハッシュアルゴリズムの種類。
@@ -207,13 +200,21 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             // now.getTime() はミリ秒なので 1000 で割り、1年分の秒数(365日 * 24時間 * 60分 * 60秒)を足します。
             const oneYearLater = Math.floor(now.getTime() / 1000) + (365 * 24 * 60 * 60);
 
+            // 保存する際は、DynamoDBのMap型として扱いたいので、ここでパースします。
+            let dataObject;
+            try {
+                dataObject = JSON.parse(dataString);
+            } catch (e) {
+                return { statusCode: 400, body: JSON.stringify({ message: 'Invalid JSON in saveData.' }) };
+            }
+
             // PutCommand: データをテーブルに「置く」（保存・上書き）命令を作成します。
             const putCommand = new PutCommand({
                 TableName: TABLE_NAME,
                 Item: {
                     userId: userId,           // パーティションキー
                     authToken: authToken,     // 次回チェック用のトークンも一緒に保存
-                    data: saveData,           // ゲームデータ本体
+                    data: dataObject,         // パースしたオブジェクトを保存
                     updatedAt: now.toISOString(), // 更新日時 (ISO 8601形式の文字列)
                     expiresAt: oneYearLater,  // 有効期限 (TTL)
                 },

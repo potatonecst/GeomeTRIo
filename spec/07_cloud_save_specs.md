@@ -56,7 +56,7 @@ JSON形式で送信する。
   "userId": "string (UUID)",
   "authToken": "string (Random Token)",
   "checksum": "string (SHA256 Hash)", // save時のみ必須
-  "saveData": { ... }, // save時のみ必須
+  "saveData": "string (JSON)", // save時のみ必須。チェックサム整合性のため文字列として送信
   "prevUpdatedAt": "string (ISO 8601)" // save時のみ (排他制御用)
 }
 ```
