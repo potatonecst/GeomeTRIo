@@ -19,7 +19,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 // これがないと、{"data": {"S": "value"}} のようなDynamoDB特有の面倒な形式でデータを扱う必要があります。
 // PutCommand: データをテーブルに「置く」（保存または上書きする）ための命令。
 // GetCommand: データをテーブルから「取得する」ための命令。
-import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, GetCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 
 
 // --- 初期化処理 ---
@@ -230,7 +230,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             await docClient.send(putCommand);
 
             // 成功したら 200 OK と成功メッセージを返します。
-            return { statusCode: 200, body: JSON.stringify({ message: 'Save successful' }) };
+            return {
+                statusCode: 200,
+                body: JSON.stringify({
+                    message: 'Save successful',
+                    updatedAt: now.toISOString() // クライアントの整合性維持のために更新日時を返す
+                })
+            };
 
         } else if (action === 'load') {
             // --- 読み込み (load) 処理 ---
@@ -272,6 +278,39 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
                 // Unity側はこれを見て「新規ユーザー」として処理を開始します。
                 return { statusCode: 200, body: JSON.stringify({ data: null }) };
             }
+        } else if (action === 'delete') {
+            // --- 削除 (delete) 処理 ---
+
+            // 1. 存在確認と認証のためのデータ取得
+            const getCommand = new GetCommand({
+                TableName: TABLE_NAME,
+                Key: { userId: userId },
+            });
+            const currentData = await docClient.send(getCommand);
+
+            // データが存在する場合のみ、トークンチェックと削除を行う
+            if (currentData.Item) {
+                // 認証チェック: トークンが一致しない場合は削除を拒否
+                if (currentData.Item.authToken !== authToken) {
+                    return {
+                        statusCode: 403,
+                        body: JSON.stringify({ message: 'Invalid authToken. You cannot delete this data.' }),
+                    };
+                }
+
+                // 2. データの削除実行
+                const deleteCommand = new DeleteCommand({
+                    TableName: TABLE_NAME,
+                    Key: { userId: userId },
+                });
+                await docClient.send(deleteCommand);
+            }
+
+            // データが存在しなかった場合も、結果的に「データがない状態」になるため成功として扱う（冪等性）
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: 'Delete successful' }),
+            };
         } else {
             // actionが 'save' でも 'load' でもない、未知のアクションが指定された場合。
             return { statusCode: 400, body: JSON.stringify({ message: 'Invalid action specified.' }) };

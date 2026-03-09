@@ -65,11 +65,11 @@ export const Toaster = () => {
     const getToastStyle = (msg: string) => {
         if (!msg) return { borderColor: 'border-cyan-500', iconColor: '#22d3ee', icon: 'res:Icons/info' };
 
-        if (msg.includes("FAILED") || msg.includes("ERROR") || msg.includes("OFFLINE")) {
+        if (msg.includes("FAILED") || msg.includes("ERROR") || msg.includes("OFFLINE") || msg.includes("CONFLICT")) {
             return { borderColor: 'border-red-500', iconColor: '#ef4444', icon: 'res:Icons/triangle-alert' };
         }
         if (msg.includes("SAVED") || msg.includes("SUCCESS")) {
-            return { borderColor: 'border-green-500', iconColor: '#22c55e', icon: 'res:Icons/check-circle' };
+            return { borderColor: 'border-green-500', iconColor: '#22c55e', icon: 'res:Icons/circle-check' };
         }
         if (msg.includes("SAVING") || msg.includes("LOADING")) {
             return { borderColor: 'border-cyan-500', iconColor: '#22d3ee', icon: 'res:Icons/loader-circle', spin: true };

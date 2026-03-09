@@ -125,6 +125,35 @@ React側から `useGlobals().GameInterop` 経由でアクセス可能な C# ク�
 
 ---
 
+## React Global Events (Called from C#)
+
+C# (`ReactInputBridge`) から `ExecuteScript` 経由で呼び出される、React側のグローバル関数です。
+各コンポーネントで `window.eventName = ...` のように実装してイベントを購読します。
+
+### `onMenuInput(event: string)`
+*   **引数:** `'up'`, `'down'`, `'left'`, `'right'`, `'submit'`, `'cancel'`, `'backspace'`
+*   **用途:** メニュー操作、フォーカス移動。
+
+### `onAnyKeyPress()`
+*   **用途:** タイトル画面での "PRESS ANY BUTTON" 検知。
+
+### `onTextInput(char: string)`
+*   **用途:** キーボードからの文字入力（名前入力など）。
+
+### `onLoadingRequest()`
+*   **用途:** ローディング画面（スピナー）の表示リクエスト。
+
+### `onFadeOutRequest()`
+*   **用途:** 画面暗転（フェードアウト）のリクエスト。
+
+### `onSaveConflict()`
+*   **用途:** セーブデータの競合発生通知。`SystemAlert` を表示する。
+
+### `onDeleteFailed()`
+*   **用途:** セーブデータ削除失敗通知。削除中のロック状態を解除する。
+
+---
+
 ## React Components
 
 `ReactUI/src/components/` にある主要な再利用可能コンポーネントです。

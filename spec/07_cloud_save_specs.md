@@ -94,12 +94,12 @@ Lambdaからの戻り値（API Gateway経由）。
         *   不一致なら `409 Conflict` を返す（他端末での更新検知）。
     4.  **改竄チェック (Checksum Verification):**
         *   サーバー側で、受け取った `saveData` とDBの `authToken` からチェックサムを再計算する。
-        *   ※計算時はJSONのキーをアルファベット順にソート（正規化）する。
+        *   ※クライアント側でキーソート済みのJSON文字列が送られてくるため、サーバーはそれをそのまま使用して計算する。
         *   リクエストの `checksum` と一致しない場合、`403 Forbidden` を返す。
     5.  現在時刻から `updatedAt` と `expiresAt` (現在時刻 + 1年) を生成。
     6.  DynamoDBに `PutItem` (上書き保存)。
 *   **Response:**
-    *   Success: `200 OK`, `{"message": "Save successful"}`
+    *   Success: `200 OK`, `{"message": "Save successful", "updatedAt": "ISO 8601 String"}`
     *   Error: `409 Conflict` (データ競合)
     *   Error: `403 Forbidden` (トークン不一致、またはチェックサム不一致)
 
@@ -111,7 +111,7 @@ Lambdaからの戻り値（API Gateway経由）。
         *   データが存在する場合、保存されている `authToken` とリクエストの `authToken` が一致するか確認。
         *   不一致なら `403 Forbidden` を返す。
 *   **Response:**
-    *   Success (データあり): `200 OK`, `{"data": { ... }}`
+    *   Success (データあり): `200 OK`, `{"data": { ... }, "updatedAt": "ISO 8601 String"}`
     *   Success (データなし/新規): `200 OK`, `{"data": null}`
     *   Error: `500 Internal Server Error`
     *   Error: `403 Forbidden` (トークン不一致)

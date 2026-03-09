@@ -58,8 +58,11 @@ AWSのリソースを直接定義する部分は、AWS CloudFormation の書き�
 
 *   **`Type`**: 作成するリソースの種類（例: `AWS::DynamoDB::Table`）。
 *   **`Properties`**: そのリソースの設定項目。
-    *   **`AttributeDefinitions`**: 「キーとして使う項目」の型定義（S=文字列, N=数値）。
-    *   **`KeySchema`**: 定義した項目を「どのキー（HASH/RANGE）」として使うかの指定。
+    *   **`AttributeDefinitions` (部品定義)**:
+        *   キーとして使用する属性の「名前」と「型」を宣言します。ここに書いたものだけがキーとして使えます。
+    *   **`KeySchema` (組み立て)**:
+        *   `AttributeDefinitions` で定義した属性を、具体的に「どの役割（HASH=主キー / RANGE=ソートキー）」で使うかを指定します。
+        *   ※同じ `userId` を2回書くことになりますが、これは「定義」と「使用」の関係にあるため必須です。
 
 ---
 

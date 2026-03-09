@@ -45,20 +45,20 @@ public struct PlayerSettings
 [System.Serializable]
 public struct PlayerStats
 {
-    public float totalPlayTime;       // 総プレイ時間（秒）
-    public int totalEnemiesDefeated;  // 総撃破数
-    public int totalGamesPlayed;      // 総プレイ回数（ステージ開始回数）
-    public int totalDamageTaken;      // 総被ダメージ量
-    public int totalDamageDealt;      // 総与ダメージ量
-    public int totalShotsFired;       // 総発射弾数
+    public double totalPlayTime;      // 総プレイ時間（秒）
+    public long totalEnemiesDefeated; // 総撃破数
+    public long totalGamesPlayed;     // 総プレイ回数（ステージ開始回数）
+    public long totalDamageTaken;     // 総被ダメージ量
+    public long totalDamageDealt;     // 総与ダメージ量
+    public long totalShotsFired;      // 総発射弾数
     // long型: 64bit整数。最大値は約922京。
     // int型(約21億)では、熱心なプレイヤーが累計スコアをカンストさせてしまう恐れがあるため、
     // より大きな数値を扱えるlong型を採用しています。
     // シューティングゲームのスコアは桁が大きくなりやすいため、将来的なインフレも見越した設計です。
     public long totalScore;           // 累計スコア
-    public int totalSpUsed;           // SP使用回数
-    public int totalChainKills;       // 誘爆撃破数
-    public int itemsCollected;        // アイテム取得数
+    public long totalSpUsed;          // SP使用回数
+    public long totalChainKills;      // 誘爆撃破数
+    public long itemsCollected;       // アイテム取得数
 }
 
 // スコアの記録データ

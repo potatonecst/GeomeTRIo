@@ -138,6 +138,10 @@ public class GameManager : MonoBehaviour
     // trueの場合、React側の OfflineIndicator が表示され、セーブ処理がスキップされます。
     public bool IsOfflineMode { get; private set; } = false;
 
+    // セーブデータの競合（コンフリクト）が未解決のまま残っているかどうか。
+    // trueの場合、シーン遷移後などに再度解決ダイアログを表示します。
+    public bool HasPendingConflict { get; private set; } = false;
+
     /// <summary>
     /// インスタンスの初期化とシングルトンの設定を行います。
     /// セーブデータのロードや、シーン遷移用オーバーレイの準備もここで実行されます。
@@ -347,13 +351,6 @@ public class GameManager : MonoBehaviour
         if (scene.name == "TitleScene")
         {
             // ここでの自動リセットは廃止。React側から制御する。
-        }
-
-        // ゲームプレイシーンならプレイ回数を加算して保存
-        if (scene.name == "Stage1" || scene.name == "ScoreAttack")
-        {
-            gameData.stats.totalGamesPlayed++;
-            SaveGameData();
         }
     }
 
@@ -857,6 +854,9 @@ public class GameManager : MonoBehaviour
             // 今回のプレイ時間を総プレイ時間に加算
             gameData.stats.totalPlayTime += timeElapsed;
 
+            // プレイ回数を加算（ゲームオーバー時）
+            gameData.stats.totalGamesPlayed++;
+
             //セーブ
             SaveGameData();
 
@@ -892,33 +892,41 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void DeleteSaveData()
     {
+        SetToastMessage("DELETING...", 0); // 処理中メッセージ（永続）
+
         // クラウド上のデータを削除
         CloudSaveManager.Instance?.Delete(currentUserId, (success) =>
         {
-            if (success) Debug.Log("Cloud save deleted.");
-            else Debug.LogError("Failed to delete cloud save.");
+            if (success)
+            {
+                Debug.Log("Cloud save deleted.");
+                SetToastMessage("DATA DELETED", 2.0f); // 成功メッセージ（2秒後に消える）
+
+                // 削除成功後にローカルデータも消去してリロード
+                PlayerPrefs.DeleteAll();
+                PlayerPrefs.Save();
+
+                // 新しいIDを即座に生成（これにより、メモリ上の古いIDが更新され、新しいユーザーとして扱われます）
+                InitializeUserId();
+                // データを初期化
+                InitializeGameData();
+                // 音声設定を反映（初期値に戻る）
+                ApplyAudioSettings();
+
+                // タイトル画面へリロード（演出スキップなし＝最初から）
+                // SkipTitleSequence = false にすることで、次回起動時に "Press Any Button" から始まります。
+                SkipTitleSequence = false;
+                SceneManager.LoadScene("TitleScene");
+            }
+            else
+            {
+                Debug.LogError("Failed to delete cloud save.");
+                SetToastMessage("DELETE FAILED", 3.0f);
+
+                // 失敗時はリロードせず、React側に通知してUIを復帰させる
+                ReactInputBridge.Instance?.NotifyDeleteFailed();
+            }
         });
-
-        // 追加: PlayerPrefs（設定やユーザーID）も削除して、完全に初期状態（新規ユーザー）に戻す
-        // 理由: PlayerPrefsにはユーザーIDなどの端末固有情報が保存されています。
-        // もしIDを残したままにすると、将来的にクラウドセーブを導入した際、次回起動時に「既存ユーザー」として認識され、
-        // 削除したはずのデータがクラウドから自動的に復元されてしまう（ゾンビ復元）リスクがあります。
-        // IDごと消去することで、次回は「完全な新規ユーザー」としてIDが再発行され、安全に最初から遊べるようになります。
-        PlayerPrefs.DeleteAll();
-        PlayerPrefs.Save();
-
-        // 新しいIDを即座に生成（これにより、メモリ上の古いIDが更新され、新しいユーザーとして扱われます）
-        InitializeUserId();
-
-        // データを初期化
-        InitializeGameData();
-        // 設定を反映（初期値に戻る）
-        ApplyAudioSettings();
-
-        // タイトル画面へリロード（演出スキップなし＝最初から）
-        // SkipTitleSequence = false にすることで、次回起動時に "Press Any Button" から始まります。
-        SkipTitleSequence = false;
-        SceneManager.LoadScene("TitleScene");
     }
 
     /// <summary>
@@ -948,7 +956,15 @@ public class GameManager : MonoBehaviour
     public void ReturnToTitle()
     {
         // ゲームオーバー時は ShowGameOverScreen で既に保存済み。
-        // ポーズメニューからの離脱時は、スコアは保存せず破棄する（統計情報の一部は失われるが、途中退室扱いとする）。
+        if (!IsGameOver)
+        {
+            // ポーズメニューからの離脱（途中終了）の場合
+            // スコアランキングには登録しないが、プレイ時間や撃破数などの累積統計（Stats）は保存する
+            gameData.stats.totalPlayTime += timeElapsed;
+            // プレイ回数を加算（途中終了でも1回とカウント）
+            gameData.stats.totalGamesPlayed++;
+            SaveGameData();
+        }
 
         // React側で決定音を鳴らしているため、ここでは再生しない（重複防止）
         // PlayCancelSound();
@@ -1138,6 +1154,13 @@ public class GameManager : MonoBehaviour
                     // エラー内容が "Conflict"（競合）だった場合の特別処理
                     if (error == "Conflict")
                     {
+                        HasPendingConflict = true; // 競合状態を記憶（シーン遷移しても忘れないように）
+                        SetToastMessage("CONFLICT DETECTED", 0); // ずっと表示し続ける
+
+                        // コンフリクト発生時はゲーム進行を緊急停止する
+                        // これにより、裏でゲームが進んだり演出が完了してしまうのを防ぎます。
+                        Time.timeScale = 0f;
+
                         // コンフリクト発生時、React側に通知してダイアログを表示
                         // ReactInputBridge経由で、React側の window.onSaveConflict() を呼び出します。
                         ReactInputBridge.Instance?.TriggerSaveConflict();
@@ -1241,6 +1264,16 @@ public class GameManager : MonoBehaviour
     public void StartGameLoop()
     {
         IsGameActive = true;
+
+        // コンフリクト解決待ちの場合は、ゲームを開始しない（時間を止めたまま待機）
+        // 解決後（ForceSave成功時など）に時間が再開される
+        if (HasPendingConflict)
+        {
+            Debug.LogWarning("[GameManager] StartGameLoop paused due to pending conflict.");
+            Time.timeScale = 0f;
+            return;
+        }
+
         // カットイン終了、ゲーム開始（時間を動かす）
         Time.timeScale = 1f;
     }
@@ -1257,6 +1290,13 @@ public class GameManager : MonoBehaviour
         // 全てのシーンにおいて、UIの準備が完了したこのタイミングでBGM再生とオーバーレイ消去を行います。
         PlayGameBGM(currentScene);
         StartCoroutine(HideOverlayCoroutine());
+
+        // 未解決のコンフリクトがある場合、シーン遷移後に再度ダイアログを表示する
+        // これにより、「ポーズからタイトルに戻る瞬間にコンフリクトしてダイアログが消えてしまった」場合でも、タイトル画面で再表示できます。
+        if (HasPendingConflict)
+        {
+            ReactInputBridge.Instance?.TriggerSaveConflict();
+        }
     }
 
     /// <summary>
@@ -1324,6 +1364,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ResolveConflict_Reload()
     {
+        HasPendingConflict = false; // 解決を試みるのでフラグを下ろす
         Debug.Log("[GameManager] Resolving conflict: Reloading from cloud...");
         SetToastMessage("RELOADING...", 0);
 
@@ -1346,6 +1387,10 @@ public class GameManager : MonoBehaviour
             {
                 Debug.LogError("Reload failed.");
                 SetToastMessage("RELOAD FAILED", 3.0f);
+
+                // 失敗した場合は、再度コンフリクト状態に戻してダイアログを出す
+                HasPendingConflict = true;
+                ReactInputBridge.Instance?.TriggerSaveConflict();
             }
         });
     }
@@ -1356,6 +1401,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ResolveConflict_ForceSave()
     {
+        HasPendingConflict = false; // 解決を試みるのでフラグを下ろす
         Debug.Log("[GameManager] Resolving conflict: Force saving...");
         // ForceSaveメソッドを使って強制保存（prevUpdatedAtを無視）
         // ここではSaveGameDataを使わず直接呼ぶ（SaveGameDataは通常保存用）
@@ -1376,11 +1422,22 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log("Force save successful.");
                     SetToastMessage("DATA SAVED", 2.0f);
+
+                    // 強制保存成功後、ゲーム中かつポーズ中でなければ時間を再開する
+                    if (IsGameActive && !IsPaused)
+                    {
+                        Time.timeScale = 1f;
+                    }
                 }
                 else
                 {
                     Debug.LogError($"Force save failed: {error}");
                     SetToastMessage($"SAVE FAILED: {error}", 3.0f);
+
+                    // 失敗した場合は、再度コンフリクト状態に戻してダイアログを出す
+                    HasPendingConflict = true;
+                    ReactInputBridge.Instance?.TriggerSaveConflict();
+
                     // 失敗時はオフラインモードへ
                     canSaveToCloud = false;
                     IsOfflineMode = true;

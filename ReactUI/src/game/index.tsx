@@ -10,6 +10,7 @@ import { AspectRatioWrapper } from '../components/AspectRatioWrapper';
 import { ScorePopup } from './ScorePopup';
 import { Toaster } from '../components/Toaster';
 import { OfflineIndicator } from '../components/OfflineIndicator';
+import { SystemAlert } from '../components/SystemAlert';
 
 // ゲームオーバーパネルコンポーネント
 // 役割: ゲームオーバー時に表示され、リトライかタイトルへ戻るかを選択させる
@@ -412,6 +413,9 @@ const GameApp = () => {
         system: false
     });
 
+    // コンフリクト警告の表示制御用
+    const [showConflictAlert, setShowConflictAlert] = useState(false);
+
     const globals = useGlobals() as any;
     const interop = globals.GameInterop;
     // ステージ名を取得（HUDと同じロジックで取得するか、statusから取る）
@@ -438,9 +442,12 @@ const GameApp = () => {
         // onLoadingRequest: ローディング画面を表示せよ
         (window as any).onLoadingRequest = () => setIsLoading(true);
         (window as any).onFadeOutRequest = () => setIsBlackout(true);
+        // セーブデータ競合の検知 (C#から呼ばれる)
+        (window as any).onSaveConflict = () => setShowConflictAlert(true);
         return () => {
             (window as any).onLoadingRequest = () => { };
             (window as any).onFadeOutRequest = () => { };
+            (window as any).onSaveConflict = () => { };
         };
     }, []);
 
@@ -492,6 +499,28 @@ const GameApp = () => {
         }
     }, []);
 
+    // コンフリクト解決ハンドラ
+    const handleResolveConflict = useCallback((overwriteLocal: boolean) => {
+        setShowConflictAlert(false);
+        if (overwriteLocal) {
+            // ローカルを上書き（クラウドのデータをロード）
+            console.log("Resolve: Overwrite Local");
+            interop?.PlaySound('submit');
+            // C#側にリロードを要求
+            if (interop && typeof interop.ReloadSaveData === 'function') {
+                interop.ReloadSaveData();
+            }
+        } else {
+            // 強制保存（クラウドを上書き）
+            console.log("Resolve: Force Save");
+            interop?.PlaySound('submit');
+            // C#側に強制保存を要求
+            if (interop && typeof interop.ForceSaveData === 'function') {
+                interop.ForceSaveData();
+            }
+        }
+    }, [interop]);
+
     return (
         <view className="absolute top-0 left-0 w-full h-full">
             <AspectRatioWrapper onReady={handleUIReady}>
@@ -537,6 +566,17 @@ const GameApp = () => {
 
                     {/* オフラインインジケーター (左上) */}
                     <OfflineIndicator className="absolute top-4 left-4" />
+
+                    {/* コンフリクト解決用アラート */}
+                    <SystemAlert
+                        isOpen={showConflictAlert}
+                        title="SYSTEM ALERT"
+                        message={"DATA CONFLICT DETECTED.\nCLOUD DATA IS NEWER."}
+                        confirmLabel="OVERWRITE LOCAL"
+                        cancelLabel="FORCE SAVE"
+                        onConfirm={() => handleResolveConflict(true)}
+                        onCancel={() => handleResolveConflict(false)}
+                    />
                 </view>
             </AspectRatioWrapper>
             {/* システムメッセージ通知用トースター (AspectRatioWrapperの外に出して再マウントを防ぐ) */}

@@ -55,16 +55,16 @@ public class GameInterop
         public bool vibration;
         // 統計情報 (Stats)
         // ゲームプレイの記録を表示するために追加されたフィールド群です。
-        public float total_play_time;
-        public int total_enemies_defeated;
-        public int total_games_played;
-        public int total_damage_taken;
-        public int total_damage_dealt;
-        public int total_shots_fired;
+        public double total_play_time; // float -> double (精度維持のため)
+        public long total_enemies_defeated; // int -> long (オーバーフロー対策)
+        public long total_games_played;
+        public long total_damage_taken;
+        public long total_damage_dealt;
+        public long total_shots_fired;
         public long total_score;
-        public int total_sp_used;
-        public int total_chain_kills;
-        public int items_collected;
+        public long total_sp_used;
+        public long total_chain_kills;
+        public long items_collected;
     }
 
     /// <summary>
@@ -562,10 +562,15 @@ public class ReactInputBridge : MonoBehaviour
         {
             if (Instance != null && Instance != this)
             {
-                Debug.LogWarning("[ReactInputBridge] 複数のプライマリブリッジが検出されました。このインスタンスは破棄されます。", gameObject);
-                Destroy(this);
-                return;
+                Debug.LogWarning($"[ReactInputBridge] Multiple primary bridges detected. Prioritizing new instance ({gameObject.name}).", gameObject);
+                // Destroy(this); // 削除せず、新しいインスタンスを生かす
             }
+            // 常に新しいものをInstanceとして登録（上書き）
+            Instance = this;
+        }
+        else if (Instance == null)
+        {
+            // プライマリ指定がなくても、他に誰もいなければ自分がInstanceになる（フォールバック）
             Instance = this;
         }
 
@@ -683,11 +688,11 @@ public class ReactInputBridge : MonoBehaviour
     private void OnDisable()
     {
         // Disable(): Input Systemのアクションを無効化し、監視を停止します。
-        _pressAnyKeyAction.Disable();
-        _navigateAction.Disable();
-        _submitAction.Disable();
-        _cancelAction.Disable();
-        _backspaceAction.Disable();
+        _pressAnyKeyAction?.Disable();
+        _navigateAction?.Disable();
+        _submitAction?.Disable();
+        _cancelAction?.Disable();
+        _backspaceAction?.Disable();
         if (Keyboard.current != null)
         {
             Keyboard.current.onTextInput -= OnTextInput;
@@ -815,13 +820,23 @@ public class ReactInputBridge : MonoBehaviour
     /// <param name="eventName">イベント名（up, down, submit, cancelなど）</param>
     private void SendEvent(string eventName)
     {
-        if (_reactRenderer != null && _reactRenderer.Context != null)
+        // オブジェクトが破棄されている、または無効化されている場合はイベントを送らない
+        if (this == null || !isActiveAndEnabled) return;
+
+        if (_reactRenderer != null && _reactRenderer.Context != null && _reactRenderer.Context.Script != null)
         {
-            // React側の関数 'onMenuInput' を呼び出す
-            // ExecuteScript(script): 文字列として渡されたJavaScriptコードを、ReactUnityのコンテキスト内で実行します。
-            // ここでは、React側で定義されたグローバル関数 `onMenuInput` を呼び出しています。
-            // 引数としてイベント名（up, down, submit, cancel）を渡す
-            _reactRenderer.Context.Script.ExecuteScript($"if (typeof onMenuInput === 'function') onMenuInput('{eventName}');");
+            try
+            {
+                // React側の関数 'onMenuInput' を呼び出す
+                // ExecuteScript(script): 文字列として渡されたJavaScriptコードを、ReactUnityのコンテキスト内で実行します。
+                // ここでは、React側で定義されたグローバル関数 `onMenuInput` を呼び出しています。
+                // 引数としてイベント名（up, down, submit, cancel）を渡す
+                _reactRenderer.Context.Script.ExecuteScript($"if (typeof onMenuInput === 'function') onMenuInput('{eventName}');");
+            }
+            catch (System.Exception)
+            {
+                // シーン遷移中や終了時にコンテキストが破棄されている場合のエラーは無視する
+            }
         }
     }
 
@@ -854,12 +869,29 @@ public class ReactInputBridge : MonoBehaviour
     /// </summary>
     public void TriggerSaveConflict()
     {
+        Debug.Log("[ReactInputBridge] TriggerSaveConflict called. Sending event to React...");
         if (_reactRenderer != null && _reactRenderer.Context != null)
         {
             // ExecuteScript: C#からJavaScriptのコードを実行します。
             // React側で定義されているグローバル関数 'onSaveConflict' を呼び出し、警告ダイアログを表示させます。
             // JSコード: "if (typeof onSaveConflict === 'function') onSaveConflict();"
             _reactRenderer.Context.Script.ExecuteScript("if (typeof onSaveConflict === 'function') onSaveConflict();");
+        }
+        else
+        {
+            Debug.LogWarning("[ReactInputBridge] Cannot trigger conflict alert: React Context is null.");
+        }
+    }
+
+    /// <summary>
+    /// セーブデータの削除に失敗したことをReact側に通知します。
+    /// Settings画面で削除中のロック状態を解除するために使用します。
+    /// </summary>
+    public void NotifyDeleteFailed()
+    {
+        if (_reactRenderer != null && _reactRenderer.Context != null)
+        {
+            _reactRenderer.Context.Script.ExecuteScript("if (typeof onDeleteFailed === 'function') onDeleteFailed();");
         }
     }
 }

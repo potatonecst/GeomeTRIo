@@ -108,6 +108,27 @@ useEffect(() => {
 *   **`[score]`**: `score` 変数が変化するたびに実行されます。
 *   **指定なし:** 毎フレーム（再描画ごと）実行されます（Unityの `Update` に近いですが、頻度が高いので注意）。
 
+### Unityイベントの登録と依存配列 (Event Registration & Dependencies)
+
+Unity(C#)からのイベント（`window.onSaveConflict`など）を登録する際、`useEffect` の依存配列の扱いに注意が必要です。
+
+**アンチパターン (レースコンディションの原因):**
+```tsx
+useEffect(() => {
+    (window as any).onEvent = () => { ... };
+    return () => { (window as any).onEvent = () => {}; }; // クリーンアップ
+}, [currentScreen]); // ★依存配列に値がある
+```
+*   **問題:** `currentScreen` が変わるたびに「登録解除」→「再登録」が走ります。この一瞬の隙間にUnityからイベントが通知されると、取りこぼす可能性があります。
+
+**ベストプラクティス:**
+```tsx
+useEffect(() => {
+    (window as any).onEvent = () => { ... };
+}, []); // ★空配列（マウント時のみ）
+```
+*   **解決:** 最初に1回だけ登録し、画面遷移しても解除しないようにすることで、いつ通知が来ても確実に受け取れるようになります。
+
 ---
 
 ## 6. カスタムフック (Custom Hooks)

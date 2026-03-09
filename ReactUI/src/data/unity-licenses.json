@@ -9,7 +9,7 @@
   },
   {
     "name": "2D Animation",
-    "version": "12.0.3",
+    "version": "13.0.4",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/2d.git",
     "publisher": "Unity Technologies",
@@ -17,7 +17,7 @@
   },
   {
     "name": "2D Aseprite Importer",
-    "version": "2.0.2",
+    "version": "3.0.1",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/2d.git",
     "publisher": "Unity Technologies",
@@ -25,7 +25,7 @@
   },
   {
     "name": "2D Common",
-    "version": "11.0.1",
+    "version": "12.0.2",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/2d.git",
     "publisher": "Unity Technologies",
@@ -33,7 +33,7 @@
   },
   {
     "name": "2D PSD Importer",
-    "version": "11.0.2",
+    "version": "12.0.1",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/2d.git",
     "publisher": "Unity Technologies",
@@ -49,7 +49,7 @@
   },
   {
     "name": "2D SpriteShape",
-    "version": "12.0.2",
+    "version": "13.0.0",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/2d.git",
     "publisher": "Unity Technologies",
@@ -57,7 +57,7 @@
   },
   {
     "name": "2D Tilemap Extras",
-    "version": "5.0.2",
+    "version": "6.0.1",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/2d.git",
     "publisher": "Unity Technologies",
@@ -73,7 +73,7 @@
   },
   {
     "name": "Burst",
-    "version": "1.8.25",
+    "version": "1.8.28",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/burst.git",
     "publisher": "Unity Technologies",
@@ -81,7 +81,7 @@
   },
   {
     "name": "Unity Version Control",
-    "version": "2.9.3",
+    "version": "2.11.4",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/com.unity.cloud.collaborate.git",
     "publisher": "Unity Technologies",
@@ -89,7 +89,7 @@
   },
   {
     "name": "Collections",
-    "version": "2.5.7",
+    "version": "2.6.2",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/dots.git",
     "publisher": "Unity Technologies",
@@ -129,7 +129,7 @@
   },
   {
     "name": "Input System",
-    "version": "1.14.2",
+    "version": "1.18.0",
     "licenses": "Unknown",
     "repository": "https://github.com/Unity-Technologies/InputSystem.git",
     "publisher": "Unity Technologies",
@@ -137,7 +137,7 @@
   },
   {
     "name": "Mathematics",
-    "version": "1.3.2",
+    "version": "1.3.3",
     "licenses": "Unknown",
     "repository": "https://github.com/Unity-Technologies/Unity.Mathematics.git",
     "publisher": "Unity Technologies",
@@ -145,7 +145,7 @@
   },
   {
     "name": "Multiplayer Center",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "licenses": "Unknown",
     "repository": "",
     "publisher": "Unity Technologies",
@@ -153,7 +153,7 @@
   },
   {
     "name": "Mono Cecil",
-    "version": "1.11.5",
+    "version": "1.11.6",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/com.unity.nuget.mono-cecil.git",
     "publisher": "Unity Technologies",
@@ -161,7 +161,7 @@
   },
   {
     "name": "Newtonsoft Json",
-    "version": "3.2.1",
+    "version": "3.2.2",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/com.unity.nuget.newtonsoft-json.git",
     "publisher": "Unity Technologies",
@@ -169,7 +169,7 @@
   },
   {
     "name": "Scriptable Render Pipeline Core",
-    "version": "17.2.0",
+    "version": "17.3.0",
     "licenses": "Unknown",
     "repository": "",
     "publisher": "Unity Technologies",
@@ -185,23 +185,15 @@
   },
   {
     "name": "Universal Render Pipeline",
-    "version": "17.2.0",
+    "version": "17.3.0",
     "licenses": "Unknown",
     "repository": "",
     "publisher": "Unity Technologies",
     "licenseText": "com.unity.render-pipelines.universal copyright © 2020 Unity Technologies ApS\n\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\n\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\n"
   },
   {
-    "name": "Unity Light Transport Library",
-    "version": "1.0.1",
-    "licenses": "Unknown",
-    "repository": "",
-    "publisher": "Unity Technologies",
-    "licenseText": "com.unity.rendering.light-transport copyright © 2023 Unity Technologies\n\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\n\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\n"
-  },
-  {
     "name": "Searcher",
-    "version": "4.9.3",
+    "version": "4.9.4",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/com.unity.searcher.git",
     "publisher": "Unity Technologies",
@@ -209,7 +201,7 @@
   },
   {
     "name": "Shader Graph",
-    "version": "17.2.0",
+    "version": "17.3.0",
     "licenses": "Unknown",
     "repository": "",
     "publisher": "Unity Technologies",
@@ -233,23 +225,23 @@
   },
   {
     "name": "Timeline",
-    "version": "1.8.10",
+    "version": "1.8.11",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/com.unity.timeline.git",
     "publisher": "Unity Technologies",
     "licenseText": "Timeline copyright © 2023 Unity Technologies\n\nLicensed under the Unity Companion License for Unity-dependent projects--see [Unity Companion License](http://www.unity3d.com/legal/licenses/Unity_Companion_License).\n\nUnless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\n"
   },
   {
-    "name": "Unity UI",
+    "name": "uGUI",
     "version": "2.0.0",
     "licenses": "Unknown",
     "repository": "",
     "publisher": "Unity Technologies",
-    "licenseText": "Unity UI Copyright © 2015-2020 Unity Technologies ApS (\"**_Unity_**\")\n\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\n\n_Unless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\n"
+    "licenseText": "uGUI Copyright © 2015-2020 Unity Technologies ApS (\"**_Unity_**\")\n\nLicensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license).\n\n_Unless expressly provided otherwise, the Software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions.\n"
   },
   {
     "name": "Vector Graphics",
-    "version": "2.0.0-preview.25",
+    "version": "3.0.0-preview.7",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/com.unity.vectorgraphics.git",
     "publisher": "Unity Technologies",
@@ -257,7 +249,7 @@
   },
   {
     "name": "Visual Scripting",
-    "version": "1.9.9",
+    "version": "1.9.10",
     "licenses": "Unknown",
     "repository": "https://github.cds.internal.unity3d.com/unity/com.unity.visualscripting.git",
     "publisher": "Unity Technologies",

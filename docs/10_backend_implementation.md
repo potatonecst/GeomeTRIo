@@ -34,6 +34,12 @@ DynamoDBの制約（空文字禁止など）を回避するため、以下のオ
 *   **`convertClassInstanceToMap: true`**:
     *   `new Class()` で生成されたインスタンスは、通常SDKによって拒否されるか正しく保存されません。このオプションにより、インスタンス内部のデータを強制的にMap型（JSONオブジェクト）として保存させます。
 
+**64bit整数の扱い (BigInt Handling):**
+C#の `long` 型（`DateTime.Ticks` や `totalScore` など）は、JavaScriptの `Number.MAX_SAFE_INTEGER` (2^53) を超える可能性があります。
+そのまま送信するとAWS SDKで `Error: Number ... is greater than Number.MAX_SAFE_INTEGER` が発生するため、Unity側で **文字列 (String)** に変換してJSON化しています。
+*   **Unity:** `JsonConverter` を使用して `long` ⇔ `string` を相互変換。
+*   **DynamoDB:** String型として保存。
+
 ### 2.2 ハンドラー関数と非同期処理
 Lambdaのエントリーポイントは `handler` 関数です。`async/await` 構文を使用して、非同期なDB操作を同期的に記述しています。
 
@@ -49,7 +55,7 @@ export const handler = async (event: any) => {
 
 1.  **パース:** `event.body` (JSON文字列) をオブジェクトに変換します。
 2.  **バリデーション:** 必須項目 (`userId`, `authToken`) があるか確認します。
-3.  **分岐:** `action` (`save` / `load`) に応じて処理を分けます。
+3.  **分岐:** `action` (`save` / `load` / `delete`) に応じて処理を分けます。
 4.  **セキュリティチェック:**
     *   **認証:** `authToken` がDB上の値と一致するか確認します。
     *   **改竄検知:** 送られてきたデータからハッシュ値を再計算し、`checksum` と一致するか確認します。
@@ -122,7 +128,7 @@ sequenceDiagram
         else Valid Request
             Lambda->>DB: PutItem (New Data + TTL)
             DB-->>Lambda: Success
-            Lambda-->>Client: 200 OK
+            Lambda-->>Client: 200 OK (updatedAt)
         end
 
     else Action == "load"
@@ -136,6 +142,21 @@ sequenceDiagram
             Lambda-->>Client: 200 OK (Data or Null)
         end
         
+    else Action == "delete"
+        Note over Lambda: 4. Delete Flow
+        Lambda->>DB: GetItem (userId)
+        DB-->>Lambda: Current Data
+        
+        alt Data Exists & AuthToken Mismatch
+            Lambda-->>Client: 403 Forbidden
+        else Success (Data Exists)
+            Lambda->>DB: DeleteItem
+            DB-->>Lambda: Success
+            Lambda-->>Client: 200 OK
+        else Success (No Data)
+            Lambda-->>Client: 200 OK
+        end
+
     else Unknown Action
         Lambda-->>Client: 400 Bad Request
     end
@@ -199,7 +220,7 @@ if (checksum !== expectedChecksum) {
 複数端末での同時プレイや、通信環境の悪化による「先祖返り（古いデータによる上書き）」を防ぐため、**楽観的ロック (Optimistic Locking)** を採用しています。
 
 1. **Load時:** クライアントにデータと共に `updatedAt` (最終更新日時) を返します。
-2. **Save時:** クライアントは保存リクエストに `prevUpdatedAt` を含めます。
+2. **Save時:** クライアントは保存リクエストに `prevUpdatedAt` を含めます。成功時、サーバーは新しい `updatedAt` を返します。
 3. **検証:** サーバーは `prevUpdatedAt` がDB上の現在の `updatedAt` と一致するか確認します。
    - 不一致の場合、**`409 Conflict`** エラーを返し、保存を拒否します。
    - クライアントはこのエラーを受け取ると、ユーザーに「リロード」か「強制上書き」の選択を求めます。

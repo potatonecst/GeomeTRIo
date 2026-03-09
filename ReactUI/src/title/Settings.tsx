@@ -265,6 +265,17 @@ export const Settings = ({ onBack, onSettingChange }: SettingsProps) => {
         }
     }, [interop]);
 
+    // 削除失敗時の復帰処理
+    useEffect(() => {
+        (window as any).onDeleteFailed = () => {
+            console.log("Delete failed. Restoring UI.");
+            setIsDeleting(false); // 入力ブロック解除
+            setOpacity(1); // 画面を再表示
+            interop?.PlaySound('cancel'); // エラー音としてキャンセル音を鳴らす
+        };
+        return () => { (window as any).onDeleteFailed = () => { }; };
+    }, [interop]);
+
     // ライセンスメニューを開く処理
     const handleOpenLicenseMenu = useCallback(() => {
         interop?.PlaySound('submit');

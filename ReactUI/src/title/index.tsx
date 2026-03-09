@@ -445,6 +445,18 @@ const TitleApp = () => {
         }
     }, [interop]);
 
+    // コンフリクト検知イベントの登録 (画面遷移に依存せず常に監視する)
+    useEffect(() => {
+        // セーブデータ競合の検知 (C#から呼ばれる)
+        (window as any).onSaveConflict = () => {
+            console.log("[TitleApp] onSaveConflict called - Showing Alert");
+            setShowConflictAlert(true);
+        };
+        return () => {
+            (window as any).onSaveConflict = () => { };
+        };
+    }, []); // 依存配列を空にして、マウント中はずっと有効にする
+
     // Unityからの入力イベントを受け取るための設定
     // useEffect: コンポーネントのマウント時や状態変化時に実行される副作用フック
     useEffect(() => {
@@ -467,12 +479,6 @@ const TitleApp = () => {
             setIsBlackout(true);
         };
 
-        // 4. セーブデータ競合の検知 (C#から呼ばれる)
-        (window as any).onSaveConflict = () => {
-            // interop?.PlaySound('alert'); // 警告音があれば鳴らす
-            setShowConflictAlert(true);
-        };
-
         // 2. メニュー操作の検知 (Menuコンポーネント等で処理するためにグローバル関数を空定義しておく)
         // 実際の処理は Menu.tsx などの各コンポーネントの useEffect で上書きされるが、エラー防止のために初期化しておく
         if (!((window as any).onMenuInput)) {
@@ -484,7 +490,6 @@ const TitleApp = () => {
         return () => {
             (window as any).onAnyKeyPress = () => { };
             (window as any).onFadeOutRequest = () => { };
-            (window as any).onSaveConflict = () => { };
         };
     }, [currentScreen, connectionState, interop]); // 依存配列も interop に変更
 

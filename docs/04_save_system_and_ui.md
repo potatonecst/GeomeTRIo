@@ -94,6 +94,35 @@ public void ForceSave(string userId, GameData data, Action<bool, string> callbac
 3. **整合性維持:** updatedAt を用いた楽観的ロックにより、古いデータによる意図しない上書き（先祖返り）を防止。
 4. **JSON正規化:** チェックサム計算時、JSONのキー順序が異なるとハッシュ値が変わってしまうため、キーをアルファベット順にソート（正規化）してから計算しています。
 
+### データ整合性とサニタイズ (Data Sanitization)
+
+**空文字とnullの変換問題:**
+DynamoDBとUnity(C#)の間でデータをやり取りする際、以下の仕様により「初期値が消える」現象が発生する可能性があります。
+
+1.  **DynamoDBの制約**: 空文字 (`""`) を保存できない場合があるため、バックエンド側で `null` に変換して保存しています (`convertEmptyValues: true`)。
+2.  **JSONデシリアライズ**: 保存された `null` をUnityで読み込むと、JSONに `"key": null` と記録されているため、C#クラスの初期値（例: `playerName = "PLAYER"`) が `null` で上書きされてしまいます。
+
+**対策:**
+ロード直後に **サニタイズ（浄化）処理** を実行し、`null` になっている文字列フィールドを空文字 `""` や適切な初期値に復元しています。
+
+```csharp
+// CloudSaveManager.cs
+if (loadedData.playerName == null) loadedData.playerName = "";
+```
+
+### 削除処理 (Delete)
+`DeleteSaveData` メソッドは、クラウド上のデータを削除し、ローカルの `PlayerPrefs` も消去してアプリを初期状態（タイトル画面）にリセットします。
+
+**失敗時のリカバリ:**
+削除通信が失敗した場合、React側のUIは「削除中（操作不能）」のままスタックしてしまう可能性があります。
+これを防ぐため、失敗時には `ReactInputBridge.Instance.NotifyDeleteFailed()` を呼び出し、React側の `window.onDeleteFailed` イベントを発火させてUIのロックを解除（復帰）させています。
+
+```csharp
+// GameManager.cs
+// 失敗時はリロードせず、React側に通知してUIを復帰させる
+ReactInputBridge.Instance?.NotifyDeleteFailed();
+```
+
 ## UIの更新: ReactUnityによるポーリング
 
 従来のuGUI実装ではObserverパターンを使用していましたが、ReactUnityへの移行に伴い、**ポーリング方式**に変更しました。

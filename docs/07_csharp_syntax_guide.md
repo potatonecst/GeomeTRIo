@@ -376,6 +376,48 @@ Unityにおいて、**「ゲームオブジェクトにアタッチして動か�
 | **呼び出し方** | `player.Hp` (変数名.メンバー)                            | `Mathf.PI` (クラス名.メンバー)                                |
 | **用途**       | HP、名前、座標など、個体ごとに違う値                     | 定数、便利関数(`Mathf`)、シングルトン(`GameManager.instance`) |
 
+### シングルトンパターンの実装と注意点 (`ReactInputBridge`)
+
+`GameManager.instance` や `ReactInputBridge.Instance` は、シングルトンパターンと呼ばれる設計手法で実装されています。
+
+**基本的な実装:**
+```csharp
+public static MyManager Instance { get; private set; }
+
+void Awake()
+{
+    if (Instance == null) Instance = this;
+    else Destroy(gameObject); // 重複したら自分を破棄
+}
+```
+
+**シーン遷移時の問題と対策 (`ReactInputBridge` の例):**
+*   **問題:** `DontDestroyOnLoad` されたオブジェクト（例: `GameManager`）にアタッチされた古いブリッジが `Instance` に居座り続けると、新しいシーンのブリッジが自分を破棄してしまい、新しいUIを操作できなくなる。
+*   **対策:** `isPrimaryBridge` フラグとフォールバック処理を組み合わせ、シーン遷移時に常に新しいシーンのブリッジが `Instance` となるように修正しました。
+
+```csharp
+// ReactInputBridge.cs
+if (isPrimaryBridge)
+{
+    if (Instance != null && Instance != this) {
+        Debug.LogWarning("複数のブリッジを検出。新しい方を優先します。");
+    }
+    Instance = this; // isPrimaryBridge=trueなら、強制的に自分をInstanceとして登録
+}
+else if (Instance == null)
+{
+    // isPrimaryBridge=falseでも、他に誰もいなければ自分がInstanceになる（フォールバック）
+    Instance = this;
+}
+```
+**`isPrimaryBridge` の本来の目的:**
+* 1つのシーン内に複数の `ReactRenderer`（例: HUDと背景）が存在する場合、どちらがメインのUI（入力や通知を受け取るUI）かを指定するために使用します。
+
+**現在の挙動:**
+* `isPrimaryBridge` が `true` のインスタンスは、シーン遷移後も残っている古いインスタンスを上書きして、常に自分が `Instance` となります。
+* `isPrimaryBridge` が `false` のインスタンス（例: TitleScene）でも、`Instance` が空であればフォールバックとして登録されるため、`GameManager` からの通知を受け取れるようになっています。
+* これにより、各シーンのUIは、そのシーンに配置されている最新のブリッジによって確実に制御されます。
+
 ### コード例
 ### コードでの違い
 ```csharp
@@ -867,3 +909,50 @@ Unityプロジェクトでは、用途に応じて2つのJSONライブラリを�
 *   **`UNITY_EDITOR`**: Unityエディタで実行している場合に定義されるシンボル。
 *   **`DEVELOPMENT_BUILD`**: 「Development Build」オプションを有効にしてビルドした場合に定義されるシンボル。
 *   **用途:** デバッグ機能の切り替えや、開発環境と本番環境の接続先切り替えなどに使用します。
+
+---
+
+## 32. protected override (継承と上書き)
+
+クラスの継承関係において、親クラスの機能を子クラスで変更（上書き）するためのキーワードです。
+
+### 構文
+```csharp
+protected override IList<JsonProperty> CreateProperties(...) { ... }
+```
+
+### 解説
+*   **`protected`**: アクセス修飾子の一つ。「自分自身」と「自分を継承した子クラス」からのみアクセス可能にします。外部（他のクラス）からは見えません。
+*   **`override`**: 親クラスで `virtual` または `abstract` として定義されているメソッドを、子クラスで独自の実装に書き換えます。
+*   **用途**: ライブラリ（Newtonsoft.Jsonなど）が提供する「基本機能」の一部だけを、自分の都合に合わせてカスタマイズしたい場合に使用します。
+
+---
+
+## 33. 暗号化クラスの使用 (HMACSHA256)
+
+データの改竄検知などに使用される、ハッシュ値を計算するためのクラスです。
+
+### 構文
+```csharp
+using (HMACSHA256 hmac = new HMACSHA256(keyBytes))
+{
+    byte[] hash = hmac.ComputeHash(dataBytes);
+}
+```
+
+### 解説
+*   **`new HMACSHA256(keyBytes)`**: 指定された「秘密鍵」を使って計算機を初期化します。この鍵を知っている人だけが、同じハッシュ値を生成できます。
+*   **`ComputeHash`**: データのハッシュ値（指紋のようなもの）を計算します。
+*   **`using`**: 暗号化クラスはOSのリソースを使用するため、計算が終わったら確実に破棄（Dispose）する必要があります。
+
+---
+
+## 34. ライブラリ拡張のためのクラス作成
+
+なぜ `AlphabeticalContractResolver` や `LongToStringConverter` のようなクラスをわざわざ作成するのか？
+
+### 理由
+ライブラリ（Newtonsoft.Jsonなど）は、機能を拡張するために **「インターフェース」** や **「基底クラス」** を要求する設計になっていることが多いからです。
+
+1.  **設定をひとまとめにする**: 単なる関数ではなく、クラスとして渡すことで、「読み込み処理」「書き込み処理」「対応する型の判定」など、関連する複数の機能をセットで渡すことができます。
+2.  **ポリモーフィズム（多態性）**: ライブラリ側は「`JsonConverter` を継承したクラスなら何でも受け入れる」という作りになっています。これにより、利用者は自由にカスタムロジックを注入できます。
