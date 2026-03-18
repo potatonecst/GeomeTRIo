@@ -24,7 +24,7 @@ public class CloudSaveManager : MonoBehaviour
     private const string API_URL_DEV = "https://yas8jqkch9.execute-api.ap-northeast-1.amazonaws.com/";
 
     // 本番環境用 (Prod) のURL
-    private const string API_URL_PROD = "https://YOUR_API_ID_PROD.execute-api.ap-northeast-1.amazonaws.com/default/GeomeTRIo_Backend";
+    private const string API_URL_PROD = "https://9fkto0zfg9.execute-api.ap-northeast-1.amazonaws.com/";
 
     /// <summary>
     /// 現在の環境（エディタ/開発ビルド か 本番ビルド）に応じて適切なAPIのエンドポイントURLを返します。
@@ -247,10 +247,19 @@ public class CloudSaveManager : MonoBehaviour
                     if (www.responseCode == 409)
                     {
                         Debug.LogWarning("[CloudSave] Conflict detected (409).");
+
+                        string serverUpdatedAt = "";
+                        try
+                        {
+                            var response = JsonConvert.DeserializeObject<LoadResponse>(www.downloadHandler.text);
+                            serverUpdatedAt = response?.updatedAt ?? "";
+                        }
+                        catch { }
+
                         // エラーメッセージとして "Conflict" を返し、GameManager側でダイアログを出せるようにします。
                         // 第1引数 (bool): false (失敗)
                         // 第2引数 (string): "Conflict" (競合エラーを示す文字列)
-                        callback?.Invoke(false, "Conflict");
+                        callback?.Invoke(false, "Conflict|" + serverUpdatedAt);
                         yield break; // リトライしない
                     }
 

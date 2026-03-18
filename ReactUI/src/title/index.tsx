@@ -404,6 +404,9 @@ const TitleApp = () => {
     // コンフリクト警告の表示制御用
     const [showConflictAlert, setShowConflictAlert] = useState(false);
 
+    // コンフリクト時のメッセージ内容
+    const [conflictMessage, setConflictMessage] = useState("");
+
     // バージョン情報 (デフォルト値はフォールバック用)
     const [appVersion, setAppVersion] = useState("ver. 0.3.0");
 
@@ -448,8 +451,14 @@ const TitleApp = () => {
     // コンフリクト検知イベントの登録 (画面遷移に依存せず常に監視する)
     useEffect(() => {
         // セーブデータ競合の検知 (C#から呼ばれる)
-        (window as any).onSaveConflict = () => {
+        (window as any).onSaveConflict = (localDate: string, serverDate: string) => {
             console.log("[TitleApp] onSaveConflict called - Showing Alert");
+            setConflictMessage(
+                `DATA CONFLICT DETECTED.\n\n` +
+                `LOCAL DATA : ${localDate}\n` +
+                `CLOUD DATA : ${serverDate}\n\n` +
+                `WHICH DATA DO YOU WANT TO KEEP?`
+            );
             setShowConflictAlert(true);
         };
         return () => {
@@ -724,7 +733,7 @@ const TitleApp = () => {
                     <SystemAlert
                         isOpen={showConflictAlert}
                         title="SYSTEM ALERT"
-                        message={"DATA CONFLICT DETECTED.\nCLOUD DATA IS NEWER."}
+                        message={conflictMessage}
                         confirmLabel="OVERWRITE LOCAL"
                         cancelLabel="FORCE SAVE"
                         onConfirm={() => handleResolveConflict(true)}

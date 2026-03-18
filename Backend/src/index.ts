@@ -168,7 +168,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
                 console.warn(`Conflict detected for user ${userId}. DB: ${currentData.Item.updatedAt}, Req: ${prevUpdatedAt}`);
                 return {
                     statusCode: 409, // Conflict (競合)
-                    body: JSON.stringify({ message: 'Data has been updated by another device. Please reload.' }),
+                    body: JSON.stringify({
+                        message: 'Data has been updated by another device. Please reload.',
+                        updatedAt: currentData.Item.updatedAt
+                    }),
                 };
             }
 

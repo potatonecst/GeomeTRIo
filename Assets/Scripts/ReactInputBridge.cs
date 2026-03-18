@@ -867,15 +867,14 @@ public class ReactInputBridge : MonoBehaviour
     /// React側にセーブデータの競合（コンフリクト）が発生したことを通知します。
     /// GameManagerで競合エラー(409)を検知した際に呼ばれます。
     /// </summary>
-    public void TriggerSaveConflict()
+    public void TriggerSaveConflict(string localDate, string serverDate)
     {
         Debug.Log("[ReactInputBridge] TriggerSaveConflict called. Sending event to React...");
         if (_reactRenderer != null && _reactRenderer.Context != null)
         {
             // ExecuteScript: C#からJavaScriptのコードを実行します。
             // React側で定義されているグローバル関数 'onSaveConflict' を呼び出し、警告ダイアログを表示させます。
-            // JSコード: "if (typeof onSaveConflict === 'function') onSaveConflict();"
-            _reactRenderer.Context.Script.ExecuteScript("if (typeof onSaveConflict === 'function') onSaveConflict();");
+            _reactRenderer.Context.Script.ExecuteScript($"if (typeof onSaveConflict === 'function') onSaveConflict('{localDate}', '{serverDate}');");
         }
         else
         {

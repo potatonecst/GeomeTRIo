@@ -40,7 +40,7 @@ const SETTINGS_MAP: Record<string, SettingItemDef[]> = {
     ],
     'SYSTEM': [
         // Player Name: 決定キーで編集モードに入り、上下で文字変更、左右でカーソル移動
-        { id: 'player_name', label: 'PLAYER NAME', type: 'text', description: 'Set your pilot name.' },
+        { id: 'player_name', label: 'PLAYER NAME', type: 'text', description: 'Set your alias.' },
         { id: 'vibration', label: 'VIBRATION', type: 'toggle', description: 'Enable or disable controller vibration feedback.' },
     ],
     'STATS': [

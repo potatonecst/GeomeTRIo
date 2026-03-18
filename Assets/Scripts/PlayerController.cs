@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     public float spinAttackFireRate = 0.1f; //連射間隔
     public float spinSpeed = 720f; //回転速度
     private bool isSpinning = false; //スピンアタック判定
+    public bool IsSpinning => isSpinning; // 外部公開用プロパティ
 
     // パワーアップ関連
     public int weaponLevel = 1; // 現在の武器レベル (1~10)
@@ -454,6 +455,9 @@ public class PlayerController : MonoBehaviour, IDamageable
         float endTime = Time.time + spinAttackDuration;
         float nextFireTime = 0f;
 
+        // 画面上の機雷も一掃する
+        ClearMines();
+
         while (Time.time < endTime)
         {
             // 継続的に弾を消す（安全地帯の確保）
@@ -542,6 +546,20 @@ public class PlayerController : MonoBehaviour, IDamageable
     }
 
     /// <summary>
+    /// 画面内に存在する全ての「機雷」を消去します。
+    /// </summary>
+    private void ClearMines()
+    {
+        // FindObjectsByType: シーン内の指定した型のコンポーネントをすべて検索します。
+        var mines = FindObjectsByType<PulseMineController>(FindObjectsSortMode.None);
+        foreach (var mine in mines)
+        {
+            // 爆発させずに消す
+            Destroy(mine.gameObject);
+        }
+    }
+
+    /// <summary>
     /// 画面内に存在する全ての「敵の弾」を消去します。
     /// </summary>
     private void ClearEnemyBullets()
@@ -594,7 +612,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     public void ApplyWeaponJam(float duration)
     {
         // スピンアタック中（システムオーバーライド中）はジャミングを無効化
-        if (isSpinning) return;
+        // 通常の被弾による無敵時間中も無効化する
+        if (isSpinning || isInvincible) return;
 
         if (jamCoroutine != null) StopCoroutine(jamCoroutine);
         jamCoroutine = StartCoroutine(WeaponJamCoroutine(duration));

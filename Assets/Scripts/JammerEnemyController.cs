@@ -72,6 +72,12 @@ public class JammerEnemyController : EnemyBase
     {
         base.Update(); // 下に移動
 
+        // プレイヤーがスピンアタック中は機雷を設置しない
+        if (PlayerController.instance != null && PlayerController.instance.IsSpinning)
+        {
+            return;
+        }
+
         // 機雷設置
         if (Time.time > nextMineTime)
         {

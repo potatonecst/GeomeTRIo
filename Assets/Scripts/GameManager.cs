@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 using System.Collections;
 using UnityEngine.UI; // uGUIを使用するために追加
 
@@ -141,6 +142,8 @@ public class GameManager : MonoBehaviour
     // セーブデータの競合（コンフリクト）が未解決のまま残っているかどうか。
     // trueの場合、シーン遷移後などに再度解決ダイアログを表示します。
     public bool HasPendingConflict { get; private set; } = false;
+    private string pendingConflictLocalDate = "";
+    private string pendingConflictServerDate = "";
 
     /// <summary>
     /// インスタンスの初期化とシングルトンの設定を行います。
@@ -1152,18 +1155,37 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     // エラー内容が "Conflict"（競合）だった場合の特別処理
-                    if (error == "Conflict")
+                    if (error != null && error.StartsWith("Conflict"))
                     {
+
+                        // サーバー日時の整形
+                        string[] parts = error.Split('|');
+                        string displayServerDate = "Unknown";
+                        if (parts.Length > 1 && !string.IsNullOrEmpty(parts[1]))
+                        {
+                            if (DateTime.TryParse(parts[1], null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime parsedServerDate))
+                                displayServerDate = parsedServerDate.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
+                        }
+
+                        // ローカル日時の整形
+                        string displayLocalDate = "Unknown";
+                        if (gameData.lastModified > 0)
+                        {
+                            DateTime localDate = new DateTime(gameData.lastModified, DateTimeKind.Utc);
+                            displayLocalDate = localDate.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
+                        }
+
                         HasPendingConflict = true; // 競合状態を記憶（シーン遷移しても忘れないように）
+                        pendingConflictLocalDate = displayLocalDate;
+                        pendingConflictServerDate = displayServerDate;
                         SetToastMessage("CONFLICT DETECTED", 0); // ずっと表示し続ける
 
                         // コンフリクト発生時はゲーム進行を緊急停止する
-                        // これにより、裏でゲームが進んだり演出が完了してしまうのを防ぎます。
                         Time.timeScale = 0f;
 
                         // コンフリクト発生時、React側に通知してダイアログを表示
                         // ReactInputBridge経由で、React側の window.onSaveConflict() を呼び出します。
-                        ReactInputBridge.Instance?.TriggerSaveConflict();
+                        ReactInputBridge.Instance?.TriggerSaveConflict(displayLocalDate, displayServerDate);
                         return;
                     }
 
@@ -1295,7 +1317,7 @@ public class GameManager : MonoBehaviour
         // これにより、「ポーズからタイトルに戻る瞬間にコンフリクトしてダイアログが消えてしまった」場合でも、タイトル画面で再表示できます。
         if (HasPendingConflict)
         {
-            ReactInputBridge.Instance?.TriggerSaveConflict();
+            ReactInputBridge.Instance?.TriggerSaveConflict(pendingConflictLocalDate, pendingConflictServerDate);
         }
     }
 
@@ -1390,7 +1412,7 @@ public class GameManager : MonoBehaviour
 
                 // 失敗した場合は、再度コンフリクト状態に戻してダイアログを出す
                 HasPendingConflict = true;
-                ReactInputBridge.Instance?.TriggerSaveConflict();
+                ReactInputBridge.Instance?.TriggerSaveConflict(pendingConflictLocalDate, pendingConflictServerDate);
             }
         });
     }
@@ -1436,7 +1458,7 @@ public class GameManager : MonoBehaviour
 
                     // 失敗した場合は、再度コンフリクト状態に戻してダイアログを出す
                     HasPendingConflict = true;
-                    ReactInputBridge.Instance?.TriggerSaveConflict();
+                    ReactInputBridge.Instance?.TriggerSaveConflict(pendingConflictLocalDate, pendingConflictServerDate);
 
                     // 失敗時はオフラインモードへ
                     canSaveToCloud = false;

@@ -69,7 +69,7 @@ export const SystemAlert = ({
     return (
         <view className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-95" style={{ zIndex: 999 }}>
             {/* ダイアログコンテナ */}
-            <view className="relative w-[900px] bg-black p-8">
+            <view className="relative w-[1000px] bg-black p-8">
                 {/* 装飾レイヤー: 枠線と発光のみを点滅させる（文字には影響させない） */}
                 <view className="absolute inset-0 border-2 border-red-500 shadow-[0_0_20px_rgba(255,0,0,0.5)] animate-pulse pointer-events-none" />
 
@@ -83,7 +83,7 @@ export const SystemAlert = ({
                 </view>
 
                 {/* メッセージ */}
-                <text className="mb-8 text-center text-xl text-white leading-relaxed whitespace-pre-wrap" style={{ fontFamily: 'SourceHanCodeJP' }}>
+                <text className="mb-8 text-center text-2xl text-white leading-relaxed whitespace-pre-wrap" style={{ fontFamily: 'SourceHanCodeJP' }}>
                     {message}
                 </text>
 
