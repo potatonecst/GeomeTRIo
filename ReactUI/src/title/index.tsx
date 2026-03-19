@@ -408,7 +408,7 @@ const TitleApp = () => {
     const [conflictMessage, setConflictMessage] = useState("");
 
     // バージョン情報 (デフォルト値はフォールバック用)
-    const [appVersion, setAppVersion] = useState("ver. 0.3.0");
+    const [appVersion, setAppVersion] = useState("ver. 0.4.1");
 
     // 初期化済みかどうかを管理するRef
     // useRef: 再描画されても値が保持される「箱」を作ります。useStateと違い、値を書き換えても再描画は発生しません。
